@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "hajimi",
+  "project_id": "4b932b63-11c0-489c-a47f-8323de7699c2"
+}
