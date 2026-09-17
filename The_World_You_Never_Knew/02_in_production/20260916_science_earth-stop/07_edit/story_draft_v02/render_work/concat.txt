@@ -1,0 +1,7 @@
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/01_hook.mp4'
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/02_inertia.mp4'
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/03_measure.mp4'
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/04_gravity.mp4'
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/05_layers.mp4'
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/06_mismatch.mp4'
+file '/Users/zhangxiaolong/Desktop/hajimi/The_World_You_Never_Knew/02_in_production/20260916_science_earth-stop/07_edit/story_draft_v02/render_work/07_callback.mp4'

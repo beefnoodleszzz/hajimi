@@ -1,0 +1,14 @@
+{
+  "project": "earth_stop_story_v02b_20260917",
+  "candidates": 3,
+  "inference_timesteps": 30,
+  "lines": [
+    {
+      "id": "EARTH_STOP_STORY_V02",
+      "character_id": "voice_friend_asmr_ref_a_20260917",
+      "emotion": "neutral",
+      "text": "Imagine the ground under your feet stopping for exactly one second. At the equator, you are already moving east at about four hundred sixty-five meters per second. The road stops — but your body keeps going. In that single second, you move nearly four hundred sixty-five meters relative to the ground: about four football fields, without taking a step. Gravity still holds you down. The danger is sideways. The air, clouds, and ocean keep their momentum too. When the ground starts again, land, air, water, and everything loose are no longer aligned. That mismatch is the real disaster. What moves first: you, the atmosphere, or the ocean?",
+      "instruct": "Natural English science-podcast narration by a mature adult woman. Preserve the authorized reference speaker's identity and human texture, but remove the ASMR performance: no whispering, mouth sounds, seductive delivery, exaggerated softness, or sleep-aid pacing. Use a low-to-mid register, calm authority, grounded warmth, and connected conversational speech. Make the first sentence immediately intriguing, give a small controlled emphasis to 'four hundred sixty-five meters', 'sideways', and 'real disaster', then land the final question with restrained curiosity. Speak to one intelligent listener, not like a broadcaster or synthetic TTS."
+    }
+  ]
+}

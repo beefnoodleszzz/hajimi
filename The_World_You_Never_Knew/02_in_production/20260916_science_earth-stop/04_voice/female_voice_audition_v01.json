@@ -1,0 +1,29 @@
+{
+  "project": "female_voice_audition_20260916_v02",
+  "candidates": 1,
+  "inference_timesteps": 30,
+  "cfg_value": 2.0,
+  "warmup_patches": 0,
+  "max_tokens": 2000,
+  "profile": "fast",
+  "normalization_profile": "none",
+  "seed": 20260921,
+  "lines": [
+    {
+      "id": "AUD_FEMALE_INTELLECTUAL",
+      "character_id": "female_mature_intellectual_01",
+      "emotion": "neutral",
+      "seed": 20260921,
+      "instruct": "Natural English science podcast narration. Intelligent, composed, and warm, like a trusted host explaining a surprising idea to one listener. Keep the delivery conversational and human, with clear numbers and a curious lift on the final question.",
+      "text": "Assume a magical, instantaneous halt: Earth's rotation stops for exactly one second. The ground would stop — but you wouldn't. At the equator, Earth's surface is moving east at about 465 meters per second, nearly 1,000 miles per hour. Your body, the atmosphere, and the oceans would keep that sideways motion. In one second, that is roughly 465 meters of relative movement — under this simplified model. The poles are different: their rotational speed is close to zero. You would not fly into space: gravity would still hold you to Earth. If the planet restarted, the mismatch between land, air, water, and everything unattached would be catastrophic. Its spin also bends global winds and ocean currents through the Coriolis effect. So what moves first: you, the atmosphere, or the ocean?"
+    },
+    {
+      "id": "AUD_FEMALE_GENTLE",
+      "character_id": "female_young_gentle_01",
+      "emotion": "neutral",
+      "seed": 20260922,
+      "instruct": "Natural English science podcast narration. Warm, calm, and reassuring without sounding sweet or childish; speak like a thoughtful host sharing a fascinating fact. Keep a relaxed human rhythm, make the key numbers clear, and finish with a soft curious question.",
+      "text": "Assume a magical, instantaneous halt: Earth's rotation stops for exactly one second. The ground would stop — but you wouldn't. At the equator, Earth's surface is moving east at about 465 meters per second, nearly 1,000 miles per hour. Your body, the atmosphere, and the oceans would keep that sideways motion. In one second, that is roughly 465 meters of relative movement — under this simplified model. The poles are different: their rotational speed is close to zero. You would not fly into space: gravity would still hold you to Earth. If the planet restarted, the mismatch between land, air, water, and everything unattached would be catastrophic. Its spin also bends global winds and ocean currents through the Coriolis effect. So what moves first: you, the atmosphere, or the ocean?"
+    }
+  ]
+}
