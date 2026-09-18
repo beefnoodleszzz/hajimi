@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from studio.config import dump_yaml
-from studio.pipeline.animatic import _animatic_target, _cadence_check, _static_hold_check
+from studio.pipeline.animatic import _animatic_target, _cadence_check, _static_hold_check, _load_storyboard_cards
 
 
 def _manifest_with_shots() -> dict:
@@ -66,3 +66,33 @@ def test_animatic_target_changes_when_media_changes(tmp_path: Path) -> None:
     second = _animatic_target(root, episode_root, manifest_path, {"profile_version": "test"}, output)
 
     assert first["asset_sha256"] != second["asset_sha256"]
+
+
+def test_animatic_cards_are_loaded_from_current_episode_storyboard(tmp_path: Path) -> None:
+    episode_root = tmp_path / "episodes" / "EP001_cloud-weight"
+    storyboard_root = episode_root / "storyboard"
+    storyboard_root.mkdir(parents=True)
+    dump_yaml(
+        {
+            "shots": [
+                {
+                    "id": "S001",
+                    "time_start": 0.0,
+                    "time_end": 1.4,
+                    "animatic_card": {
+                        "kicker": "0.0 — 1.4 / HOOK",
+                        "title": "A CLOUD ON A SCALE",
+                        "sub": "THE SKY IS NOT EMPTY",
+                        "kind": "cloud_scale",
+                        "accent": "#ffb35c",
+                    },
+                }
+            ]
+        },
+        storyboard_root / "storyboard_v01.yaml",
+    )
+
+    cards = _load_storyboard_cards(episode_root, {"shots": [{"id": "S001", "duration_target": 1.4}]})
+
+    assert cards[0]["title"] == "A CLOUD ON A SCALE"
+    assert cards[0]["kind"] == "cloud_scale"

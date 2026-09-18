@@ -1,0 +1,341 @@
+{
+  "seed": 42,
+  "inference_timesteps": 30,
+  "cfg_value": 2.0,
+  "warmup_patches": 0,
+  "max_tokens": 2000,
+  "candidates": 2,
+  "profile": "production",
+  "normalization_profile": "narration",
+  "project_lexicon": {},
+  "episode_lexicon": {},
+  "project": "hajimi_EP001_cloud-weight_voxcpm2",
+  "lines": [
+    {
+      "id": "B001",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "That cloud weighs five hundred fifty tons.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "That cloud weighs five hundred fifty tons.",
+        "text_normalized": "That cloud weighs five hundred fifty tons.",
+        "text_spoken": "That cloud weighs five hundred fifty tons.",
+        "text_expected": "That cloud weighs five hundred fifty tons.",
+        "normalization": {
+          "original": "That cloud weighs five hundred fifty tons.",
+          "normalized": "That cloud weighs five hundred fifty tons.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: That",
+            "Review spoken form of identifier: cloud",
+            "Review spoken form of identifier: weighs",
+            "Review spoken form of identifier: five",
+            "Review spoken form of identifier: hundred",
+            "Review spoken form of identifier: fifty",
+            "Review spoken form of identifier: tons."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "That cloud weighs five hundred fifty tons.",
+          "expected": "That cloud weighs five hundred fifty tons.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B002",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+        "text_normalized": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+        "text_spoken": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+        "text_expected": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+        "normalization": {
+          "original": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+          "normalized": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: One",
+            "Review spoken form of identifier: cubic-kilometre",
+            "Review spoken form of identifier: cumulus",
+            "Review spoken form of identifier: five",
+            "Review spoken form of identifier: hundred",
+            "Review spoken form of identifier: fifty-one",
+            "Review spoken form of identifier: tons."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+          "expected": "One cubic-kilometre cumulus: five hundred fifty-one tons.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B003",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Liquid water—tiny droplets, spread wide.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "Liquid water—tiny droplets, spread wide.",
+        "text_normalized": "Liquid water—tiny droplets, spread wide.",
+        "text_spoken": "Liquid water—tiny droplets, spread wide.",
+        "text_expected": "Liquid water—tiny droplets, spread wide.",
+        "normalization": {
+          "original": "Liquid water—tiny droplets, spread wide.",
+          "normalized": "Liquid water—tiny droplets, spread wide.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Liquid",
+            "Review spoken form of identifier: water",
+            "Review spoken form of identifier: tiny",
+            "Review spoken form of identifier: droplets",
+            "Review spoken form of identifier: spread",
+            "Review spoken form of identifier: wide."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Liquid water—tiny droplets, spread wide.",
+          "expected": "Liquid water—tiny droplets, spread wide.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B004",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+        "text_normalized": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+        "text_spoken": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+        "text_expected": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+        "normalization": {
+          "original": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+          "normalized": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Why",
+            "Review spoken form of identifier: doesn",
+            "Review spoken form of identifier: t",
+            "Review spoken form of identifier: it",
+            "Review spoken form of identifier: fall",
+            "Review spoken form of identifier: Cloudy",
+            "Review spoken form of identifier: air",
+            "Review spoken form of identifier: is",
+            "Review spoken form of identifier: less",
+            "Review spoken form of identifier: dense",
+            "Review spoken form of identifier: than",
+            "Review spoken form of identifier: dry",
+            "Review spoken form of identifier: air."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+          "expected": "Why doesn't it fall? Cloudy air is less dense than dry air.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B005",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Rising air carries the droplets up.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "Rising air carries the droplets up.",
+        "text_normalized": "Rising air carries the droplets up.",
+        "text_spoken": "Rising air carries the droplets up.",
+        "text_expected": "Rising air carries the droplets up.",
+        "normalization": {
+          "original": "Rising air carries the droplets up.",
+          "normalized": "Rising air carries the droplets up.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Rising",
+            "Review spoken form of identifier: air",
+            "Review spoken form of identifier: carries",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: droplets",
+            "Review spoken form of identifier: up."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Rising air carries the droplets up.",
+          "expected": "Rising air carries the droplets up.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B006",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Heavy water, riding inside moving air.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "Heavy water, riding inside moving air.",
+        "text_normalized": "Heavy water, riding inside moving air.",
+        "text_spoken": "Heavy water, riding inside moving air.",
+        "text_expected": "Heavy water, riding inside moving air.",
+        "normalization": {
+          "original": "Heavy water, riding inside moving air.",
+          "normalized": "Heavy water, riding inside moving air.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Heavy",
+            "Review spoken form of identifier: water",
+            "Review spoken form of identifier: riding",
+            "Review spoken form of identifier: inside",
+            "Review spoken form of identifier: moving",
+            "Review spoken form of identifier: air."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Heavy water, riding inside moving air.",
+          "expected": "Heavy water, riding inside moving air.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B007",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "When drops outgrow the updraft, they fall as rain.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "When drops outgrow the updraft, they fall as rain.",
+        "text_normalized": "When drops outgrow the updraft, they fall as rain.",
+        "text_spoken": "When drops outgrow the updraft, they fall as rain.",
+        "text_expected": "When drops outgrow the updraft, they fall as rain.",
+        "normalization": {
+          "original": "When drops outgrow the updraft, they fall as rain.",
+          "normalized": "When drops outgrow the updraft, they fall as rain.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: When",
+            "Review spoken form of identifier: drops",
+            "Review spoken form of identifier: outgrow",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: updraft",
+            "Review spoken form of identifier: they",
+            "Review spoken form of identifier: fall",
+            "Review spoken form of identifier: as",
+            "Review spoken form of identifier: rain."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "When drops outgrow the updraft, they fall as rain.",
+          "expected": "When drops outgrow the updraft, they fall as rain.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B008",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "A cloud can be heavy—and still float.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 1,
+      "seed": null,
+      "preparation": {
+        "text_original": "A cloud can be heavy—and still float.",
+        "text_normalized": "A cloud can be heavy—and still float.",
+        "text_spoken": "A cloud can be heavy—and still float.",
+        "text_expected": "A cloud can be heavy—and still float.",
+        "normalization": {
+          "original": "A cloud can be heavy—and still float.",
+          "normalized": "A cloud can be heavy—and still float.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: A",
+            "Review spoken form of identifier: cloud",
+            "Review spoken form of identifier: can",
+            "Review spoken form of identifier: be",
+            "Review spoken form of identifier: heavy",
+            "Review spoken form of identifier: and",
+            "Review spoken form of identifier: still",
+            "Review spoken form of identifier: float."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "A cloud can be heavy—and still float.",
+          "expected": "A cloud can be heavy—and still float.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    }
+  ]
+}

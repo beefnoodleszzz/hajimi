@@ -30,6 +30,7 @@ episodes/*/master/*.mp4
 episodes/*/audio/*.wav
 episodes/*/audio/*.aiff
 episodes/*/audio/final/*.wav
+episodes/*/audio/production/*.wav
 episodes/*/shots/*/production/
 episodes/*/shots/*/candidates/
 episodes/*/shots/*/preview/

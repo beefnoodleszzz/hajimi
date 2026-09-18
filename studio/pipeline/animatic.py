@@ -1,4 +1,4 @@
-"""Build EP001's deterministic storyboard animatic and gate it.
+"""Build the current episode's deterministic storyboard animatic and gate it.
 
 The animatic is intentionally cheap: no AI generation is invoked, and no old
 V1 asset is consulted. Cards provide readable composition, vectors, and the
@@ -25,31 +25,33 @@ from ..media.hashing import sha256_file
 from ..media.probe import executable, probe_media
 from ..paths import StudioPaths, project_root
 
-TEMP_VO = (
-    "Imagine the ground under your feet stopping for exactly one second. "
-    "The ground stops. You don't. At the equator, you are already moving east "
-    "at about four hundred sixty-five meters per second. In one second, that is "
-    "roughly four hundred sixty-five meters relative to the ground. Your body, "
-    "the air, and the clouds keep that sideways motion too. The ocean does not "
-    "politely stop with the pavement. When the ground starts again, land, air, "
-    "and water are no longer aligned. Gravity still holds you down. The danger "
-    "is sideways. That is the real disaster: a one-second mismatch in motion. "
-    "One second. Four hundred sixty-five meters. What moves first?"
-)
-TEMP_VO_RATE = 190
+TEMP_VO_RATE = 185
 
-SHOT_CARDS: list[dict[str, Any]] = [
-    {"id": "S001", "kicker": "0.0 — 1.2 / THE EVENT", "title": "THE GROUND\nSTOPS", "sub": "YOU HAVE NOT MOVED YET", "kind": "road", "accent": "#ffb35c"},
-    {"id": "S002", "kicker": "1.2 — 4.0 / PERSONAL SCALE", "title": "YOU DON'T", "sub": "EASTWARD INERTIA", "kind": "person", "accent": "#ff6b5f"},
-    {"id": "S003", "kicker": "4.0 — 7.0 / EQUATOR", "title": "465 m/s", "sub": "ALREADY MOVING EAST", "kind": "speed", "accent": "#52d7ff"},
-    {"id": "S004", "kicker": "7.0 — 11.0 / ONE SECOND", "title": "≈ 465 m", "sub": "RELATIVE TO THE GROUND", "kind": "map", "accent": "#52d7ff"},
-    {"id": "S005", "kicker": "11.0 — 16.0 / ATMOSPHERE", "title": "THE AIR\nKEEPS GOING", "sub": "LAND STAYS FIXED", "kind": "air", "accent": "#8cecff"},
-    {"id": "S006", "kicker": "16.0 — 21.0 / OCEAN", "title": "WATER\nKEEPS GOING", "sub": "THE PAVEMENT IS NOT THE OCEAN", "kind": "ocean", "accent": "#3ca8ff"},
-    {"id": "S007", "kicker": "21.0 — 27.0 / HERO SHOT", "title": "MOTION ≠\nGROUND", "sub": "LAND / AIR / OCEAN", "kind": "mismatch", "accent": "#ffb35c"},
-    {"id": "S008", "kicker": "27.0 — 31.0 / CORRECTION", "title": "GRAVITY\nSTAYS", "sub": "THE DANGER IS SIDEWAYS", "kind": "vectors", "accent": "#ff6b5f"},
-    {"id": "S009", "kicker": "31.0 — 35.0 / PAYOFF", "title": "ONE-SECOND\nMISMATCH", "sub": "THAT IS THE DISASTER", "kind": "thesis", "accent": "#ffb35c"},
-    {"id": "S010", "kicker": "35.0 — 38.0 / CALLBACK", "title": "WHAT MOVES\nFIRST?", "sub": "ONE SECOND · 465 METERS", "kind": "callback", "accent": "#ff6b5f"},
-]
+
+def _temporary_voice_text(episode_root: str | Path, manifest: dict[str, Any]) -> str:
+    """Read temporary animatic narration from the current episode only."""
+
+    episode_root = Path(episode_root)
+    beat_script_path = episode_root / "creative" / "beat_script.yaml"
+    if beat_script_path.is_file():
+        beat_script = load_yaml(beat_script_path)
+        beats = beat_script.get("beats", []) if isinstance(beat_script, dict) else []
+        narration = [str(beat.get("narration", "")).strip() for beat in beats if isinstance(beat, dict)]
+        narration = [line for line in narration if line]
+        if narration:
+            return " ".join(narration)
+
+    script_path = manifest.get("script", {}).get("path") if isinstance(manifest.get("script"), dict) else None
+    if script_path:
+        candidate = episode_root.parent.parent / str(script_path)
+        if candidate.is_file():
+            lines = []
+            for line in candidate.read_text(encoding="utf-8").splitlines():
+                if line.strip().startswith("- voice:"):
+                    lines.append(line.split(":", 1)[1].strip().strip("\\\"'"))
+            if lines:
+                return " ".join(lines)
+    raise FileNotFoundError("current episode has no narration in creative/beat_script.yaml or script.path")
 
 
 def _font(size: int, bold: bool = False) -> ImageFont.ImageFont:
@@ -82,96 +84,50 @@ def _arrow(draw: ImageDraw.ImageDraw, start: tuple[int, int], end: tuple[int, in
     draw.polygon([end, left, right], fill=color)
 
 
-def _road(draw: ImageDraw.ImageDraw, accent: str, shifted: bool = False) -> None:
-    width, height = 1080, 1920
-    horizon = 820
-    draw.polygon([(0, height), (width, height), (760, horizon), (320, horizon)], fill="#1b2430")
-    for offset in range(-2, 8):
-        x = 540 + offset * 110
-        draw.line([(540, horizon), (x, height)], fill="#435062", width=3)
-    for y in range(horizon + 100, height, 155):
-        draw.line([(120, y), (960, y)], fill="#394656", width=4)
-    draw.line([(540, horizon), (540, height)], fill="#d9cfa1", width=5)
-    draw.ellipse((470, 850, 610, 990), fill="#c5cedc", outline="#eef5ff", width=4)
-    receipt_x = 830 if shifted else 580
-    draw.rounded_rectangle((receipt_x, 1020, receipt_x + 58, 1110), radius=8, fill="#e94f43", outline="#ffd0c8", width=3)
-    _arrow(draw, (receipt_x + 30, 1130), (min(width - 30, receipt_x + 260), 1130), accent, 7)
+def _draw_visual(draw: ImageDraw.ImageDraw, card: dict[str, Any], accent: str) -> None:
+    """Draw a compact diagram from the current storyboard card, never a fixed episode."""
 
-
-def _person(draw: ImageDraw.ImageDraw, accent: str) -> None:
-    draw.ellipse((455, 860, 570, 975), fill="#bac7d8")
-    draw.rounded_rectangle((420, 970, 605, 1300), radius=58, fill="#2f3a49", outline="#e6f0ff", width=4)
-    draw.line([(455, 1290), (385, 1530)], fill="#bac7d8", width=36)
-    draw.line([(570, 1290), (650, 1530)], fill="#bac7d8", width=36)
-    draw.line([(435, 1060), (280, 1220)], fill="#bac7d8", width=28)
-    draw.line([(585, 1060), (735, 1170)], fill="#bac7d8", width=28)
-    _arrow(draw, (620, 1150), (920, 1150), accent, 12)
-
-
-def _layers(draw: ImageDraw.ImageDraw, accent: str, mismatch: bool = False) -> None:
-    left = 120
-    right = 960
-    y_values = [(980, "LAND", "#8f714c"), (1170, "AIR", "#86c9d9"), (1360, "OCEAN", "#2776b7")]
-    for index, (y, label, color) in enumerate(y_values):
-        shift = 0 if not mismatch or index == 0 else (70 + index * 35)
-        draw.rounded_rectangle((left + shift, y, right + shift, y + 110), radius=16, fill=color, outline="#d9f3ff", width=4)
-        _text(draw, (left + 32 + shift, y + 55), label, _font(34, True), "#08111d", anchor="lm")
-        if index > 0:
-            _arrow(draw, (right - 170 + shift, y + 55), (right + 10 + shift, y + 55), accent, 8)
-    if mismatch:
-        _text(draw, (540, 1580), "RESTART", _font(34, True), accent, anchor="mm")
-        _arrow(draw, (880, 1040), (800, 1040), "#ff6b5f", 7)
-
-
-def _draw_visual(draw: ImageDraw.ImageDraw, kind: str, accent: str) -> None:
-    if kind == "road":
-        _road(draw, accent)
-        draw.line([(120, 820), (960, 820)], fill="#ffb35c", width=8)
-    elif kind == "person":
-        _road(draw, accent)
-        _person(draw, accent)
-    elif kind == "speed":
-        draw.ellipse((170, 840, 910, 1580), outline="#263b50", width=6)
-        for radius in (180, 280, 380):
-            draw.arc((540 - radius, 1210 - radius, 540 + radius, 1210 + radius), 205, 335, fill="#52d7ff", width=5)
-        _arrow(draw, (220, 1210), (880, 1210), accent, 14)
-        _text(draw, (540, 1040), "EAST", _font(34, True), "#8cecff", anchor="mm")
-    elif kind == "map":
-        for x in range(120, 1000, 150):
-            draw.line([(x, 850), (x, 1500)], fill="#35475a", width=4)
-        for y in range(850, 1550, 150):
-            draw.line([(100, y), (980, y)], fill="#35475a", width=4)
-        draw.ellipse((170, 1170, 210, 1210), fill="#e94f43")
-        draw.ellipse((850, 1170, 890, 1210), fill="#ffb35c")
-        _arrow(draw, (210, 1190), (850, 1190), accent, 12)
-    elif kind == "air":
-        draw.rectangle((100, 1160, 980, 1450), fill="#8f714c", outline="#f2d0a0", width=4)
-        draw.ellipse((190, 840, 420, 1030), fill="#bcdde8", outline="#efffff", width=4)
-        draw.ellipse((340, 780, 650, 1040), fill="#bcdde8", outline="#efffff", width=4)
-        draw.ellipse((590, 850, 850, 1030), fill="#bcdde8", outline="#efffff", width=4)
-        _arrow(draw, (180, 1010), (900, 1010), accent, 12)
-    elif kind == "ocean":
-        draw.polygon([(90, 1100), (990, 980), (990, 1540), (90, 1540)], fill="#2776b7")
-        for y in range(1160, 1510, 90):
-            draw.arc((130, y, 900, y + 80), 190, 350, fill="#8cecff", width=5)
-        draw.rectangle((90, 950, 990, 1100), fill="#8f714c")
-        _arrow(draw, (220, 900), (900, 900), accent, 11)
-    elif kind == "mismatch":
-        _layers(draw, accent, mismatch=True)
-    elif kind == "vectors":
-        _person(draw, accent)
-        _arrow(draw, (540, 1330), (540, 850), "#8cecff", 10)
-        _arrow(draw, (600, 1130), (930, 1130), accent, 14)
-        _text(draw, (570, 820), "GRAVITY", _font(28, True), "#8cecff", anchor="lm")
-        _text(draw, (700, 1085), "SIDEWAYS", _font(28, True), accent, anchor="mm")
-    elif kind == "thesis":
-        _layers(draw, accent, mismatch=True)
-        draw.rounded_rectangle((150, 700, 930, 860), radius=24, fill="#111b28", outline=accent, width=4)
-        _text(draw, (540, 780), "THE REAL DISASTER", _font(42, True), "#f5f8ff", anchor="mm")
-    elif kind == "callback":
-        _road(draw, accent, shifted=True)
-        draw.rounded_rectangle((120, 700, 960, 845), radius=22, fill="#111b28", outline=accent, width=4)
-        _text(draw, (540, 772), "WHAT MOVES FIRST?", _font(42, True), "#f5f8ff", anchor="mm")
+    kind = str(card.get("kind") or "diagram")
+    labels = [str(value) for value in card.get("visual_labels", []) if value]
+    if kind == "cloud_scale":
+        draw.ellipse((170, 920, 850, 1240), fill="#e5f5ff", outline="#ffffff", width=6)
+        draw.ellipse((290, 760, 650, 1120), fill="#e5f5ff", outline="#ffffff", width=6)
+        draw.line([(540, 1240), (540, 1400)], fill=accent, width=12)
+        draw.line([(240, 1400), (840, 1400)], fill=accent, width=12)
+        draw.rounded_rectangle((330, 1400, 750, 1540), radius=18, fill="#a67b52", outline="#f8d5a8", width=5)
+    elif kind == "droplets":
+        for x, y, radius in [(250, 1000, 34), (410, 860, 22), (580, 1080, 44), (740, 930, 28), (500, 1320, 18), (820, 1280, 20)]:
+            draw.ellipse((x-radius, y-radius, x+radius, y+radius), fill="#7cdcf4", outline="#e9fcff", width=4)
+        draw.line([(150, 1510), (930, 1510)], fill="#526f86", width=6)
+        _arrow(draw, (540, 1480), (540, 1130), accent, 10)
+    elif kind == "density":
+        draw.rounded_rectangle((140, 900, 470, 1510), radius=24, fill="#8ba6b7", outline="#e8f8ff", width=5)
+        draw.rounded_rectangle((610, 900, 940, 1510), radius=24, fill="#2b4354", outline="#e8f8ff", width=5)
+        _text(draw, (305, 1210), "DRY\nAIR", _font(34, True), "#08111b", anchor="mm")
+        _text(draw, (775, 1210), "MOIST\nCLOUD AIR", _font(34, True), "#f1f7ff", anchor="mm")
+        _arrow(draw, (490, 1200), (590, 1200), accent, 10)
+    elif kind == "updraft":
+        draw.polygon([(150, 1500), (930, 1500), (760, 1060), (320, 1060)], fill="#20384a", outline="#8cecff")
+        for x in (350, 540, 730):
+            _arrow(draw, (x, 1450), (x, 920), accent, 9)
+        draw.ellipse((380, 780, 700, 1030), fill="#e5f5ff", outline="#ffffff", width=5)
+    elif kind == "hero_cutaway":
+        draw.rectangle((100, 1200, 980, 1540), fill="#20384a", outline="#8cecff", width=5)
+        for x, y, radius in [(210, 1070, 22), (340, 960, 30), (470, 1130, 18), (620, 940, 24), (760, 1080, 32), (870, 990, 18)]:
+            draw.ellipse((x-radius, y-radius, x+radius, y+radius), fill="#7cdcf4", outline="#e9fcff", width=3)
+        draw.ellipse((230, 700, 850, 1100), fill="#e5f5ff", outline="#ffffff", width=6)
+        _arrow(draw, (160, 1620), (920, 1620), accent, 12)
+        _text(draw, (540, 1700), "AIR CARRIES THE WATER", _font(30, True), accent, anchor="mm")
+    elif kind == "loop":
+        draw.arc((180, 850, 900, 1570), 205, 500, fill=accent, width=14)
+        _arrow(draw, (760, 980), (900, 1100), accent, 10)
+        _text(draw, (540, 1160), "VAPOR → CLOUD\n→ RAIN → VAPOR", _font(38, True), "#f1f7ff", anchor="mm")
+    else:
+        draw.rounded_rectangle((130, 900, 950, 1510), radius=28, fill="#132333", outline=accent, width=5)
+        for index, label in enumerate(labels[:4] or ["VISUAL TEST"]):
+            y = 1010 + index * 120
+            draw.rounded_rectangle((210, y, 870, y + 70), radius=14, fill="#20384a", outline="#6e91a5", width=2)
+            _text(draw, (540, y + 35), label.upper(), _font(28, True), "#f1f7ff", anchor="mm")
 
 
 def render_card(card: dict[str, Any], destination: str | Path, width: int = 1080, height: int = 1920) -> Path:
@@ -182,7 +138,7 @@ def render_card(card: dict[str, Any], destination: str | Path, width: int = 1080
     _text(draw, (84, 92), card["kicker"], _font(26, True), card["accent"])
     _text(draw, (84, 190), card["title"], _font(82, True), "#f1f6ff")
     _text(draw, (84, 430), card["sub"], _font(28, True), "#9eb1c7")
-    _draw_visual(draw, card["kind"], card["accent"])
+    _draw_visual(draw, card, card["accent"])
     draw.line([(84, 1660), (996, 1660)], fill="#233d52", width=3)
     _text(draw, (84, 1720), "THE WORLD YOU NEVER KNEW", _font(22, True), "#708aa2")
     _text(draw, (996, 1720), card["id"], _font(22, True), card["accent"], anchor="ra")
@@ -192,10 +148,39 @@ def render_card(card: dict[str, Any], destination: str | Path, width: int = 1080
     return destination
 
 
-def build_storyboard_cards(episode_root: str | Path) -> list[Path]:
+def _load_storyboard_cards(episode_root: str | Path, manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    storyboard_path = Path(episode_root) / "storyboard" / "storyboard_v01.yaml"
+    if not storyboard_path.is_file():
+        raise FileNotFoundError(f"current episode storyboard is missing: {storyboard_path}")
+    storyboard = load_yaml(storyboard_path)
+    storyboard_shots = {str(item.get("id")): item for item in storyboard.get("shots", []) if isinstance(item, dict) and item.get("id")}
+    cards: list[dict[str, Any]] = []
+    for shot in manifest.get("shots", []):
+        shot_id = str(shot.get("id"))
+        board = storyboard_shots.get(shot_id)
+        if not board:
+            raise ValueError(f"storyboard has no current shot {shot_id}")
+        card = board.get("animatic_card") if isinstance(board.get("animatic_card"), dict) else board
+        start = float(shot.get("time_start", 0.0))
+        end = float(shot.get("time_end", start + float(shot.get("duration_target", 0.0))))
+        cards.append({
+            "id": shot_id,
+            "kicker": str(card.get("kicker") or f"{start:.1f} — {end:.1f} / {str(shot.get('role', 'SHOT')).upper()}"),
+            "title": str(card.get("title") or shot.get("role") or shot_id),
+            "sub": str(card.get("sub") or board.get("information_payload") or "CURRENT EPISODE"),
+            "kind": str(card.get("kind") or "diagram"),
+            "accent": str(card.get("accent") or "#52d7ff"),
+            "visual_labels": card.get("visual_labels") if isinstance(card.get("visual_labels"), list) else [],
+        })
+    if not cards:
+        raise ValueError("current episode storyboard has no shots")
+    return cards
+
+
+def build_storyboard_cards(episode_root: str | Path, manifest: dict[str, Any]) -> list[Path]:
     card_root = Path(episode_root) / "animatic" / "cards"
     paths: list[Path] = []
-    for card in SHOT_CARDS:
+    for card in _load_storyboard_cards(episode_root, manifest):
         path = render_card(card, card_root / f"{card['id']}.png")
         shot_preview = Path(episode_root) / "shots" / card["id"] / "preview" / "storyboard.png"
         shot_preview.parent.mkdir(parents=True, exist_ok=True)
@@ -223,7 +208,7 @@ def _write_pcm_stem(path: Path, duration: float, generator) -> None:
             stream.writeframes(buffer)
 
 
-def create_audio_stems(episode_root: str | Path, duration: float = 38.0) -> dict[str, Any]:
+def create_audio_stems(episode_root: str | Path, manifest: dict[str, Any], duration: float = 38.0) -> dict[str, Any]:
     audio_root = Path(episode_root) / "audio"
     audio_root.mkdir(parents=True, exist_ok=True)
     voice_path = audio_root / "vo_temp.wav"
@@ -231,9 +216,10 @@ def create_audio_stems(episode_root: str | Path, duration: float = 38.0) -> dict
     say_bin = shutil.which("say")
     ffmpeg_bin = executable("HAJIMI_FFMPEG", "ffmpeg")
     aiff_path = Path(episode_root) / "animatic" / "render_work" / "vo_temp.aiff"
+    temporary_voice = _temporary_voice_text(episode_root, manifest)
     if say_bin and ffmpeg_bin:
         aiff_path.parent.mkdir(parents=True, exist_ok=True)
-        spoken = subprocess.run([say_bin, "-v", "Samantha", "-r", str(TEMP_VO_RATE), "-o", str(aiff_path), TEMP_VO], capture_output=True, text=True, check=False)
+        spoken = subprocess.run([say_bin, "-v", "Samantha", "-r", str(TEMP_VO_RATE), "-o", str(aiff_path), temporary_voice], capture_output=True, text=True, check=False)
         if spoken.returncode == 0:
             converted = subprocess.run([ffmpeg_bin, "-y", "-hide_banner", "-nostdin", "-i", str(aiff_path), "-ar", "48000", "-ac", "1", str(voice_path)], capture_output=True, text=True, check=False)
             if converted.returncode == 0:
@@ -243,7 +229,15 @@ def create_audio_stems(episode_root: str | Path, duration: float = 38.0) -> dict
 
     _write_pcm_stem(audio_root / "music_temp.wav", duration, lambda t: 0.035 * math.sin(2 * math.pi * (82 + 0.8 * math.sin(t / 5)) * t) + 0.012 * math.sin(2 * math.pi * 164 * t))
     _write_pcm_stem(audio_root / "ambience_temp.wav", duration, lambda t: 0.016 * math.sin(2 * math.pi * 196 * t) + 0.008 * math.sin(2 * math.pi * 278 * t))
-    event_times = [0.0, 0.38, 4.0, 7.0, 11.0, 21.0, 27.0, 31.0, 35.0]
+    event_times = sorted({
+        round(float(event.get("time", 0.0)), 3)
+        for event in manifest.get("visual_events", [])
+        if isinstance(event, dict) and 0.0 <= float(event.get("time", 0.0)) <= duration
+    } | {
+        round(float(shot.get("time_start", 0.0)), 3)
+        for shot in manifest.get("shots", [])
+        if isinstance(shot, dict)
+    }) or [0.0]
 
     def sfx(t: float) -> float:
         output = 0.0
@@ -332,7 +326,7 @@ def _mix_audio(episode_root: Path, destination: Path, duration: float) -> None:
 
 def render_animatic(episode_root: str | Path, manifest: dict[str, Any]) -> Path:
     episode_root = Path(episode_root)
-    cards = build_storyboard_cards(episode_root)
+    cards = build_storyboard_cards(episode_root, manifest)
     render_root = episode_root / "animatic" / "render_work"
     render_root.mkdir(parents=True, exist_ok=True)
     segments: list[Path] = []
@@ -349,7 +343,7 @@ def render_animatic(episode_root: str | Path, manifest: dict[str, Any]) -> Path:
     concatenated = subprocess.run([ffmpeg_bin, "-y", "-hide_banner", "-nostdin", "-f", "concat", "-safe", "0", "-i", str(concat_path), "-c", "copy", str(video_only)], capture_output=True, text=True, check=False)
     if concatenated.returncode != 0:
         raise RuntimeError(concatenated.stderr[-3000:] or "animatic concat failed")
-    stems = create_audio_stems(episode_root, duration=sum(float(shot["duration_target"]) for shot in manifest["shots"]))
+    stems = create_audio_stems(episode_root, manifest, duration=sum(float(shot["duration_target"]) for shot in manifest["shots"]))
     mixed_audio = render_root / "mixed_audio.wav"
     _mix_audio(episode_root, mixed_audio, sum(float(shot["duration_target"]) for shot in manifest["shots"]))
     output = episode_root / "animatic" / f"{manifest['episode_id']}_animatic.mp4"

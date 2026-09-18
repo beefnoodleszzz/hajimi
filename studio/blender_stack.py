@@ -28,7 +28,7 @@ from .paths import StudioPaths
 
 REQUIRED_BLENDER_VERSION = "5.2.2"
 REQUIRED_ENGINES = {"EEVEE": "BLENDER_EEVEE_NEXT", "CYCLES": "CYCLES"}
-DEFAULT_TARGET = "EP001_TEST_01"
+DEFAULT_TARGET = "EP001"
 DEFAULT_PROFILE = "P1"
 PROFILE_NAMES = ("P0", "P1", "P2", "P3", "hero_exr", "final_cycles")
 
@@ -1282,15 +1282,173 @@ def build_restart_mismatch(scene):
     scene["restart_pivot_frame"] = pivot
     return cutaway_rig(ortho_scale=15.5, target_z=0.0)
 
+def animate_z(value, first, last):
+    base_z = float(value.location.z)
+    value.location.z = base_z + float(first)
+    value.keyframe_insert(data_path="location", index=2, frame=scene.frame_start)
+    value.location.z = base_z + float(last)
+    value.keyframe_insert(data_path="location", index=2, frame=scene.frame_end)
+
+def cloud_cluster(prefix, mat, center_x, center_z, scale=1.0):
+    offsets = [(-1.1, 0.0, 0.62), (0.0, 0.15, 0.86), (1.0, 0.0, 0.58), (-0.55, 0.48, 0.58), (0.55, 0.52, 0.62)]
+    puffs = []
+    for index, (offset_x, offset_y, radius) in enumerate(offsets):
+        puff = sphere(prefix + "_Puff_" + str(index), (center_x + offset_x * scale, offset_y, center_z + (radius - 0.55) * scale), radius * scale, mat)
+        puff.scale = (1.35, 0.72, 0.72)
+        puffs.append(puff)
+    return puffs
+
+def vertical_arrow(prefix, x, z, length, mat):
+    curve_line(prefix + "_Stem", [(x, -1.25, z), (x, -1.25, z + length)], mat, 0.075)
+    curve_line(prefix + "_Head", [(x, -1.25, z + length), (x - 0.32, -1.25, z + length - 0.48), (x + 0.32, -1.25, z + length - 0.48)], mat, 0.075)
+
+def cloud_scale_scene(scene):
+    cloud_mat = material("Cloud_White", (0.78, 0.90, 0.98), roughness=0.86)
+    metal_mat = material("Scale_Metal", (0.62, 0.27, 0.08), metallic=0.5, roughness=0.3)
+    amber_mat = material("Scale_Amber", (1.0, 0.48, 0.08), metallic=0.1, roughness=0.24)
+    cube("Scale_Base", (0.0, 0.0, -3.0), (4.7, 1.6, 0.32), metal_mat, 0.12)
+    cube("Scale_Pillar", (0.0, 0.0, -1.55), (0.18, 0.28, 1.2), metal_mat, 0.04)
+    cube("Scale_Beam", (0.0, 0.0, -0.35), (3.8, 0.35, 0.16), amber_mat, 0.04)
+    cube("Scale_Pan", (0.0, 0.0, 0.0), (3.0, 1.1, 0.12), metal_mat, 0.05)
+    cloud = cloud_cluster("CloudScale", cloud_mat, 0.0, 1.8, 1.25)
+    for puff in cloud:
+        animate_z(puff, 0.0, 0.12)
+    light_setup(scene, warm=(1.0, 0.55, 0.2), energy=1900)
+    scene["shot_mode"] = "cloud_scale"
+    scene["causal_read"] = "a visible cloud sits on a weighing scale before the estimate is defined"
+    return cutaway_rig(12.5, 0.0)
+
+def cloud_cube_scene(scene):
+    cloud_mat = material("Cloud_White", (0.78, 0.90, 0.98), roughness=0.86)
+    cube_mat = material("Cube_Cyan", (0.04, 0.72, 0.95), metallic=0.1, roughness=0.25)
+    cloud_cluster("CloudCube", cloud_mat, 0.0, 0.7, 1.55)
+    corners = [(-4.2, -1.2, -2.2), (4.2, -1.2, -2.2), (4.2, 1.2, -2.2), (-4.2, 1.2, -2.2), (-4.2, -1.2, 3.6), (4.2, -1.2, 3.6), (4.2, 1.2, 3.6), (-4.2, 1.2, 3.6)]
+    edges = [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4), (0, 4), (1, 5), (2, 6), (3, 7)]
+    for index, (start, end) in enumerate(edges):
+        curve_line("CubeEdge_" + str(index), [corners[start], corners[end]], cube_mat, 0.04)
+    light_setup(scene, energy=1600)
+    scene["shot_mode"] = "cloud_cube"
+    scene["causal_read"] = "the 551-ton estimate belongs to a defined one-kilometre cloud volume"
+    return cutaway_rig(13.8, 0.6)
+
+def cloud_droplets_scene(scene):
+    cloud_mat = material("Cloud_White", (0.66, 0.82, 0.92), roughness=0.88)
+    water_mat = material("Water_Cyan", (0.03, 0.70, 0.92), metallic=0.08, roughness=0.18)
+    cloud_cluster("DropletCloud", cloud_mat, 0.0, 2.2, 1.35)
+    positions = [(-4.1, -0.2, 1.4), (-3.0, 0.1, 0.2), (-2.0, -0.3, 1.2), (-1.0, 0.0, -0.3), (0.0, -0.2, 1.0), (1.0, 0.1, -0.4), (2.0, -0.2, 1.4), (3.2, 0.0, 0.3), (4.2, -0.3, 1.1), (-2.8, -0.5, -1.2), (-0.8, -0.4, -1.0), (1.3, -0.4, -1.3), (3.0, -0.5, -0.9)]
+    for index, (x, y, z) in enumerate(positions):
+        drop = sphere("WaterDroplet_" + str(index), (x, y, z), 0.12 + (index % 4) * 0.06, water_mat)
+        animate_z(drop, 0.0, 0.32 + (index % 3) * 0.12)
+    light_setup(scene, energy=1700)
+    scene["shot_mode"] = "cloud_droplets"
+    scene["causal_read"] = "the counted mass is liquid droplets distributed through a large volume"
+    return cutaway_rig(13.8, 0.6)
+
+def cloud_density_scene(scene):
+    dry_mat = material("Dry_Air", (0.18, 0.25, 0.34), roughness=0.7)
+    moist_mat = material("Moist_Air", (0.05, 0.42, 0.62), metallic=0.06, roughness=0.3)
+    cloud_mat = material("Cloud_White", (0.72, 0.88, 0.96), roughness=0.86)
+    cube("DryAirColumn", (-3.0, 0.0, 0.0), (2.0, 1.2, 2.8), dry_mat, 0.12)
+    moist = cube("MoistCloudAirColumn", (3.0, 0.0, 0.0), (2.0, 1.2, 2.8), moist_mat, 0.12)
+    animate_z(moist, 0.0, 0.55)
+    cloud_cluster("DensityCloud", cloud_mat, 3.0, 3.1, 0.9)
+    for index, x in enumerate((-3.0, 3.0)):
+        vertical_arrow("DensityArrow_" + str(index), x, -2.3, 3.8 if x > 0 else 1.2, moist_mat if x > 0 else dry_mat)
+    light_setup(scene, energy=1500)
+    scene["shot_mode"] = "cloud_density"
+    scene["causal_read"] = "cloudy moist air can be less dense than the drier air around it"
+    return cutaway_rig(13.5, 0.0)
+
+def cloud_updraft_scene(scene):
+    cloud_mat = material("Cloud_White", (0.78, 0.90, 0.98), roughness=0.86)
+    water_mat = material("Water_Cyan", (0.03, 0.70, 0.92), metallic=0.08, roughness=0.18)
+    air_mat = material("Updraft_Cyan", (0.02, 0.82, 1.0), metallic=0.12, roughness=0.22)
+    cloud_cluster("UpdraftCloud", cloud_mat, 0.0, 2.9, 1.2)
+    for index, x in enumerate((-4.0, -2.0, 0.0, 2.0, 4.0)):
+        vertical_arrow("UpdraftArrow_" + str(index), x, -2.6, 4.5, air_mat)
+        drop = sphere("UpdraftDroplet_" + str(index), (x, -0.2, -1.6 + (index % 2) * 0.5), 0.18 + (index % 3) * 0.06, water_mat)
+        animate_z(drop, 0.0, 2.2)
+    light_setup(scene, energy=1800)
+    scene["shot_mode"] = "cloud_updraft"
+    scene["causal_read"] = "rising air carries droplets upward inside the cloud"
+    return cutaway_rig(13.6, 0.6)
+
+def cloud_hero_scene(scene):
+    cloud_mat = material("Cloud_White", (0.82, 0.93, 1.0), roughness=0.82)
+    water_mat = material("Water_Cyan", (0.03, 0.72, 0.94), metallic=0.08, roughness=0.16)
+    air_mat = material("Hero_Air", (0.02, 0.82, 1.0), metallic=0.12, roughness=0.22)
+    layer_mat = material("Cloud_Layer", (0.03, 0.18, 0.28), roughness=0.7)
+    layer = cube("MovingCloudAirLayer", (0.0, 0.4, -0.65), (6.2, 1.4, 0.22), layer_mat, 0.08)
+    animate_x(layer, 0.0, 0.8, 2.0)
+    puffs = cloud_cluster("HeroCloud", cloud_mat, 0.0, 1.2, 1.65)
+    for puff in puffs:
+        animate_x(puff, 0.0, 0.5, 1.6)
+    positions = [(-4.3, -0.4, 0.3), (-3.0, -0.2, 1.0), (-1.8, -0.45, 0.0), (-0.4, -0.3, 1.2), (1.0, -0.45, 0.2), (2.3, -0.2, 1.0), (3.7, -0.4, 0.0)]
+    for index, (x, y, z) in enumerate(positions):
+        drop = sphere("HeroDroplet_" + str(index), (x, y, z), 0.14 + (index % 3) * 0.08, water_mat)
+        animate_z(drop, 0.0, 0.7 + (index % 2) * 0.3)
+    for index, x in enumerate((-4.5, -2.2, 0.1, 2.4, 4.5)):
+        vertical_arrow("HeroAirArrow_" + str(index), x, -2.7, 3.9, air_mat)
+    light_setup(scene, warm=(1.0, 0.58, 0.28), energy=2200)
+    scene["shot_mode"] = "cloud_hero"
+    scene["causal_read"] = "heavy water rides inside a moving layer of air"
+    return cutaway_rig(14.5, 0.4)
+
+def cloud_rain_scene(scene):
+    cloud_mat = material("Cloud_White", (0.72, 0.86, 0.94), roughness=0.86)
+    water_mat = material("Rain_Cyan", (0.03, 0.70, 0.92), metallic=0.08, roughness=0.16)
+    air_mat = material("Rain_Air", (0.02, 0.78, 0.96), metallic=0.1, roughness=0.22)
+    cloud_cluster("RainCloud", cloud_mat, 0.0, 2.8, 1.2)
+    vertical_arrow("RainUpdraft", 0.0, -2.4, 3.5, air_mat)
+    breaker = sphere("BreakthroughDroplet", (0.2, -0.6, 1.3), 0.34, water_mat)
+    breaker.keyframe_insert(data_path="location", frame=scene.frame_start)
+    breaker.location.z = -2.6
+    breaker.keyframe_insert(data_path="location", frame=scene.frame_end)
+    breaker.scale = (1.0, 1.0, 1.8)
+    breaker.keyframe_insert(data_path="scale", frame=scene.frame_start)
+    breaker.scale = (0.75, 0.75, 2.4)
+    breaker.keyframe_insert(data_path="scale", frame=scene.frame_end)
+    for index, x in enumerate((-2.2, -1.2, 1.2, 2.2)):
+        rain = sphere("RainDrop_" + str(index), (x, -0.4, 0.9), 0.12, water_mat)
+        rain.keyframe_insert(data_path="location", frame=scene.frame_start)
+        rain.location.z = -2.7
+        rain.keyframe_insert(data_path="location", frame=scene.frame_end)
+    light_setup(scene, warm=(1.0, 0.48, 0.14), energy=1850)
+    scene["shot_mode"] = "cloud_rain"
+    scene["causal_read"] = "droplets grow until the updraft can no longer carry them and rain begins"
+    return cutaway_rig(13.8, 0.2)
+
+def cloud_loop_scene(scene):
+    cloud_mat = material("Cloud_White", (0.78, 0.90, 0.98), roughness=0.86)
+    water_mat = material("Loop_Cyan", (0.03, 0.70, 0.92), metallic=0.08, roughness=0.18)
+    loop_mat = material("Loop_Amber", (1.0, 0.48, 0.08), metallic=0.1, roughness=0.24)
+    cloud_cluster("LoopCloud", cloud_mat, 0.0, 1.5, 1.35)
+    curve_line("LoopArcTop", [(-4.2, -1.0, 0.0), (-2.2, -1.0, 3.0), (1.2, -1.0, 3.3), (4.1, -1.0, 1.0)], loop_mat, 0.08)
+    curve_line("LoopArcBottom", [(4.1, -1.0, 1.0), (2.0, -1.0, -2.0), (-1.5, -1.0, -2.0), (-4.2, -1.0, 0.0)], loop_mat, 0.08)
+    drop = sphere("LoopDroplet", (-4.2, -0.8, 0.0), 0.2, water_mat)
+    drop.keyframe_insert(data_path="location", frame=scene.frame_start)
+    drop.location.x = 4.1
+    drop.location.z = 1.0
+    drop.keyframe_insert(data_path="location", frame=scene.frame_end)
+    light_setup(scene, warm=(1.0, 0.52, 0.16), energy=1850)
+    scene["shot_mode"] = "cloud_loop"
+    scene["causal_read"] = "the opening cloud returns with the heavy-but-floating paradox resolved"
+    return cutaway_rig(14.2, 0.4)
+
 def build_episode_shot(scene):
     mode = SPEC.get("shot_mode", "episode_template")
-    if mode == "air_inertia":
-        return build_air_inertia(scene)
-    if mode == "ocean_inertia":
-        return build_ocean_inertia(scene)
-    if mode == "restart_mismatch":
-        return build_restart_mismatch(scene)
-    return build_template(scene, mode)
+    builders = {{
+        "cloud_scale": cloud_scale_scene,
+        "cloud_cube": cloud_cube_scene,
+        "cloud_droplets": cloud_droplets_scene,
+        "cloud_density": cloud_density_scene,
+        "cloud_updraft": cloud_updraft_scene,
+        "cloud_hero": cloud_hero_scene,
+        "cloud_rain": cloud_rain_scene,
+        "cloud_loop": cloud_loop_scene,
+    }}
+    builder = builders.get(mode)
+    return builder(scene) if builder else build_template(scene, mode)
 
 def build_template(scene, template_name):
     dark = material("Template_Dark", (0.03, 0.04, 0.07), roughness=0.8)
@@ -1543,28 +1701,6 @@ def _bootstrap_impl(root: Path) -> dict[str, Any]:
 
 def _target_info(root: Path, target: str, shot_id: str | None = None) -> dict[str, Any]:
     target = target.strip()
-    if target.upper() in {"EP001_TEST_01", "EP001-TEST-01"}:
-        return {
-            "target": "EP001_TEST_01",
-            "episode_id": "EP001_earth-stop",
-            "shot_id": "TEST_01",
-            "kind": "validation_shot",
-            "role": "9:16 city road / inertia proof",
-            "frame_start": 1,
-            "frame_end": 90,
-            "fps": 30,
-            "width": 1080,
-            "height": 1920,
-            "lens_mm": 24,
-            "engine": "EEVEE",
-            "engine_id": "BLENDER_EEVEE_NEXT",
-            "screen_direction": "RIGHT",
-            "direction_check": "red paper and dust travel screen-right while road locks",
-            "late_afternoon": True,
-            "human_proxy": "charcoal silhouette",
-            "object_anchor": "small red paper receipt",
-            "ground_lock": True,
-        }
     if target.upper() == "EP001" and shot_id:
         manifest_paths = sorted((root / "episodes").glob("EP001*/episode.yaml"))
         if not manifest_paths:
@@ -1594,12 +1730,21 @@ def _target_info(root: Path, target: str, shot_id: str | None = None) -> dict[st
                     "screen_direction": "RIGHT",
                     "direction_check": "preserve episode storyboard direction",
                     "ground_lock": True,
-                    "shot_mode": {"S005": "air_inertia", "S006": "ocean_inertia", "S007": "restart_mismatch"}.get(shot_id, "episode_template"),
+                    "shot_mode": {
+                        "S001": "cloud_scale",
+                        "S002": "cloud_cube",
+                        "S003": "cloud_droplets",
+                        "S004": "cloud_density",
+                        "S005": "cloud_updraft",
+                        "S006": "cloud_hero",
+                        "S007": "cloud_rain",
+                        "S008": "cloud_loop",
+                    }.get(shot_id, "episode_template"),
                 }
         raise BlenderStackError(f"Shot {shot_id} not found in EP001 manifest")
     if target.upper() == "EP001_EARTH-STOP" and shot_id:
         return _target_info(root, "EP001", shot_id)
-    raise BlenderStackError(f"Unknown Blender target {target}; use EP001_TEST_01 or EP001 S005")
+    raise BlenderStackError(f"Unknown Blender target {target}; use EP001 S001")
 
 
 def _artifact_dir(root: Path, info: dict[str, Any]) -> Path:
@@ -1611,7 +1756,7 @@ def _write_shot_scaffold(artifact: Path, info: dict[str, Any]) -> dict[str, Any]
     """Create the shot-local contract without duplicating pipeline logic."""
     for name in ("preview", "render", "qc", "logs", "cache/sim", "cache/geo", "cache/volume", "cache/preview"):
         (artifact / name).mkdir(parents=True, exist_ok=True)
-    target = str(info.get("target", "EP001_TEST_01"))
+    target = str(info.get("target", "EP001"))
     shot_id = info.get("shot_id")
     target_literal = json.dumps(target, ensure_ascii=False)
     shot_literal = json.dumps(str(shot_id) if shot_id else None, ensure_ascii=False)
@@ -2457,7 +2602,7 @@ def run_blender_command(
         return _benchmark_impl(project)
     if command == "build":
         if not target:
-            raise BlenderStackError("build requires a target, e.g. EP001_TEST_01 or EP001 S005")
+            raise BlenderStackError("build requires a target, e.g. EP001 S001")
         return _build_impl(project, target, shot_id, force=force)
     if command == "preview":
         if not target:

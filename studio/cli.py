@@ -426,7 +426,7 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument("--json", action="store_true")
     for name in ("build", "preview", "render", "qc"):
         command = blender_sub.add_parser(name)
-        command.add_argument("target", help="EP001_TEST_01 or an episode key such as EP001")
+        command.add_argument("target", help="an episode key such as EP001")
         command.add_argument("shot_id", nargs="?", help="episode shot id, e.g. S005")
         if name in {"preview", "render", "qc"}:
             command.add_argument("--profile", choices=("P0", "P1", "P2", "P3", "hero_exr", "final_cycles"))

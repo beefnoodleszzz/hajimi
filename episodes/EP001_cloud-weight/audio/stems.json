@@ -1,0 +1,8 @@
+{
+  "voice": "episodes/EP001_cloud-weight/audio/vo_temp.wav",
+  "music": "episodes/EP001_cloud-weight/audio/music_temp.wav",
+  "ambience": "episodes/EP001_cloud-weight/audio/ambience_temp.wav",
+  "sfx": "episodes/EP001_cloud-weight/audio/narrative_sfx_temp.wav",
+  "voice_status": "macos_say_temp_voice",
+  "layer_count": 4
+}

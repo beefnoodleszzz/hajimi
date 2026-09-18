@@ -10,27 +10,27 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class ManifestTests(unittest.TestCase):
     def test_ep001_is_valid_and_has_stable_shots(self):
-        path = ROOT / "episodes" / "EP001_earth-stop" / "episode.yaml"
+        path = ROOT / "episodes" / "EP001_cloud-weight" / "episode.yaml"
         manifest = load_manifest(path)
         self.assertEqual(validate_manifest(manifest, path), [])
-        self.assertEqual([shot["id"] for shot in manifest["shots"]], [f"S{index:03d}" for index in range(1, 11)])
+        self.assertEqual([shot["id"] for shot in manifest["shots"]], [f"S{index:03d}" for index in range(1, 9)])
         self.assertEqual(manifest["creative"]["hero_shot"], "S006")
 
     def test_methods_are_explicit(self):
-        path = ROOT / "episodes" / "EP001_earth-stop" / "episode.yaml"
+        path = ROOT / "episodes" / "EP001_cloud-weight" / "episode.yaml"
         manifest = load_manifest(path)
         methods = {shot["method"] for shot in manifest["shots"]}
-        self.assertTrue({"blender", "fusion", "ai_video"}.issubset(methods))
+        self.assertTrue({"blender", "fusion"}.issubset(methods))
 
     def test_short_manifest_requires_string_portrait_aspect_ratio(self):
-        path = ROOT / "episodes" / "EP001_earth-stop" / "episode.yaml"
+        path = ROOT / "episodes" / "EP001_cloud-weight" / "episode.yaml"
         manifest = load_manifest(path)
         self.assertEqual(manifest["aspect_ratio"], "9:16")
         manifest["aspect_ratio"] = "16:9"
         self.assertTrue(any("aspect_ratio" in error for error in validate_manifest(manifest, path)))
 
     def test_ep001_shot_contracts_are_parseable(self):
-        shot = load_shot_manifest(ROOT / "episodes" / "EP001_earth-stop" / "shots" / "S007" / "shot.yaml")
+        shot = load_shot_manifest(ROOT / "episodes" / "EP001_cloud-weight" / "shots" / "S007" / "shot.yaml")
         self.assertEqual(shot["id"], "S007")
         self.assertEqual(shot["method"], "blender")
 

@@ -1,0 +1,10 @@
+schema_version: generation-plan-v2
+shots:
+  - {shot_id: S001, tier: HERO, method: hybrid, candidates: 3, shot_contract: {must_show: [cloud physically interacting with scale, readable 551-ton contradiction, screen-right cloud anchor], forbidden: [generic stock cloud, unqualified universal claim, unreadable tiny number]}}
+  - {shot_id: S002, tier: STORY, method: fusion, candidates: 2, shot_contract: {must_show: [one-kilometre cube, volume expansion, estimate label], forbidden: [arithmetic without units, fake precision beyond source]}}
+  - {shot_id: S003, tier: STORY, method: blender_ai_hybrid, candidates: 3, shot_contract: {must_show: [liquid droplets, transparent cloud volume, sparse moving field], forbidden: [solid cotton interior, random glitter particles]}}
+  - {shot_id: S004, tier: STORY, method: blender, candidates: 1, shot_contract: {must_show: [dry-air/cloud-air contrast, relative density movement], forbidden: [claim that gravity stops, unsupported molecule count]}}
+  - {shot_id: S005, tier: STORY, method: blender, candidates: 1, shot_contract: {must_show: [upward streamlines, droplets carried upward, coherent vertical direction], forbidden: [arrows floating without air volume, reversed screen direction]}}
+  - {shot_id: S006, tier: HERO, method: blender_ai_hybrid, candidates: 3, shot_contract: {must_show: [cloud layer, droplets, upward motion, sunlight edge, continuous screen-right anchor], forbidden: [static AI plate over six seconds, visible simulation artifacts, narration-only explanation]}}
+  - {shot_id: S007, tier: STORY, method: blender, candidates: 2, shot_contract: {must_show: [droplet growth, weakened lift, first breakthrough into rain], forbidden: [rain begins without threshold, droplets falling upward]}}
+  - {shot_id: S008, tier: CONNECTOR, method: fusion, candidates: 2, shot_contract: {must_show: [visual match to S001, heavy-but-floating payoff, loopable droplet motion], forbidden: [new unrelated location, final card held without motion]}}

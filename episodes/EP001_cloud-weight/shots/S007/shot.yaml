@@ -1,0 +1,17 @@
+id: S007
+episode: EP001_cloud-weight
+version: 1
+role: STORY
+method: blender
+renderer: eevee
+intent: Show the visible threshold where growing droplets break through as rain.
+camera:
+  name: CAM_Main
+  rig: CameraRoot/Dolly/PanTilt/Shake/Target
+  lens_mm: 24
+frames: {start: 721, end: 900, fps: 30}
+output:
+  provenance: provenance.json
+  scene: blender/generated/artifacts/EP001_S007/scene.blend
+  sequence: blender/generated/artifacts/EP001_S007/preview/P1
+  render_manifest: blender/generated/artifacts/EP001_S007/render_manifest.json

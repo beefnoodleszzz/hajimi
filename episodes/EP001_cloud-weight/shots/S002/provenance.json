@@ -1,0 +1,28 @@
+{
+  "schema_version": "hajimi-shot-provenance-v1",
+  "episode_id": "EP001_cloud-weight",
+  "shot_id": "S002",
+  "candidate_id": "S002_blender_p1",
+  "media_type": "image_sequence",
+  "output_asset": "blender/generated/artifacts/EP001_S002/render_manifest.json",
+  "output_sha256": "a42ad9781b95cebd62e12af6cb062d0a8e64bd9156f0bf967a49d07fe42bbbbe",
+  "sequence_dir": "./blender/generated/artifacts/EP001_S002/render/P3",
+  "filename_pattern": "frame_%04d.png",
+  "frame_range": [
+    43,
+    138
+  ],
+  "fps": 30,
+  "source_asset": "blender/generated/artifacts/EP001_S002/scene.blend",
+  "source_sha256": "6259e2a9d848cc4ddab0416cde824644236a3a43ef4056b9d153c3f108b7edde",
+  "qc": {
+    "fast_qc": "PASS",
+    "blender_preview_qc": "PASS",
+    "report": "blender/generated/artifacts/EP001_S002/qc_report.json",
+    "note": "Deterministic Blender render metadata is hash-bound; representative-frame QC passed; final playback review remains required."
+  },
+  "license": {
+    "status": "project-authored",
+    "source": "procedural Blender scene generated in project workspace"
+  }
+}

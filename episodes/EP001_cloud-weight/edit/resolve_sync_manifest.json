@@ -1,0 +1,414 @@
+{
+  "schema_version": "resolve-handoff-v2",
+  "episode_id": "EP001_cloud-weight",
+  "created_at": "2026-09-18T17:42:43.021580+00:00",
+  "editor_of_record": "DaVinci Resolve 21.1",
+  "pages": {
+    "edit": true,
+    "fusion": true,
+    "fairlight": true
+  },
+  "capability": {
+    "available": true,
+    "binary": "/Applications/DaVinci Resolve/DaVinci Resolve.app/Contents/MacOS/Resolve",
+    "version_target": "DaVinci Resolve 21.1",
+    "status": "PARTIAL",
+    "mutation": false,
+    "mode": "HANDOFF_ONLY",
+    "checks": {
+      "app": "PASS",
+      "version": "UNKNOWN",
+      "scripting_developer_files": "UNKNOWN",
+      "mcp": "UNKNOWN",
+      "runtime_connection": "UNKNOWN",
+      "readback": "CONTRACT_ONLY"
+    },
+    "reason": "A local app path is not evidence of scripting, MCP, mutation, or readback readiness."
+  },
+  "timeline": {
+    "episode_id": "EP001_cloud-weight",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "sample_rate": 48000,
+    "shot_ids": [
+      "S001",
+      "S002",
+      "S003",
+      "S004",
+      "S005",
+      "S006",
+      "S007",
+      "S008"
+    ],
+    "timebase": "30 fps"
+  },
+  "manifest_sha256": "632e178ad4913ba7c0d0d1c3f7fa3d930398f6b2c81bca8c4217a259e9acd89b",
+  "provenance": {
+    "episode_id": "EP001_cloud-weight",
+    "decision": "PASS",
+    "shots": [
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S001",
+        "path": "episodes/EP001_cloud-weight/shots/S001/provenance.json",
+        "candidate_id": "S001_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S001/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S002",
+        "path": "episodes/EP001_cloud-weight/shots/S002/provenance.json",
+        "candidate_id": "S002_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S002/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S003",
+        "path": "episodes/EP001_cloud-weight/shots/S003/provenance.json",
+        "candidate_id": "S003_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S003/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S004",
+        "path": "episodes/EP001_cloud-weight/shots/S004/provenance.json",
+        "candidate_id": "S004_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S004/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S005",
+        "path": "episodes/EP001_cloud-weight/shots/S005/provenance.json",
+        "candidate_id": "S005_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S005/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S006",
+        "path": "episodes/EP001_cloud-weight/shots/S006/provenance.json",
+        "candidate_id": "S006_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S006/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S007",
+        "path": "episodes/EP001_cloud-weight/shots/S007/provenance.json",
+        "candidate_id": "S007_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S007/render_manifest.json"
+      },
+      {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S008",
+        "path": "episodes/EP001_cloud-weight/shots/S008/provenance.json",
+        "candidate_id": "S008_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S008/render_manifest.json"
+      }
+    ]
+  },
+  "shots": [
+    {
+      "id": "S001",
+      "role": "HERO",
+      "method": "blender",
+      "duration_target": 1.4,
+      "time_start": 0.0,
+      "time_end": 1.4,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S001/render/P3",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S001/render_manifest.json",
+          "manifest_sha256": "0535034d87583387fca608bf90413323f3cc6b8a7094225d924504b20559540e",
+          "sequence_dir": "blender/generated/artifacts/EP001_S001/render/P3",
+          "filename_pattern": "frame_%04d.png",
+          "start": 1,
+          "end": 42,
+          "fps": 30,
+          "alpha": false,
+          "files": 42,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S001",
+        "path": "episodes/EP001_cloud-weight/shots/S001/provenance.json",
+        "candidate_id": "S001_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S001/render_manifest.json"
+      }
+    },
+    {
+      "id": "S002",
+      "role": "STORY",
+      "method": "fusion",
+      "duration_target": 3.2,
+      "time_start": 1.4,
+      "time_end": 4.6,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S002/render/P3",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S002/render_manifest.json",
+          "manifest_sha256": "a42ad9781b95cebd62e12af6cb062d0a8e64bd9156f0bf967a49d07fe42bbbbe",
+          "sequence_dir": "blender/generated/artifacts/EP001_S002/render/P3",
+          "filename_pattern": "frame_%04d.png",
+          "start": 43,
+          "end": 138,
+          "fps": 30,
+          "alpha": false,
+          "files": 96,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S002",
+        "path": "episodes/EP001_cloud-weight/shots/S002/provenance.json",
+        "candidate_id": "S002_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S002/render_manifest.json"
+      }
+    },
+    {
+      "id": "S003",
+      "role": "STORY",
+      "method": "blender",
+      "duration_target": 4.0,
+      "time_start": 4.6,
+      "time_end": 8.6,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S003/render/P3",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S003/render_manifest.json",
+          "manifest_sha256": "da8381f347c82bb1715f68abc54a6383598220a006bc9f05c857f679e44f8ce6",
+          "sequence_dir": "blender/generated/artifacts/EP001_S003/render/P3",
+          "filename_pattern": "frame_%04d.png",
+          "start": 139,
+          "end": 258,
+          "fps": 30,
+          "alpha": false,
+          "files": 120,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S003",
+        "path": "episodes/EP001_cloud-weight/shots/S003/provenance.json",
+        "candidate_id": "S003_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S003/render_manifest.json"
+      }
+    },
+    {
+      "id": "S004",
+      "role": "STORY",
+      "method": "blender",
+      "duration_target": 4.0,
+      "time_start": 8.6,
+      "time_end": 12.6,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S004/preview/P1",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S004/render_manifest.json",
+          "manifest_sha256": "cd6dbc7db2ea57cbe260595640ef50bfc24467a861b070b8848d676ddd159500",
+          "sequence_dir": "blender/generated/artifacts/EP001_S004/preview/P1",
+          "filename_pattern": "frame_%04d.png",
+          "start": 259,
+          "end": 378,
+          "fps": 30,
+          "alpha": false,
+          "files": 120,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S004",
+        "path": "episodes/EP001_cloud-weight/shots/S004/provenance.json",
+        "candidate_id": "S004_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S004/render_manifest.json"
+      }
+    },
+    {
+      "id": "S005",
+      "role": "STORY",
+      "method": "blender",
+      "duration_target": 5.0,
+      "time_start": 12.6,
+      "time_end": 17.6,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S005/preview/P1",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S005/render_manifest.json",
+          "manifest_sha256": "c4bc75d37c970cf3716333d3a4a8f37b913b2e577b905004e9b1644050b648a9",
+          "sequence_dir": "blender/generated/artifacts/EP001_S005/preview/P1",
+          "filename_pattern": "frame_%04d.png",
+          "start": 379,
+          "end": 528,
+          "fps": 30,
+          "alpha": false,
+          "files": 150,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S005",
+        "path": "episodes/EP001_cloud-weight/shots/S005/provenance.json",
+        "candidate_id": "S005_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S005/render_manifest.json"
+      }
+    },
+    {
+      "id": "S006",
+      "role": "HERO",
+      "method": "blender",
+      "duration_target": 6.4,
+      "time_start": 17.6,
+      "time_end": 24.0,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S006/render/P3",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S006/render_manifest.json",
+          "manifest_sha256": "23789b4acbd1ac8f48c697365eebac72c42970f2883d90a4b43fb33d06706e97",
+          "sequence_dir": "blender/generated/artifacts/EP001_S006/render/P3",
+          "filename_pattern": "frame_%04d.png",
+          "start": 529,
+          "end": 720,
+          "fps": 30,
+          "alpha": false,
+          "files": 192,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S006",
+        "path": "episodes/EP001_cloud-weight/shots/S006/provenance.json",
+        "candidate_id": "S006_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S006/render_manifest.json"
+      }
+    },
+    {
+      "id": "S007",
+      "role": "STORY",
+      "method": "blender",
+      "duration_target": 6.0,
+      "time_start": 24.0,
+      "time_end": 30.0,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S007/preview/P1",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S007/render_manifest.json",
+          "manifest_sha256": "935c1750f9989be4ce8e53ad765c502bb462a44c617316c400efe93d4fe5a0e4",
+          "sequence_dir": "blender/generated/artifacts/EP001_S007/preview/P1",
+          "filename_pattern": "frame_%04d.png",
+          "start": 721,
+          "end": 900,
+          "fps": 30,
+          "alpha": false,
+          "files": 180,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S007",
+        "path": "episodes/EP001_cloud-weight/shots/S007/provenance.json",
+        "candidate_id": "S007_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S007/render_manifest.json"
+      }
+    },
+    {
+      "id": "S008",
+      "role": "CONNECTOR",
+      "method": "fusion",
+      "duration_target": 5.5,
+      "time_start": 30.0,
+      "time_end": 35.5,
+      "status": "qc_pending",
+      "approved_for_ingest": false,
+      "media": {
+        "active": "blender/generated/artifacts/EP001_S008/preview/P1",
+        "active_kind": "image_sequence",
+        "videos": [],
+        "image_sequence": {
+          "kind": "image_sequence",
+          "manifest": "blender/generated/artifacts/EP001_S008/render_manifest.json",
+          "manifest_sha256": "33ffda6559326e976ad057ec3fe5bc2719fb9220ed996d8064cb2d57c07fbfac",
+          "sequence_dir": "blender/generated/artifacts/EP001_S008/preview/P1",
+          "filename_pattern": "frame_%04d.png",
+          "start": 901,
+          "end": 1065,
+          "fps": 30,
+          "alpha": false,
+          "files": 165,
+          "qc_decision": null
+        }
+      },
+      "provenance": {
+        "valid": true,
+        "errors": [],
+        "shot_id": "S008",
+        "path": "episodes/EP001_cloud-weight/shots/S008/provenance.json",
+        "candidate_id": "S008_blender_p1",
+        "output_asset": "blender/generated/artifacts/EP001_S008/render_manifest.json"
+      }
+    }
+  ],
+  "readback_contract": {
+    "path": "edit/resolve_production_readback.json",
+    "validator": "studio.resolve.sync.validate_resolve_readback"
+  },
+  "mode": "handoff_plan",
+  "mutation": false,
+  "note": "Plan only. Resolve remains the editor of record; import active video/image-sequence media in manifest order and record its export readback."
+}

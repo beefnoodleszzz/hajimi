@@ -1,0 +1,497 @@
+schema_version: voice-manifest-v2
+provider: voxcpm2_local
+narrator: science_female_main
+language: en
+script_hash: a113351f3fb296f0bdad1dbac0e40c399b8568795123ac04269c92ac1c06a1c8
+model: mlx-community/VoxCPM2-bf16
+reference_voice: science_female_main/neutral
+reference_hash: 8442b34479eb7407dc82532047ea5f9317a63a1603b5484bc4efef26bd1367a3
+voice_direction:
+  schema_version: voice-direction-v2
+  narrator: science_female_main
+  provider: voxcpm2_local
+  mode: per_line
+  voice_identity:
+    name: 朋友女性主声 A（已授权）
+    language: en
+    styles:
+    - neutral
+    authorization_status: authorized
+    commercial_use: true
+  beats:
+  - id: B001
+    text: That cloud weighs five hundred fifty tons.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: surprise
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B002
+    text: 'One cubic-kilometre cumulus: five hundred fifty-one tons.'
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: disbelief becomes attention
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B003
+    text: Liquid water—tiny droplets, spread wide.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: abstraction becomes tangible
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B004
+    text: Why doesn't it fall? Cloudy air is less dense than dry air.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: confusion becomes a model
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B005
+    text: Rising air carries the droplets up.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: model gains motion
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B006
+    text: Heavy water, riding inside moving air.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: surprise becomes awe
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: gentle
+      style: neutral
+      mode: controllable
+      instruct: '轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B007
+    text: When drops outgrow the updraft, they fall as rain.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: awe becomes satisfaction
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: gentle
+      style: neutral
+      mode: controllable
+      instruct: '轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: controlled, pace: medium'
+      candidate_count: 1
+  - id: B008
+    text: A cloud can be heavy—and still float.
+    direction:
+      energy: controlled
+      pace: medium
+      emotional_intent: clarity and replay impulse
+      emphasis: []
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium'
+      candidate_count: 1
+selection_policy:
+  key_beat_candidate_count: 3
+  normal_beat_candidate_count: 1-2
+  human_listening_required: true
+  automatic_selection: screening_only
+takes:
+  B001:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B001/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: That cloud weighs five hundred fifty tons.
+          recognized: that cloud weighs five hundred fifty tons
+          expected_comparison: thatcloudweighsfivehundredfiftytons
+          recognized_comparison: thatcloudweighsfivehundredfiftytons
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: 8910128748767534e50e0b939c097c67c948134a1c60e88f9c000c80e89e1dbb
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 3.6801666666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-d67ae484ec
+  B002:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B002/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: 'One cubic-kilometre cumulus: five hundred fifty-one tons.'
+          recognized: one cubic kilometer cumulus551 tons
+          expected_comparison: onecubickilometrecumulusfivehundredfiftyonetons
+          recognized_comparison: onecubickilometercumulus551tons
+          cer: 0.44680851063829785
+          substitutions:
+          - expected_index: 15
+            recognized_index: 15
+            expected: r
+            recognized: e
+          - expected_index: 16
+            recognized_index: 16
+            expected: e
+            recognized: r
+          - expected_index: 40
+            recognized_index: 24
+            expected: o
+            recognized: '5'
+          - expected_index: 41
+            recognized_index: 25
+            expected: n
+            recognized: '5'
+          - expected_index: 42
+            recognized_index: 26
+            expected: e
+            recognized: '1'
+          deletions:
+          - expected_index: 24
+            expected: f
+          - expected_index: 25
+            expected: i
+          - expected_index: 26
+            expected: v
+          - expected_index: 27
+            expected: e
+          - expected_index: 28
+            expected: h
+          - expected_index: 29
+            expected: u
+          - expected_index: 30
+            expected: n
+          - expected_index: 31
+            expected: d
+          - expected_index: 32
+            expected: r
+          - expected_index: 33
+            expected: e
+          - expected_index: 34
+            expected: d
+          - expected_index: 35
+            expected: f
+          - expected_index: 36
+            expected: i
+          - expected_index: 37
+            expected: f
+          - expected_index: 38
+            expected: t
+          - expected_index: 39
+            expected: y
+          insertions: []
+          edit_distance: 21
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: 27a58fc4baa8ae362e0b8e6b3e17b9a139e61e7e9c0533aeecc0cc69c6242bb3
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 5.760166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-0b36ad7f76
+  B003:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B003/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: Liquid water—tiny droplets, spread wide.
+          recognized: liquid water tiny droplets spread wide
+          expected_comparison: liquidwatertinydropletsspreadwide
+          recognized_comparison: liquidwatertinydropletsspreadwide
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: 78b92b87883558472bd7f2db4f8bf1c78ed38e2c321271c76282681f178c5fba
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 3.6801666666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-03c9208d8e
+  B004:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B004/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: Why doesn't it fall? Cloudy air is less dense than dry air.
+          recognized: why doesn't it fall cloudy air is less dense than dry air
+          expected_comparison: whydoesntitfallcloudyairislessdensethandryair
+          recognized_comparison: whydoesntitfallcloudyairislessdensethandryair
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: ae2bbacc5db270f7b1b54b7fd8fedb21faf53a18fe01787e9327d20d2a7ee30d
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 4.480166666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-ed1a936e23
+  B005:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B005/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: Rising air carries the droplets up.
+          recognized: rising air carries the droplets up
+          expected_comparison: risingaircarriesthedropletsup
+          recognized_comparison: risingaircarriesthedropletsup
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: ed02c76d2716358eafc06a73de2c8bbee03533ddea26491bf79a0a8800a92d6d
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 2.5601666666666665
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-fc1bbafada
+  B006:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B006/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: Heavy water, riding inside moving air.
+          recognized: heavy water riding inside moving air
+          expected_comparison: heavywaterridinginsidemovingair
+          recognized_comparison: heavywaterridinginsidemovingair
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: 14be5ab00343e922e59470909638c4b92df77a6797d1aa2821ea3cba729818a0
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 2.8801666666666668
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-f3c6e80cc6
+  B007:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B007/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: When drops outgrow the updraft, they fall as rain.
+          recognized: when drops outgrow the updraft they fall as rain
+          expected_comparison: whendropsoutgrowtheupdrafttheyfallasrain
+          recognized_comparison: whendropsoutgrowtheupdrafttheyfallasrain
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: 425b6982059b938300c08743f163b5e8dde44091e8626fd16726ca623276054a
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 4.000166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-35c3840171
+  B008:
+    candidates:
+    - id: candidate_01
+      path: voxcpm2-local://hajimi_EP001_cloud-weight_voxcpm2/run_0003/B008/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          expected: A cloud can be heavy—and still float.
+          recognized: a cloud can be heavy and still float
+          expected_comparison: acloudcanbeheavyandstillfloat
+          recognized_comparison: acloudcanbeheavyandstillfloat
+          cer: 0.0
+          substitutions: []
+          deletions: []
+          insertions: []
+          edit_distance: 0
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:multilingual:itn=false
+          config_sha256: c9627c1e69857fcd5589a884bbfc6b4e241727beb161cfdf4c53a2ef73902a72
+          threshold: null
+          requested_language: en
+          detected_language: en
+          language_match: true
+          audio_sha256: d5ff0839dcbbbd57acc45c0779739f684b0902e748befd620a044c645135fe07
+          pass: null
+          status: WARN
+          note: Uncalibrated ASR is advisory; edit differences are not proof of mispronunciation
+        duration: 3.2001666666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: candidate_01
+    selection_status: SELECTED
+    reviewer: director
+    review_id: director-774d80aa4b
+production_voice:
+  provider: voxcpm2_local
+  status: READY
+  temporary: false
+  path: audio/production/narration.wav
+  sha256: 28c1d01831d91179a4f935dbfd509957593cd2b39d7222a140d4d590c9e54264
+  script_hash: a113351f3fb296f0bdad1dbac0e40c399b8568795123ac04269c92ac1c06a1c8
+  voice_id: science_female_main
+  reference_hash: 8442b34479eb7407dc82532047ea5f9317a63a1603b5484bc4efef26bd1367a3
+  model_identity:
+    model_repo: mlx-community/VoxCPM2-bf16
+  joined_narration_sha256: 28c1d01831d91179a4f935dbfd509957593cd2b39d7222a140d4d590c9e54264
+  selected_beat_hashes:
+    B001: 8910128748767534e50e0b939c097c67c948134a1c60e88f9c000c80e89e1dbb
+    B002: 27a58fc4baa8ae362e0b8e6b3e17b9a139e61e7e9c0533aeecc0cc69c6242bb3
+    B003: 78b92b87883558472bd7f2db4f8bf1c78ed38e2c321271c76282681f178c5fba
+    B004: ae2bbacc5db270f7b1b54b7fd8fedb21faf53a18fe01787e9327d20d2a7ee30d
+    B005: ed02c76d2716358eafc06a73de2c8bbee03533ddea26491bf79a0a8800a92d6d
+    B006: 14be5ab00343e922e59470909638c4b92df77a6797d1aa2821ea3cba729818a0
+    B007: 425b6982059b938300c08743f163b5e8dde44091e8626fd16726ca623276054a
+    B008: d5ff0839dcbbbd57acc45c0779739f684b0902e748befd620a044c645135fe07
+  joined_source: voxcpm2-local://outputs/delivery/longform/fc167ddd26384029b67456a39177bb57/joined.wav
+provenance:
+  voice_library: voxcpm2-local://voices/science_female_main/voice.json
+  runtime: voxcpm2_local
+render_manifest: voxcpm2-local://outputs/raw/hajimi_EP001_cloud-weight_voxcpm2/run_0003/manifest.json

@@ -1,0 +1,98 @@
+{
+  "project": "hajimi_EP001_cloud-weight_voxcpm2",
+  "candidates": 2,
+  "inference_timesteps": 30,
+  "cfg_value": 2.0,
+  "profile": "production",
+  "normalization_profile": "narration",
+  "lines": [
+    {
+      "id": "B001",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 3,
+      "text": "That cloud could contain about five hundred fifty tons of water."
+    },
+    {
+      "id": "B002",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 2,
+      "text": "For a one-kilometre-cube cumulus estimate, the number is about five hundred fifty-one tons."
+    },
+    {
+      "id": "B003",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 2,
+      "text": "That is liquid water—tiny droplets spread through a huge volume."
+    },
+    {
+      "id": "B004",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 2,
+      "text": "So why does it not simply fall? Because cloudy air can be less dense than the drier air around it."
+    },
+    {
+      "id": "B005",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 2,
+      "text": "And inside the cloud, rising air keeps carrying droplets upward."
+    },
+    {
+      "id": "B006",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "gentle",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: controlled, pace: medium",
+      "candidates": 2,
+      "text": "It is not weightless. It is heavy water riding inside a moving layer of air."
+    },
+    {
+      "id": "B007",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "gentle",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: controlled, pace: medium",
+      "candidates": 3,
+      "text": "When droplets grow faster than the updraft can carry them, they break through as rain."
+    },
+    {
+      "id": "B008",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium",
+      "candidates": 3,
+      "text": "A cloud can be heavy and still float."
+    }
+  ]
+}

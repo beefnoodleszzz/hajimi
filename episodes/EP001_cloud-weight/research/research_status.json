@@ -1,0 +1,11 @@
+{
+  "episode_id": "EP001_cloud-weight",
+  "stage": "research",
+  "decision": "PASS",
+  "required_outputs": [
+    "episodes/EP001_cloud-weight/research/topic_brief.md",
+    "episodes/EP001_cloud-weight/research/fact_pack.md",
+    "episodes/EP001_cloud-weight/research/reference_deconstruction.json"
+  ],
+  "missing": []
+}

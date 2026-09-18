@@ -1,0 +1,17 @@
+id: S004
+episode: EP001_cloud-weight
+version: 1
+role: STORY
+method: blender
+renderer: eevee
+intent: Make the density relationship between dry air and cloudy air visible.
+camera:
+  name: CAM_Main
+  rig: CameraRoot/Dolly/PanTilt/Shake/Target
+  lens_mm: 24
+frames: {start: 259, end: 378, fps: 30}
+output:
+  provenance: provenance.json
+  scene: blender/generated/artifacts/EP001_S004/scene.blend
+  sequence: blender/generated/artifacts/EP001_S004/preview/P1
+  render_manifest: blender/generated/artifacts/EP001_S004/render_manifest.json

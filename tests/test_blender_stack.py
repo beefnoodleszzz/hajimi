@@ -23,9 +23,9 @@ def test_render_profiles_match_required_portrait_matrix():
         assert profile["height"] == resolution[1]
 
 
-def test_validation_target_is_explicit_and_rightward():
-    info = _target_info(ROOT, "EP001_TEST_01")
-    assert info["kind"] == "validation_shot"
+def test_episode_target_is_explicit_and_rightward():
+    info = _target_info(ROOT, "EP001", "S001")
+    assert info["kind"] == "episode_shot"
     assert info["width"] == 1080
     assert info["height"] == 1920
     assert info["screen_direction"] == "RIGHT"
@@ -43,9 +43,27 @@ def test_hero_exr_profile_is_half_float_sequence_with_composite_passes():
 
 def test_episode_shortcut_resolves_shot_without_mutating_manifest():
     info = _target_info(ROOT, "EP001", "S005")
-    assert info["episode_id"] == "EP001_earth-stop"
+    assert info["episode_id"] == "EP001_cloud-weight"
     assert info["shot_id"] == "S005"
     assert info["engine"] == "EEVEE"
+
+
+def test_current_cloud_episode_routes_all_shots_to_cloud_scene_modes():
+    expected = {
+        "S001": "cloud_scale",
+        "S002": "cloud_cube",
+        "S003": "cloud_droplets",
+        "S004": "cloud_density",
+        "S005": "cloud_updraft",
+        "S006": "cloud_hero",
+        "S007": "cloud_rain",
+        "S008": "cloud_loop",
+    }
+
+    for shot_id, mode in expected.items():
+        info = _target_info(ROOT, "EP001", shot_id)
+        assert info["episode_id"] == "EP001_cloud-weight"
+        assert info["shot_mode"] == mode
 
 
 def test_plugin_matrix_requires_a_loaded_smoke_probe_not_just_a_module_directory():
