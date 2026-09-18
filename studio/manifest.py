@@ -231,7 +231,7 @@ def new_manifest(episode_id: str) -> dict[str, Any]:
             "target_duration_sec": 38,
         },
         "script": {"version": 1, "path": "script/script_v01.md", "locked": False},
-        "audio": {"narrator": "science_female_main", "target_lufs": -14, "true_peak_max_db": -1.0},
+        "audio": {"narrator": None, "target_lufs": -14, "true_peak_max_db": -1.0},
         "shots": [],
         "publish": {"title": None, "description": None, "ai_disclosure": True, "visibility": "private"},
     }

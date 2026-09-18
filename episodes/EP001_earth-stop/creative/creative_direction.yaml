@@ -1,51 +1,67 @@
 schema_version: creative-direction-v2
-core_question: If the ground stops for one second, what keeps moving?
-core_answer: The body, air, and ocean retain eastward motion; the danger is a broken
-  shared reference frame.
-one_sentence_promise: A familiar road freezes in the first second, then one eastward
-  vector expands until Earth stops being one aligned system.
+episode_id: EP001_earth-stop
+core_question: What keeps moving when the ground stops?
+core_answer: A sudden surface stop does not erase the motion already carried by bodies,
+  air, and water; it breaks their shared reference frame.
+one_sentence_promise: A tiny key crosses a frozen surface, then the same motion splits
+  Earth into layers that no longer agree.
+hook_type: tactile_object_anomaly
+hero_shot_type: layered_reference_frame_restart
+viewer_promise: The audience will see one familiar object become evidence of a planetary
+  coordination failure.
 viewer_emotion_curve:
 - curiosity
+- recognition
 - danger
 - scale
 - awe
-- payoff
+- open question
 opening:
-  first_frame: road-level late-afternoon road with a red receipt in motion
-  first_second_action: road and horizon lock while the receipt continues right
-  first_line: The road freezes—your momentum doesn't.
+  first_frame: close road-level table-like surface with a metal key and a hard horizon
+  first_second_action: surface locks while the key and its dust shadow continue east
+  first_line: The ground can stop without taking your motion with it.
+  anomaly_time_sec: 0.4
 narrative_engine:
-  central_visual_motif: one eastward vector branching through land, air, ocean, and
-    body
-  escalation_pattern: personal object → body → measured distance → atmosphere → ocean
-    → system cross-section
-  transformation_pattern: ordinary motion becomes a broken reference frame
+  central_visual_motif: moving object plus displaced shadow mark
+  escalation_pattern: object to body to measured distance to air to ocean to shared
+    frame
+  transformation_pattern: harmless motion becomes evidence that Earth is not one rigid
+    state
 visual_peaks:
-- time: 0.0
-  idea: road locks before explanation
-- time: 7.0
-  idea: 465m becomes a physical ruler
-- time: 21.0
-  idea: land restarts while air and ocean lag
-- time: 31.0
-  idea: gravity/down vector separates from sideways danger
+- time: 0.4
+  tier: CONNECTOR
+  idea: key crosses a locked surface
+- time: 8.0
+  tier: STORY
+  idea: one-second ruler turns velocity into distance
+- time: 18.0
+  tier: STORY
+  idea: atmosphere slides through a fixed horizon
+- time: 26.0
+  tier: HERO
+  idea: restart reveals four layers with separate offsets
+- time: 32.0
+  tier: CONNECTOR
+  idea: displaced shadow closes the loop
 hero_shot:
-  concept: A clean land/air/ocean cross-section caught at the instant the surface
-    restarts.
-  why_memorable: 'One still explains the entire causal argument: land is locked, upper
-    layers visibly offset, and the 465m vector is measurable.'
-  production_method: blender_ai_hybrid with Fusion measurement overlays
+  shot_id: S006
+  concept: orthographic motion ledger at restart, with locked land, offset air and
+    ocean, and the key's vector preserved
+  why_memorable: One readable frame explains both the mechanism and the consequence
+    without relying on destruction spectacle.
+  deletion_cost: Removing it leaves the audience with a metaphor but no causal picture.
 ending:
-  payoff: The disaster is the mismatch between layers, not a cartoon planet explosion.
-  loop_or_comment_hook: One second. 465 meters. Which layer moves first?
+  payoff: The disaster is the loss of a shared frame, not a fireball.
+  loop_or_comment_hook: If the ground restarts first, which layer would you trust?
 reject:
   generic_angles:
   - planet explodes
-  - people fly into space
-  - generic city destruction montage
+  - people fly straight into space
+  - city destruction montage
   boring_explanations:
-  - paragraph narration over scenic Earth footage
-  - number-only infographic without an action
+  - speed statistic over scenic Earth
+  - paragraph narration over stock clouds
   visual_cliches:
-  - shaking camera as a substitute for physics
-  - fireball as the only consequence
+  - unmotivated camera shake
+  - random debris
+  - unreadable infographic wall

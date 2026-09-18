@@ -4,172 +4,134 @@ candidate_policy:
   HERO: 6
   STORY: 3
   CONNECTOR: 2
-  note: Counts are configurable; hero budget is concentrated, not evenly distributed.
+  rationale: concentrate iterations on information-bearing peaks
 shots:
 - shot_id: S001
   tier: CONNECTOR
-  method: ai_video
+  method: blender
   candidates: 2
-  primary: ai_video
+  primary: blender
   supporting:
-  - hybrid
+  - ai_video
   shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: road-level wide; horizon upper third
-    lens: 28mm
-    camera_height: low locked camera
-    camera_motion: snap to locked horizon
-    subject_motion: receipt continues right
-    screen_direction: right/east
-    lighting: late-afternoon hard side light
-    palette: charcoal / cyan / red
-    atmosphere: dust freezes after the snap
-    continuity: rightward vector and red object must match adjacent shots
+    identity: metal key and displaced shadow
+    environment: dark road-level surface
+    composition: key against hard baseline
+    camera: locked macro
+    subject_motion: key continues east
+    continuity: preserve key orientation into S002
     forbidden:
     - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: road-level wide; horizon upper third
-    final_frame: hard cut from black
-  reference_pack:
-  - shots/S001/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
+    - random shake
+    - decorative debris
+    first_frame: key centered before stop
+    final_frame: key beyond shadow mark
 - shot_id: S002
   tier: STORY
   method: ai_video
   candidates: 3
   primary: ai_video
-  supporting: []
+  supporting:
+  - blender
   shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: rear three-quarter medium with road markings
-    lens: 35mm
-    camera_height: 1.6m tracking height
-    camera_motion: subtle lateral track
-    subject_motion: body and receipt move right
-    screen_direction: right/east
-    lighting: warm key, cool shadow
-    palette: charcoal / cyan / red
-    atmosphere: paper motion streak
-    continuity: rightward vector and red object must match adjacent shots
+    identity: same key and hand
+    environment: fixed surface
+    composition: hand follows key
+    camera: lateral medium
+    subject_motion: key and hand separate from mark
+    continuity: match S001 screen direction
     forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: rear three-quarter medium with road markings
-    final_frame: rightward match
-  reference_pack:
-  - shots/S002/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
+    - anatomy drift
+    - reversed motion
+    - generic panic
+    first_frame: hand enters
+    final_frame: key exits frame
 - shot_id: S003
   tier: CONNECTOR
   method: fusion
   candidates: 2
   primary: fusion
-  supporting: []
+  supporting:
+  - blender
   shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: centered graphic with road texture
-    lens: graphic
-    camera_height: orthographic
-    camera_motion: number punch
-    subject_motion: vector sweeps right
-    screen_direction: right/east
-    lighting: cyan against charcoal
-    palette: charcoal / cyan / red
-    atmosphere: clean line draw
-    continuity: rightward vector and red object must match adjacent shots
+    identity: cyan ruler and red origin
+    environment: sparse city grid
+    composition: endpoint readable
+    camera: orthographic
+    subject_motion: ruler draws east
+    continuity: key path becomes ruler
     forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: centered graphic with road texture
-    final_frame: vector match
-  reference_pack:
-  - shots/S003/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
+    - tiny labels
+    - wrong units
+    - clutter
+    first_frame: origin mark
+    final_frame: endpoint mark
 - shot_id: S004
+  tier: STORY
+  method: blender_ai_hybrid
+  candidates: 3
+  primary: blender_ai_hybrid
+  supporting:
+  - ai_video
+  - fusion
+  shot_contract:
+    identity: fixed window bars and cloud band
+    environment: atmosphere over land
+    composition: one clear baseline
+    camera: locked side view
+    subject_motion: cloud band shears east
+    continuity: ruler line becomes cloud edge
+    forbidden:
+    - solid cloud wall
+    - scenic filler
+    - random camera shake
+    first_frame: quiet window
+    final_frame: offset cloud baseline
+- shot_id: S005
+  tier: STORY
+  method: blender_ai_hybrid
+  candidates: 3
+  primary: blender_ai_hybrid
+  supporting:
+  - ai_video
+  - fusion
+  shot_contract:
+    identity: locked land and moving water seam
+    environment: abstract coastline
+    composition: boundary dominates
+    camera: elevated side cutaway
+    subject_motion: water continues east
+    continuity: cloud edge becomes water seam
+    forbidden:
+    - tsunami cliché
+    - explosion
+    - unmotivated zoom
+    first_frame: coast aligned
+    final_frame: coast seam offset
+- shot_id: S006
+  tier: HERO
+  method: blender_ai_hybrid
+  candidates: 6
+  primary: blender_ai_hybrid
+  supporting:
+  - blender
+  - fusion
+  - ai_image
+  shot_contract:
+    identity: key vector plus land/air/ocean/body layers
+    environment: scientific charcoal cutaway
+    composition: four horizontal bands with one focal relation
+    camera: orthographic
+    subject_motion: land restarts while upper layers lag east
+    continuity: inherit every prior boundary
+    forbidden:
+    - generic planet explosion
+    - unreadable labels
+    - reversed vector
+    - random shake
+    first_frame: impact cut
+    final_frame: stable motion ledger
+- shot_id: S007
   tier: STORY
   method: fusion
   candidates: 3
@@ -177,376 +139,36 @@ shots:
   supporting:
   - blender
   shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: top-down city blocks with origin/end points
-    lens: graphic
-    camera_height: orthographic overhead
-    camera_motion: controlled push along ruler
-    subject_motion: ruler advances right
-    screen_direction: right/east
-    lighting: high-contrast red/cyan
-    palette: charcoal / cyan / red
-    atmosphere: map grid pulses once
-    continuity: rightward vector and red object must match adjacent shots
+    identity: body silhouette and down/east arrows
+    environment: negative space
+    composition: arrows separated
+    camera: centered graphic
+    subject_motion: east arrow grows
+    continuity: derive arrows from S006 layers
     forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: top-down city blocks with origin/end points
-    final_frame: vector extends
-  reference_pack:
-  - shots/S004/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
-- shot_id: S005
-  tier: STORY
-  method: blender
-  candidates: 3
-  primary: blender
-  supporting: []
-  shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: side cutaway of city slab and atmosphere band
-    lens: 45mm
-    camera_height: eye-level abstraction
-    camera_motion: controlled pull back
-    subject_motion: cloud band moves right
-    screen_direction: right/east
-    lighting: cool atmospheric rim
-    palette: charcoal / cyan / red
-    atmosphere: thin cloud trails
-    continuity: rightward vector and red object must match adjacent shots
-    forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: side cutaway of city slab and atmosphere band
-    final_frame: line becomes cloud
-  reference_pack:
-  - shots/S005/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
-- shot_id: S006
-  tier: STORY
-  method: blender
-  candidates: 3
-  primary: blender
-  supporting: []
-  shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: coastline cross-section; water line dominates
-    lens: 35mm
-    camera_height: high side view
-    camera_motion: single crane back
-    subject_motion: water continues right
-    screen_direction: right/east
-    lighting: deep blue with red land accent
-    palette: charcoal / cyan / red
-    atmosphere: surface shear
-    continuity: rightward vector and red object must match adjacent shots
-    forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: coastline cross-section; water line dominates
-    final_frame: cloud trace becomes water trace
-  reference_pack:
-  - shots/S006/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
-- shot_id: S007
-  tier: HERO
-  method: blender_ai_hybrid
-  candidates: 6
-  primary: blender_ai_hybrid
-  supporting:
-  - hybrid
-  shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: clean horizontal three-layer scientific cutaway
-    lens: graphic
-    camera_height: orthographic
-    camera_motion: land snaps left; upper layers lag right
-    subject_motion: air and ocean offset right
-    screen_direction: right/east
-    lighting: charcoal, cyan, red receipt accent
-    palette: charcoal / cyan / red
-    atmosphere: layered dust and water shear
-    continuity: rightward vector and red object must match adjacent shots
-    forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: clean horizontal three-layer scientific cutaway
-    final_frame: hard restart hit
-  reference_pack:
-  - shots/S007/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
+    - vertical launch implication
+    - dense copy
+    - random movement
+    first_frame: down arrow
+    final_frame: sideways seam
 - shot_id: S008
-  tier: STORY
-  method: fusion
-  candidates: 3
-  primary: fusion
-  supporting: []
-  shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: silhouette with empty right-side vector space
-    lens: graphic
-    camera_height: orthographic
-    camera_motion: arrows draw on
-    subject_motion: right vector grows; down vector stays
-    screen_direction: right/east
-    lighting: neutral light with red danger accent
-    palette: charcoal / cyan / red
-    atmosphere: brief silence gap
-    continuity: rightward vector and red object must match adjacent shots
-    forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: silhouette with empty right-side vector space
-    final_frame: offset becomes vectors
-  reference_pack:
-  - shots/S008/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
-- shot_id: S009
   tier: CONNECTOR
-  method: fusion
+  method: ai_image
   candidates: 2
-  primary: fusion
-  supporting: []
-  shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: centered phrase over ghosted offsets
-    lens: graphic
-    camera_height: orthographic
-    camera_motion: phrase resolves from layers
-    subject_motion: offsets pulse once
-    screen_direction: right/east
-    lighting: minimal charcoal/cyan
-    palette: charcoal / cyan / red
-    atmosphere: single restrained pulse
-    continuity: rightward vector and red object must match adjacent shots
-    forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: centered phrase over ghosted offsets
-    final_frame: silence to road
-  reference_pack:
-  - shots/S009/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
-- shot_id: S010
-  tier: CONNECTOR
-  method: hybrid
-  candidates: 2
-  primary: hybrid
+  primary: ai_image
   supporting:
-  - ai_image
+  - blender
+  - fusion
   shot_contract:
-    identity: EP001 eastward vector, red receipt anchor, charcoal silhouette when
-      present
-    environment: equatorial city/coast abstraction, late afternoon
-    composition: opening road, wider negative space
-    lens: 28mm
-    camera_height: low locked camera
-    camera_motion: almost locked
-    subject_motion: dust settles; receipt rests east
-    screen_direction: right/east
-    lighting: same as S001
-    palette: charcoal / cyan / red
-    atmosphere: dust settle
-    continuity: rightward vector and red object must match adjacent shots
+    identity: original key and displaced shadow
+    environment: opening surface
+    composition: matched macro frame
+    camera: locked macro
+    subject_motion: dust settles beyond mark
+    continuity: match S001 lighting and lens
     forbidden:
-    - generated text
-    - reversed screen direction
-    - random camera shake
-    - generic destruction montage
-    first_frame: opening road, wider negative space
-    final_frame: match S001 framing
-  reference_pack:
-  - shots/S010/references/
-  - creative/visual_concept.yaml
-  - creative/beat_script.yaml
-  evaluation:
-  - composition
-  - subject_readability
-  - visual_impact
-  - physics
-  - continuity
-  - camera_match
-  - motion_quality
-  - artifact_severity
-  - story_usefulness
-  regeneration_policy:
-    local_fix_first:
-    - crop
-    - retime
-    - Fusion mask
-    - cleanup
-    - frame replacement
-    - color
-    full_regenerate_if:
-    - composition wrong
-    - subject motion wrong
-    - camera logic wrong
-    - identity broken
+    - new object
+    - changed direction
+    - decorative plate
+    first_frame: offset key
+    final_frame: settled dust

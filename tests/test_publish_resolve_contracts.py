@@ -10,7 +10,8 @@ from studio.media.hashing import sha256_file
 from studio.manifest import manifest_input_hash
 from studio.publish.youtube import build_publish_plan, publish_doctor, record_upload_readback
 from studio.resolve.sync import record_resolve_readback, resolve_doctor, validate_resolve_readback
-from studio.voice.manifest import VOICE_PROVIDER, write_voice_manifest
+from studio.voice.manifest import VOICE_PROVIDER, script_hash, write_voice_manifest
+from studio.voice.voxcpm2 import inspect_voice
 
 
 def _manifest() -> dict:
@@ -54,6 +55,7 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     (episode_root / "animatic").mkdir()
     (episode_root / "script").mkdir()
     (episode_root / "audio" / "voxcpm2" / "run_0001").mkdir(parents=True)
+    (episode_root / "creative").mkdir()
     shot_media = episode_root / "shots" / "S001" / "production" / "shot.mp4"
     shot_media.parent.mkdir(parents=True)
     shot_media.write_bytes(b"shot-contract-media")
@@ -87,17 +89,33 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     )
     manifest = _manifest()
     dump_yaml(manifest, episode_root / "episode.yaml")
+    dump_yaml(
+        {"schema_version": "beat-script-v2", "beats": [{"id": "B001", "narration": "Contract narration."}]},
+        episode_root / "creative" / "beat_script.yaml",
+    )
+    joined = episode_root / "audio" / "production" / "narration.wav"
+    joined.parent.mkdir(parents=True)
+    joined.write_bytes(b"joined-contract-narration")
+    voice = inspect_voice("science_female_main")
+    current_script_hash = script_hash(episode_root)
     write_voice_manifest(
         episode_root,
         {
-            "schema_version": "voice-manifest-v1",
+            "schema_version": "voice-manifest-v2",
             "provider": VOICE_PROVIDER,
             "narrator": "science_female_main",
+            "script_hash": current_script_hash,
+            "reference_hash": voice["reference_hash"],
             "production_voice": {
                 "provider": VOICE_PROVIDER,
                 "status": "READY",
                 "temporary": False,
-                "path": str(episode_root / "audio" / "voxcpm2" / "run_0001"),
+                "path": "audio/production/narration.wav",
+                "sha256": sha256_file(joined),
+                "joined_narration_sha256": sha256_file(joined),
+                "script_hash": current_script_hash,
+                "reference_hash": voice["reference_hash"],
+                "voice_id": "science_female_main",
             },
         },
     )

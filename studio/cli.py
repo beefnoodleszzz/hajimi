@@ -11,7 +11,7 @@ from typing import Any
 from .analytics.schema import initialize_record
 from .blender_stack import BlenderStackError, run_blender_command
 from .config import write_json
-from .creative import generate_creative_package
+from .creative import generate_creative_package, load_creative_context, save_creative_artifact, validate_creative_package
 from .db import StateStore
 from .manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, new_manifest, write_manifest
 from .master import register_resolve_master
@@ -26,7 +26,7 @@ from .qc.engine import record_human_playback, record_shot_review, run_episode_qc
 from .resolve.sync import record_resolve_readback, resolve_doctor, sync_episode
 from .voice.director import build_voice_plan
 from .voice.voxcpm2 import doctor as voice_doctor
-from .voice.voxcpm2 import render_voice, voice_status
+from .voice.voxcpm2 import assemble_voice, list_available_voices, render_voice, review_voice, voice_status
 
 
 def _paths(root_arg: str | None) -> StudioPaths:
@@ -139,24 +139,41 @@ def _cmd_animatic_review(args: argparse.Namespace, paths: StudioPaths) -> int:
 
 
 def _cmd_creative(args: argparse.Namespace, paths: StudioPaths) -> int:
-    result = generate_creative_package(paths.root, args.episode_id, force=args.force)
+    if args.creative_command == "context":
+        context = load_creative_context(paths.root, args.episode_id)
+        destination = paths.episode(args.episode_id) / "creative" / "context_pack.yaml"
+        save_creative_artifact(context, destination)
+        result = {"status": "PASS", "episode_id": args.episode_id, "context_pack": str(destination)}
+    elif args.creative_command == "validate":
+        errors = validate_creative_package(paths.episode(args.episode_id) / "creative")
+        result = {"status": "PASS" if not errors else "FAIL", "episode_id": args.episode_id, "errors": errors}
+    else:
+        result = generate_creative_package(paths.root, args.episode_id, force=args.force, agent_dir=args.agent_dir)
     _print(result, args.json)
-    return 0 if result.get("status") == "PASS" else 1
+    return 0 if result.get("status") in {"PASS"} else 1
 
 
 def _cmd_voice(args: argparse.Namespace, paths: StudioPaths) -> int:
+    if args.voice_command == "voices":
+        result = {"status": "READY", "provider": "voxcpm2_local", "voices": list_available_voices()}
+        _print(result, args.json)
+        return 0
     if args.voice_command == "doctor":
         result = voice_doctor(paths.root, getattr(args, "episode_id", None), narrator=getattr(args, "narrator", None))
         _print(result, args.json)
         return 0 if result.get("status") in {"READY", "PARTIAL"} else 1
     if args.voice_command == "plan":
-        result = build_voice_plan(paths.root, args.episode_id)
+        result = build_voice_plan(paths.root, args.episode_id, narrator=getattr(args, "narrator", None))
     elif args.voice_command == "render":
         result = render_voice(paths.root, args.episode_id)
+    elif args.voice_command == "review":
+        result = review_voice(paths.root, args.episode_id, args.beat_id, args.select, reviewer=args.reviewer)
+    elif args.voice_command == "assemble":
+        result = assemble_voice(paths.root, args.episode_id, pause_seconds=args.pause_seconds)
     else:
         result = voice_status(paths.root, args.episode_id)
     _print(result, args.json)
-    return 0 if result.get("status") in {"READY", "PLANNED", "SELECTED"} else 1
+    return 0 if result.get("status") in {"READY", "PLANNED", "SELECTED", "REVIEW_REQUIRED"} else 1
 
 
 def _cmd_qc(args: argparse.Namespace, paths: StudioPaths) -> int:
@@ -297,13 +314,22 @@ def build_parser() -> argparse.ArgumentParser:
 
     creative = sub.add_parser("creative", help="build content-first creative artifacts")
     creative_sub = creative.add_subparsers(dest="creative_command", required=True)
+    creative_context = creative_sub.add_parser("context")
+    creative_context.add_argument("episode_id")
+    creative_context.add_argument("--json", action="store_true")
     creative_package = creative_sub.add_parser("package")
     creative_package.add_argument("episode_id")
     creative_package.add_argument("--force", action="store_true")
+    creative_package.add_argument("--agent-dir")
     creative_package.add_argument("--json", action="store_true")
+    creative_validate = creative_sub.add_parser("validate")
+    creative_validate.add_argument("episode_id")
+    creative_validate.add_argument("--json", action="store_true")
 
     voice = sub.add_parser("voice", help="plan and render production voice")
     voice_sub = voice.add_subparsers(dest="voice_command", required=True)
+    voice_voices = voice_sub.add_parser("voices")
+    voice_voices.add_argument("--json", action="store_true")
     voice_doctor_parser = voice_sub.add_parser("doctor")
     voice_doctor_parser.add_argument("episode_id", nargs="?")
     voice_doctor_parser.add_argument("--narrator")
@@ -311,7 +337,19 @@ def build_parser() -> argparse.ArgumentParser:
     for name in ("plan", "render", "status"):
         command = voice_sub.add_parser(name)
         command.add_argument("episode_id")
+        if name == "plan":
+            command.add_argument("--narrator")
         command.add_argument("--json", action="store_true")
+    voice_review = voice_sub.add_parser("review")
+    voice_review.add_argument("episode_id")
+    voice_review.add_argument("beat_id")
+    voice_review.add_argument("--select", required=True)
+    voice_review.add_argument("--reviewer", default="human")
+    voice_review.add_argument("--json", action="store_true")
+    voice_assemble = voice_sub.add_parser("assemble")
+    voice_assemble.add_argument("episode_id")
+    voice_assemble.add_argument("--pause-seconds", type=float, default=0.0)
+    voice_assemble.add_argument("--json", action="store_true")
 
     qc = sub.add_parser("qc")
     qc_sub = qc.add_subparsers(dest="qc_command", required=True)

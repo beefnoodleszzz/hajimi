@@ -1,211 +1,116 @@
 schema_version: visual-concept-v2
+episode_id: EP001_earth-stop
 visual_language:
-  visual_thesis: One eastward vector makes a familiar frame disagree with itself.
-  motif: red object + cyan vector + layered horizontal surfaces
-  scale_language: personal object → body → city → land/air/ocean system
-  movement_language: rightward momentum against locked planes; no random shake
-  lighting_language: late-afternoon warmth for normality, cyan scientific separation
-    for the anomaly
-  color_language: charcoal base, cyan information, red danger/object anchor
-  contrast: one focal relationship per frame; empty space protects the vector
-  texture: road grit, paper edge, cloud shear, water surface; never texture for decoration
+  visual_thesis: A small moving witness exposes a layered planet that no longer shares
+    one baseline.
+  motif: metal key + displaced shadow + cyan motion ledger
+  scale_language: object to hand to street to atmosphere to ocean to coupled system
+  movement_language: eastward continuation against locked references; no random shake
+  lighting_language: ordinary warm surface, cool cyan layer separation at the anomaly
+  color_language: charcoal base, cyan information, red measurement mark, steel key
+  contrast: one boundary or vector per frame
+  texture: brushed metal, road grit, dust edge, cloud shear, water seam
 hero_frames:
-- concept: land/air/ocean restart mismatch
-  composition: three clean horizontal bands with measured 465m vector
-  foreground: locked land slab and red receipt
-  midground: air/cloud band offset right
-  background: ocean sheet offset right
-  subject_action: land restarts first
+- shot_id: S006
+  concept: layered reference-frame restart
+  composition: four horizontal bands with a key vector crossing the locked land band
+  foreground: land and key
+  midground: air band
+  background: ocean band
+  subject_action: land snaps while upper layers lag east
   camera: orthographic side cutaway
-  lighting: charcoal with cyan rim and red accent
   production_method: blender_ai_hybrid
 shots:
 - shot_id: S001
   tier: CONNECTOR
-  visual_goal: Make the anomaly readable before the explanation.
-  composition: road-level wide; horizon upper third
-  focal_subject: red receipt
-  camera_position: low locked camera
-  lens: 28mm
-  camera_motion: snap to locked horizon
-  subject_motion: receipt continues right
-  foreground: road foreground
-  midground: receipt midground
-  background: horizon background
-  lighting: late-afternoon hard side light
-  atmosphere: dust freezes after the snap
-  visual_event: state change
+  visual_goal: Make the anomaly legible before explanation
+  composition: key on a dark surface with a hard horizon
+  focal_subject: metal key and dust shadow
+  camera: low locked macro
+  action: surface freezes while key crosses
   transition: hard cut from black
   method_candidates:
+  - blender
   - ai_video
-  - hybrid
 - shot_id: S002
   tier: STORY
-  visual_goal: Translate inertia into a body-scale danger.
-  composition: rear three-quarter medium with road markings
-  focal_subject: silhouette and receipt
-  camera_position: 1.6m tracking height
-  lens: 35mm
-  camera_motion: subtle lateral track
-  subject_motion: body and receipt move right
-  foreground: road
-  midground: body
-  background: empty eastward negative space
-  lighting: warm key, cool shadow
-  atmosphere: paper motion streak
-  visual_event: subject motion
-  transition: rightward match
+  visual_goal: Transfer the retained motion from object to body
+  composition: hand reaches for the key as the mark stays behind
+  focal_subject: hand/key/mark
+  camera: rear three-quarter medium
+  action: hand inherits eastward motion
+  transition: match on key edge
   method_candidates:
   - ai_video
+  - blender
 - shot_id: S003
   tier: CONNECTOR
-  visual_goal: Make rotational speed feel like a live vector.
-  composition: centered graphic with road texture
-  focal_subject: 465 m/s
-  camera_position: orthographic
-  lens: graphic
-  camera_motion: number punch
-  subject_motion: vector sweeps right
-  foreground: texture
-  midground: number
-  background: cyan vector
-  lighting: cyan against charcoal
-  atmosphere: clean line draw
-  visual_event: information reveal
-  transition: vector match
+  visual_goal: Convert rotation into measurable distance
+  composition: one-second ruler crosses a sparse street grid
+  focal_subject: ruler and 465 m label
+  camera: orthographic overhead
+  action: endpoint snaps into place
+  transition: key trajectory becomes ruler
   method_candidates:
   - fusion
+  - blender
 - shot_id: S004
   tier: STORY
-  visual_goal: Turn one second into distance.
-  composition: top-down city blocks with origin/end points
-  focal_subject: 465m ruler
-  camera_position: orthographic overhead
-  lens: graphic
-  camera_motion: controlled push along ruler
-  subject_motion: ruler advances right
-  foreground: city grid
-  midground: ruler
-  background: endpoint
-  lighting: high-contrast red/cyan
-  atmosphere: map grid pulses once
-  visual_event: scale change
-  transition: vector extends
+  visual_goal: Show air as a moving layer
+  composition: fixed window bars over a sliding cloud band
+  focal_subject: cloud band and baseline
+  camera: locked side view
+  action: cloud texture shears through frame
+  transition: ruler line becomes cloud edge
   method_candidates:
-  - fusion
   - blender
+  - ai_video
 - shot_id: S005
   tier: STORY
-  visual_goal: Reveal the air as a moving layer.
-  composition: side cutaway of city slab and atmosphere band
-  focal_subject: cloud band
-  camera_position: eye-level abstraction
-  lens: 45mm
-  camera_motion: controlled pull back
-  subject_motion: cloud band moves right
-  foreground: land slab
-  midground: air band
-  background: distant haze
-  lighting: cool atmospheric rim
-  atmosphere: thin cloud trails
-  visual_event: composition change
-  transition: line becomes cloud
+  visual_goal: Add the ocean without scenic filler
+  composition: coastline seam with locked land and moving water
+  focal_subject: land/water boundary
+  camera: elevated side cutaway
+  action: water line continues east
+  transition: cloud edge becomes coast seam
   method_candidates:
   - blender
+  - ai_video
 - shot_id: S006
-  tier: STORY
-  visual_goal: Escalate from air to ocean without scenic filler.
-  composition: coastline cross-section; water line dominates
-  focal_subject: ocean surface
-  camera_position: high side view
-  lens: 35mm
-  camera_motion: single crane back
-  subject_motion: water continues right
-  foreground: coast
-  midground: water sheet
-  background: vector line
-  lighting: deep blue with red land accent
-  atmosphere: surface shear
-  visual_event: impact
-  transition: cloud trace becomes water trace
+  tier: HERO
+  visual_goal: Deliver the causal explanation in one frame
+  composition: four clean horizontal layers with offset baselines and key vector
+  focal_subject: LAND/AIR/OCEAN/BODY relationship
+  camera: orthographic scientific cutaway
+  action: land restarts while upper layers lag
+  transition: impact cut from coast
   method_candidates:
   - blender
+  - fusion
+  - ai_image
 - shot_id: S007
-  tier: HERO
-  visual_goal: Deliver the one-frame causal explanation.
-  composition: clean horizontal three-layer scientific cutaway
-  focal_subject: LAND / AIR / OCEAN
-  camera_position: orthographic
-  lens: graphic
-  camera_motion: land snaps left; upper layers lag right
-  subject_motion: air and ocean offset right
-  foreground: land foreground
-  midground: air midground
-  background: ocean background
-  lighting: charcoal, cyan, red receipt accent
-  atmosphere: layered dust and water shear
-  visual_event: state change
-  transition: hard restart hit
-  method_candidates:
-  - blender_ai_hybrid
-  - hybrid
-- shot_id: S008
   tier: STORY
-  visual_goal: Correct the fly-into-space misconception.
-  composition: silhouette with empty right-side vector space
-  focal_subject: body plus down/right arrows
-  camera_position: orthographic
-  lens: graphic
-  camera_motion: arrows draw on
-  subject_motion: right vector grows; down vector stays
-  foreground: silhouette
-  midground: arrows
-  background: negative space
-  lighting: neutral light with red danger accent
-  atmosphere: brief silence gap
-  visual_event: information reveal
-  transition: offset becomes vectors
+  visual_goal: Correct vertical-flight misconception
+  composition: down arrow stays while eastward arrow expands
+  focal_subject: body silhouette and down/east arrows
+  camera: centered graphic
+  action: sideways vector grows
+  transition: layer offsets become arrows
   method_candidates:
   - fusion
-- shot_id: S009
+- shot_id: S008
   tier: CONNECTOR
-  visual_goal: Name the thesis without repeating the hero.
-  composition: centered phrase over ghosted offsets
-  focal_subject: MOTION ≠ GROUND
-  camera_position: orthographic
-  lens: graphic
-  camera_motion: phrase resolves from layers
-  subject_motion: offsets pulse once
-  foreground: ghosted layers
-  midground: phrase
-  background: red accent
-  lighting: minimal charcoal/cyan
-  atmosphere: single restrained pulse
-  visual_event: payoff
-  transition: silence to road
+  visual_goal: Close the loop with the original witness
+  composition: original key and shadow mark now separated
+  focal_subject: key/mark
+  camera: same locked macro as opening
+  action: dust settles beyond mark
+  transition: match S001
   method_candidates:
-  - fusion
-- shot_id: S010
-  tier: CONNECTOR
-  visual_goal: Prove the loop with the original object.
-  composition: opening road, wider negative space
-  focal_subject: receipt at changed position
-  camera_position: low locked camera
-  lens: 28mm
-  camera_motion: almost locked
-  subject_motion: dust settles; receipt rests east
-  foreground: road
-  midground: displaced receipt
-  background: horizon
-  lighting: same as S001
-  atmosphere: dust settle
-  visual_event: callback
-  transition: match S001 framing
-  method_candidates:
-  - hybrid
+  - blender
   - ai_image
 rejections:
-- pretty scenic coastline without causal action
-- static AI plate plus paragraph narration
-- same camera motion on every shot
-- complex frame with no focal relationship
+- scenic coastline without causal seam
+- static AI plate under long narration
+- repeated camera logic
+- dense labels that hide the moving boundary

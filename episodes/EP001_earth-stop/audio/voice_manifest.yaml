@@ -1,187 +1,682 @@
-schema_version: voice-manifest-v1
+schema_version: voice-manifest-v2
 provider: voxcpm2_local
 narrator: science_female_main
-mode: ultimate
-script_hash: 904f0118d0eb4e187ef6773591def5c7cea9d745d167ee79129a905603df34ea
+language: en
+script_hash: d74e6fab6a34296e47adc5bcca2962d35a82dc4a396c2782e0a2668dd561c189
 model: mlx-community/VoxCPM2-bf16
 reference_voice: science_female_main/neutral
-reference_hash: null
-selection_policy:
-  candidate_count: 3
-  selected_candidate: candidate_02
-  selected_from: previous same-reference VoxCPM2 Ultimate vs Qwen comparison; candidate
-    02 was the approved friend-voice production take
-  human_listening_required: true
+reference_hash: 8442b34479eb7407dc82532047ea5f9317a63a1603b5484bc4efef26bd1367a3
 voice_direction:
-  schema_version: voice-direction-v1
+  schema_version: voice-direction-v2
   narrator: science_female_main
   provider: voxcpm2_local
-  mode: ultimate
-  global:
-    character:
-    - intelligent
-    - cinematic
-    - confident
-    - restrained
-    - mature English female narrator
-    forbidden:
-    - whisper
-    - ASMR delivery
-    - seductive
-    - sleepy
-    - overacted
-    - radio-commercial
-    note: Preserve identity from the authorized friend reference; style control must
-      not erase identity.
+  mode: per_line
+  voice_identity:
+    name: 朋友女性主声 A（已授权）
+    language: en
+    styles:
+    - neutral
+    authorization_status: authorized
+    commercial_use: true
   beats:
   - id: B001
-    text: The road freezes—your momentum doesn't.
-    energy: controlled
-    pace: medium-fast
-    emphasis:
-    - road freezes
-    - momentum
-    pause_before_ms: 120
-    pause_after_ms: 80
-    emotional_intent: curiosity → danger
+    text: The ground can stop without taking your motion with it.
+    direction:
+      energy: controlled
+      pace: medium-fast
+      emotional_intent: curiosity to danger
+      emphasis:
+      - ground
+      - motion
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium-fast,
+        emphasis: ground, motion'
+      candidate_count: 3
   - id: B002
-    text: At the equator, your body is already moving east at roughly 465 meters per
-      second.
-    energy: urgent
-    pace: medium
-    emphasis:
-    - equator
-    - 465 meters per second
-    pause_before_ms: 80
-    pause_after_ms: 80
-    emotional_intent: danger → scale
+    text: That key is carrying the speed of the surface it was sitting on.
+    direction:
+      energy: precise
+      pace: medium
+      emotional_intent: danger to scale
+      emphasis:
+      - carrying
+      - speed
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: precise, pace: medium,
+        emphasis: carrying, speed'
+      candidate_count: 2
   - id: B003
-    text: Stop the surface, and that eastward speed has nowhere to go.
-    energy: precise
-    pace: medium
-    emphasis:
-    - eastward speed
-    - nowhere to go
-    pause_before_ms: 80
-    pause_after_ms: 80
-    emotional_intent: scale → tension
+    text: Near the equator, that motion is roughly four hundred sixty-five meters
+      per second.
+    direction:
+      energy: clear
+      pace: medium
+      emotional_intent: scale
+      emphasis:
+      - equator
+      - four hundred sixty-five meters per second
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: clear, pace: medium, emphasis:
+        equator, four hundred sixty-five meters per second'
+      candidate_count: 2
   - id: B004
-    text: In one second, you slide about 465 meters past the surface.
-    energy: astonished
-    pace: medium-slow
-    emphasis:
-    - one second
-    - 465 meters
-    pause_before_ms: 100
-    pause_after_ms: 100
-    emotional_intent: tension → awe
+    text: Stop the surface, and the air above it still has the old vector.
+    direction:
+      energy: ominous
+      pace: medium
+      emotional_intent: awe to systemic dread
+      emphasis:
+      - air
+      - old vector
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: ominous, pace: medium,
+        emphasis: air, old vector'
+      candidate_count: 2
   - id: B005
-    text: The air keeps the same vector, so the sky is no longer aligned with the
-      land.
-    energy: ominous
-    pace: medium
-    emphasis:
-    - air
-    - aligned
-    pause_before_ms: 80
-    pause_after_ms: 80
-    emotional_intent: awe → systemic dread
+    text: The ocean keeps its motion too, so the coastline loses its seam.
+    direction:
+      energy: grave
+      pace: medium-slow
+      emotional_intent: systemic dread
+      emphasis:
+      - ocean
+      - loses its seam
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: grave, pace: medium-slow,
+        emphasis: ocean, loses its seam'
+      candidate_count: 2
   - id: B006
-    text: The ocean keeps moving too; pavement and water no longer share a frame.
-    energy: grave
-    pace: medium
-    emphasis:
-    - ocean
-    - pavement
-    - water
-    pause_before_ms: 90
-    pause_after_ms: 90
-    emotional_intent: systemic dread → inevitability
+    text: When the ground restarts, Earth is no longer one shared frame.
+    direction:
+      energy: calm authority
+      pace: medium-slow
+      emotional_intent: awe
+      emphasis:
+      - restarts
+      - shared frame
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: calm authority, pace:
+        medium-slow, emphasis: restarts, shared frame'
+      candidate_count: 3
   - id: B007
-    text: When land restarts, Earth is no longer one aligned system.
-    energy: calm authority
-    pace: medium-slow
-    emphasis:
-    - land restarts
-    - aligned system
-    pause_before_ms: 120
-    pause_after_ms: 100
-    emotional_intent: inevitability → awe
-  - id: B008
     text: Gravity still points down. The dangerous motion is sideways.
-    energy: clear correction
-    pace: medium
-    emphasis:
-    - gravity
-    - sideways
-    pause_before_ms: 90
-    pause_after_ms: 100
-    emotional_intent: awe → understanding
-  - id: B009
+    direction:
+      energy: clear correction
+      pace: medium
+      emotional_intent: understanding
+      emphasis:
+      - down
+      - sideways
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: clear correction, pace:
+        medium, emphasis: down, sideways'
+      candidate_count: 2
+  - id: B008
     text: The disaster is everything else refusing to stop with the ground.
-    energy: restrained cinematic
-    pace: medium-slow
-    emphasis:
-    - disaster
-    - stop with the ground
-    pause_before_ms: 110
-    pause_after_ms: 100
-    emotional_intent: understanding → payoff
-  - id: B010
-    text: One second. 465 meters. Which layer moves first?
-    energy: inviting question
-    pace: slow with final lift
-    emphasis:
-    - one second
-    - 465 meters
-    - which layer
-    pause_before_ms: 100
-    pause_after_ms: 160
-    emotional_intent: payoff → curiosity
+    direction:
+      energy: restrained cinematic
+      pace: medium-slow
+      emotional_intent: payoff
+      emphasis:
+      - disaster
+      - refusing to stop
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: restrained cinematic,
+        pace: medium-slow, emphasis: disaster, refusing to stop'
+      candidate_count: 3
+  - id: B009
+    text: If the ground restarts first, which layer would you trust?
+    direction:
+      energy: inviting question
+      pace: slow
+      emotional_intent: curiosity
+      emphasis:
+      - restarts first
+      - which layer
+      pause_before_ms: 80
+      pause_after_ms: 80
+    voxcpm2:
+      emotion: neutral
+      style: neutral
+      mode: controllable
+      instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: inviting question, pace:
+        slow, emphasis: restarts first, which layer'
+      candidate_count: 3
+selection_policy:
+  key_beat_candidate_count: 3
+  normal_beat_candidate_count: 1-2
+  human_listening_required: true
+  automatic_selection: screening_only
 takes:
   B001:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B001/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B001/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.3601666666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B001/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B001/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.0401666666666665
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B001/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B001/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.520166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B002:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B002/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B002/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.160166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B002/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B002/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.320166666666666
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B002/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B002/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.6401666666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B003:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B003/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B003/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 5.440166666666666
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B003/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B003/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.480166666666666
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B003/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B003/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.960166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B004:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B004/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B004/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.520166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B004/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B004/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.800166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B004/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B004/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.520166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B005:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B005/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B005/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 5.120166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B005/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B005/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.6801666666666666
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B005/candidate_03.wav
+      metrics:
+        audio_qc: WARN
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B005/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 5.6001666666666665
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B006:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B006/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B006/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.160166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B006/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B006/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.8401666666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B006/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B006/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.160166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B007:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B007/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B007/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 5.920166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B007/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B007/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.480166666666666
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B007/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B007/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.6401666666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B008:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B008/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B008/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.8401666666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B008/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B008/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.520166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B008/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B008/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 5.760166666666667
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
   B009:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
-  B010:
-    selected: candidate_02
-    candidates: []
-    status: PLANNED
+    candidates:
+    - id: candidate_01
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B009/candidate_01.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B009/candidate_01.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.3601666666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_02
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B009/candidate_02.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B009/candidate_02.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 3.520166666666667
+        clipping: null
+        speaker_similarity: null
+    - id: candidate_03
+      path: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B009/candidate_03.wav
+      metrics:
+        audio_qc: PASS
+        transcript_qc:
+          status: ERROR
+          pass: null
+          cer: null
+          error: 'Local ASR failed (SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false):
+            Command ''[''.venv/bin/python'', ''scripts/asr_transcribe.py'', ''/Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/B009/candidate_03.wav'']''
+            returned non-zero exit status 1.'
+          backend_id: SenseVoiceSmall@8ddd966bd96243cff196422f81f0c5d955814792:zh:itn=false
+          config_sha256: 7b0f433af25ddc9cc1baa389ffbaf85ca61bb3cd2731811cfedd673f1ad97694
+        duration: 4.320166666666666
+        clipping: null
+        speaker_similarity: null
+    screened_candidate: candidate_01
+    selected: null
+    selection_status: AWAITING_HUMAN
 production_voice:
   provider: voxcpm2_local
-  status: PLANNED
+  status: REVIEW_REQUIRED
   temporary: false
   path: null
   sha256: null
+  script_hash: d74e6fab6a34296e47adc5bcca2962d35a82dc4a396c2782e0a2668dd561c189
+  voice_id: science_female_main
+  reference_hash: 8442b34479eb7407dc82532047ea5f9317a63a1603b5484bc4efef26bd1367a3
+  model_identity:
+    model_repo: mlx-community/VoxCPM2-bf16
+provenance:
+  voice_library: /Users/zhangxiaolong/AI/voxcpm2-local/voices/science_female_main/voice.json
+  runtime: voxcpm2_local
+render_manifest: /Users/zhangxiaolong/AI/voxcpm2-local/outputs/raw/hajimi_EP001_earth-stop_voxcpm2/run_0001/manifest.json

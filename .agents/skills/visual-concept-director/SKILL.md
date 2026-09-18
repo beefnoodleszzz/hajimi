@@ -7,7 +7,8 @@ triggers: visual concept, hero frame, visual language, visual motif
 # Objective
 
 Design visual language, hero frames, and shot-level visual actions that carry
-the story on mute.
+the current story on mute. Read the current creative direction and beat
+intent; do not reuse a legacy shot list just because it exists.
 
 # Required Output
 
@@ -19,4 +20,5 @@ candidates for every shot.
 
 Reject decorative plates, narration-only coverage, repeated camera logic,
 subtitle-dependent frames, and complex compositions without a clear focal
-relationship. This role does not write research or final generation prompts.
+relationship. This role does not write research, final generation prompts, or
+Python-owned hero shots.

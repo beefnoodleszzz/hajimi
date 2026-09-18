@@ -16,7 +16,11 @@ are ranked by retention and visual comprehension before production cost.
 # Inputs
 
 Research pack, reference deconstruction, channel brand language, and episode
-manifest.
+manifest, idea analysis, angle mutations, and tournament comparisons.
+
+Read the tournament before deciding. Challenge its apparent strongest angle,
+reject generic or generation-hostile answers, and preserve the tournament's
+composite direction rather than selecting by numeric rank.
 
 # Outputs
 
@@ -53,7 +57,8 @@ Manifest loader, reference pattern YAML, Beads.
 
 # Forbidden Patterns
 
-Do not write research, build Blender scenes, or approve a final upload.
+Do not write research, build Blender scenes, approve a final upload, or call a
+fixed `_creative_direction()` answer.
 
 # Handoff
 

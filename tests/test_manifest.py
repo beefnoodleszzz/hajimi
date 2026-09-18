@@ -14,7 +14,7 @@ class ManifestTests(unittest.TestCase):
         manifest = load_manifest(path)
         self.assertEqual(validate_manifest(manifest, path), [])
         self.assertEqual([shot["id"] for shot in manifest["shots"]], [f"S{index:03d}" for index in range(1, 11)])
-        self.assertEqual(manifest["creative"]["hero_shot"], "S007")
+        self.assertEqual(manifest["creative"]["hero_shot"], "S006")
 
     def test_methods_are_explicit(self):
         path = ROOT / "episodes" / "EP001_earth-stop" / "episode.yaml"
