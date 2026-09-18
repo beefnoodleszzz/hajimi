@@ -1,5 +1,5 @@
 {
-  "blend": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/artifacts/geometry_nodes_library.blend",
+  "blend": "./blender/generated/artifacts/geometry_nodes_library.blend",
   "groups": [
     {
       "name": "HJ_ArrowVector",

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from studio.blender_stack import _plugin_matrix, _profile, _target_info
+from studio.blender_stack import _plugin_matrix, _portableize, _profile, _target_info
 from studio.config import load_yaml
 
 
@@ -79,3 +79,38 @@ def test_free_replacement_matrix_records_loaded_extension_and_replacement_role()
     assert matrix["scatter_objects"]["status"] == "PASS"
     assert matrix["scatter_objects"]["replacement_for"] == "geoscatter"
     assert matrix["scatter_objects"]["detected_version"] == [0, 2, 0]
+
+
+def test_demo_plugin_is_not_reported_as_full_production_capability():
+    config = load_yaml(ROOT / "config" / "blender.yaml")
+    packages = {key: [] for key in config["plugins"]}
+    packages["flip_fluids"] = ["blender/installers/FLIP_Fluids_demo_release.zip"]
+    loaded = {
+        "addons": {
+            "flip_fluids_addon": {
+                "module": "flip_fluids_addon",
+                "loaded": True,
+                "enabled": True,
+                "version": [1, 8, 8],
+            }
+        }
+    }
+
+    matrix = _plugin_matrix(config, {}, packages, loaded)
+
+    assert matrix["flip_fluids"]["status"] == "DEMO_LIMITED"
+    assert matrix["flip_fluids"]["capability_status"] == "DEMO_LIMITED"
+    assert matrix["flip_fluids"]["production_final_allowed"] is False
+
+
+def test_generated_blender_evidence_uses_portable_paths():
+    payload = _portableize(
+        ROOT,
+        {
+            "scene": str(ROOT / "blender" / "generated" / "scene.blend"),
+            "assets": str(ROOT / "blender" / "assets" / "curated"),
+        },
+    )
+
+    assert payload["scene"] == "./blender/generated/scene.blend"
+    assert payload["assets"] == "${HAJIMI_ASSETS}/curated"

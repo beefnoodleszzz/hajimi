@@ -43,4 +43,4 @@ Do not approve a shot or edit the timeline.
 
 # Handoff
 
-Pass shot briefs to `blender-shot`, `ai-visual-producer`, or `resolve-editor`.
+Pass shot briefs to `blender-production`, `ai-visual-producer`, or `resolve-editor`.

@@ -1,0 +1,8 @@
+animatic:
+  profile_version: animatic-gate-v2
+  visual_cadence:
+    target_min_sec: 1.0
+    target_max_sec: 3.0
+  static_hold:
+    max_sec: 5.0
+    low_variation_threshold: 0.02

@@ -39,8 +39,8 @@
   "asset_libraries": [
     {
       "name": "Hajimi Curated",
-      "expected_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/curated",
-      "actual_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/curated",
+      "expected_path": "${HAJIMI_ASSETS}/curated",
+      "actual_path": "${HAJIMI_ASSETS}/curated",
       "registered": true,
       "path_matches": true,
       "exists": true,
@@ -48,8 +48,8 @@
     },
     {
       "name": "Hajimi Cameras",
-      "expected_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/cameras",
-      "actual_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/cameras",
+      "expected_path": "${HAJIMI_ASSETS}/cameras",
+      "actual_path": "${HAJIMI_ASSETS}/cameras",
       "registered": true,
       "path_matches": true,
       "exists": true,
@@ -57,8 +57,8 @@
     },
     {
       "name": "Hajimi Materials",
-      "expected_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/materials",
-      "actual_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/materials",
+      "expected_path": "${HAJIMI_ASSETS}/materials",
+      "actual_path": "${HAJIMI_ASSETS}/materials",
       "registered": true,
       "path_matches": true,
       "exists": true,
@@ -66,8 +66,8 @@
     },
     {
       "name": "Hajimi Environments",
-      "expected_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/environments",
-      "actual_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/environments",
+      "expected_path": "${HAJIMI_ASSETS}/environments",
+      "actual_path": "${HAJIMI_ASSETS}/environments",
       "registered": true,
       "path_matches": true,
       "exists": true,
@@ -75,8 +75,8 @@
     },
     {
       "name": "Hajimi FX",
-      "expected_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/fx",
-      "actual_path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/fx",
+      "expected_path": "${HAJIMI_ASSETS}/fx",
+      "actual_path": "${HAJIMI_ASSETS}/fx",
       "registered": true,
       "path_matches": true,
       "exists": true,
@@ -85,23 +85,23 @@
   ],
   "startup_registration": {
     "status": "PASS",
-    "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/scripts/startup/hajimi_bootstrap.py"
+    "path": "./blender/scripts/startup/hajimi_bootstrap.py"
   },
   "smoke": {
     "eevee": {
       "engine": "BLENDER_EEVEE",
       "status": "PASS",
       "resolved_engine": "BLENDER_EEVEE",
-      "duration_sec": 0.926,
-      "output": "/Users/zhangxiaolong/Desktop/hajimi/config/generated/blender_smoke/eevee.png",
+      "duration_sec": 1.098,
+      "output": "./config/generated/blender_smoke/eevee.png",
       "exists": true
     },
     "cycles": {
       "engine": "CYCLES",
       "status": "PASS",
       "resolved_engine": "CYCLES",
-      "duration_sec": 0.044,
-      "output": "/Users/zhangxiaolong/Desktop/hajimi/config/generated/blender_smoke/cycles.png",
+      "duration_sec": 0.042,
+      "output": "./config/generated/blender_smoke/cycles.png",
       "exists": true
     }
   }

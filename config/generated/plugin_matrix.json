@@ -21,7 +21,30 @@
       "physical_motion_blur",
       "sun_position"
     ],
-    "capability_status": "PASS_WITH_REPLACEMENT"
+    "capability_status": "PARTIAL",
+    "capabilities": {
+      "physical_exposure": {
+        "status": "PARTIAL",
+        "provided_by": "photographer",
+        "production_final_allowed": false
+      },
+      "shutter_control": {
+        "status": "PARTIAL",
+        "provided_by": "photographer",
+        "production_final_allowed": false
+      },
+      "advanced_camera_controls": {
+        "status": "PARTIAL",
+        "provided_by": "photographer",
+        "production_final_allowed": false
+      },
+      "light_mixer": {
+        "status": "PARTIAL",
+        "provided_by": "photographer",
+        "production_final_allowed": false
+      }
+    },
+    "production_final_allowed": false
   },
   "geoscatter": {
     "display_name": "Geo-Scatter",
@@ -45,7 +68,35 @@
       "scatter_objects",
       "bagapie"
     ],
-    "capability_status": "PASS_WITH_REPLACEMENT"
+    "capability_status": "PARTIAL",
+    "capabilities": {
+      "basic_scatter": {
+        "status": "PARTIAL",
+        "provided_by": "geoscatter",
+        "production_final_allowed": false
+      },
+      "procedural_scatter": {
+        "status": "PARTIAL",
+        "provided_by": "geoscatter",
+        "production_final_allowed": false
+      },
+      "ecosystem_presets": {
+        "status": "PARTIAL",
+        "provided_by": "geoscatter",
+        "production_final_allowed": false
+      },
+      "camera_culling": {
+        "status": "PARTIAL",
+        "provided_by": "geoscatter",
+        "production_final_allowed": false
+      },
+      "advanced_biome_workflow": {
+        "status": "PARTIAL",
+        "provided_by": "geoscatter",
+        "production_final_allowed": false
+      }
+    },
+    "production_final_allowed": false
   },
   "physical_atmosphere": {
     "display_name": "Physical Atmosphere²",
@@ -69,7 +120,35 @@
       "dynamic_sky",
       "helio"
     ],
-    "capability_status": "PASS_WITH_REPLACEMENT"
+    "capability_status": "PARTIAL",
+    "capabilities": {
+      "procedural_sky": {
+        "status": "PARTIAL",
+        "provided_by": "physical_atmosphere",
+        "production_final_allowed": false
+      },
+      "sun_position": {
+        "status": "PARTIAL",
+        "provided_by": "physical_atmosphere",
+        "production_final_allowed": false
+      },
+      "fog": {
+        "status": "PARTIAL",
+        "provided_by": "physical_atmosphere",
+        "production_final_allowed": false
+      },
+      "volumetric_clouds": {
+        "status": "PARTIAL",
+        "provided_by": "physical_atmosphere",
+        "production_final_allowed": false
+      },
+      "advanced_weather_system": {
+        "status": "PARTIAL",
+        "provided_by": "physical_atmosphere",
+        "production_final_allowed": false
+      }
+    },
+    "production_final_allowed": false
   },
   "poliigon": {
     "display_name": "Poliigon Blender Addon",
@@ -98,7 +177,15 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "poliigon",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "botaniq_engon": {
     "display_name": "engon / botaniq",
@@ -127,13 +214,21 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "botaniq_engon",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "flip_fluids": {
     "display_name": "FLIP Fluids",
     "required": false,
     "expected_version": "1.8.8",
-    "status": "PASS",
+    "status": "DEMO_LIMITED",
     "blocking": false,
     "installed": true,
     "enabled": true,
@@ -156,7 +251,20 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "DEMO_LIMITED",
+    "capabilities": {
+      "fluid_simulation": {
+        "status": "DEMO_LIMITED",
+        "provided_by": "flip_fluids",
+        "production_final_allowed": false
+      },
+      "production_license": {
+        "status": "DEMO_LIMITED",
+        "provided_by": "flip_fluids",
+        "production_final_allowed": false
+      }
+    },
+    "production_final_allowed": false
   },
   "scatter_objects": {
     "display_name": "Scatter Objects (Geo-Scatter replacement)",
@@ -185,7 +293,15 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "scatter_objects",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "bagapie": {
     "display_name": "BagaPie (Geo-Scatter community replacement)",
@@ -214,7 +330,15 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "bagapie",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "physical_motion_blur": {
     "display_name": "Physical Motion Blur (Photographer replacement)",
@@ -243,7 +367,15 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "physical_motion_blur",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "sun_position": {
     "display_name": "Sun Position (Photographer replacement)",
@@ -272,7 +404,15 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "sun_position",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "dynamic_sky": {
     "display_name": "Dynamic Sky (Physical Atmosphere replacement)",
@@ -301,7 +441,15 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "dynamic_sky",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   },
   "helio": {
     "display_name": "Helio (Physical Atmosphere solar replacement)",
@@ -330,6 +478,14 @@
     ],
     "policy": "inspect-only; no automatic download or license bypass",
     "satisfied_by_replacements": [],
-    "capability_status": "PASS"
+    "capability_status": "PASS",
+    "capabilities": {
+      "core_plugin": {
+        "status": "PASS",
+        "provided_by": "helio",
+        "production_final_allowed": true
+      }
+    },
+    "production_final_allowed": true
   }
 }

@@ -1,5 +1,5 @@
 episode_id: EP001_earth-stop
-status: qc_pending
+status: animatic
 channel: The World You Never Knew
 format: youtube_short
 language: en-US
@@ -22,6 +22,76 @@ creative:
   target_duration_sec: 38
   time_to_anomaly_sec: 0.38
   loop_strategy: Return to the same road with the red receipt displaced.
+visual_events:
+- time: 0.0
+  type: state_change
+  description: road locks while the receipt remains in motion
+- time: 1.2
+  type: cut
+  description: the visual argument moves from ground to body
+- time: 2.6
+  type: subject_motion
+  description: body and receipt continue eastward
+- time: 4.0
+  type: information_reveal
+  description: equatorial speed becomes the scale anchor
+- time: 5.5
+  type: scale_change
+  description: street motion expands into a measurable vector
+- time: 7.0
+  type: graphic_reveal
+  description: one-second displacement is drawn across the map
+- time: 9.0
+  type: subject_motion
+  description: the distance marker advances east
+- time: 11.0
+  type: composition_change
+  description: the frame separates land from the moving air layer
+- time: 13.0
+  type: subject_motion
+  description: the cloud layer carries the original momentum
+- time: 15.0
+  type: graphic_reveal
+  description: land and air are visibly out of alignment
+- time: 16.0
+  type: cut
+  description: the moving layer expands from air to ocean
+- time: 18.0
+  type: subject_motion
+  description: the ocean surface continues eastward
+- time: 20.0
+  type: impact
+  description: the pavement is no longer aligned with the water
+- time: 21.0
+  type: cut
+  description: the system restarts from the land layer
+- time: 23.0
+  type: composition_change
+  description: land holds while air and water lag right
+- time: 25.0
+  type: information_reveal
+  description: the mismatch becomes the hero visual
+- time: 27.0
+  type: cut
+  description: gravity is separated from sideways motion
+- time: 29.0
+  type: subject_motion
+  description: the body falls while its sideways vector persists
+- time: 31.0
+  type: cut
+  description: the physical explanation resolves into the thesis
+- time: 33.0
+  type: information_reveal
+  description: one-second mismatch is named as the disaster
+- time: 35.0
+  type: cut
+  description: the callback returns to the original road
+- time: 36.5
+  type: transition
+  description: the receipt displacement closes the loop
+- time: 38.0
+  type: information_reveal
+  description: the question what moves first remains as the hook
 script:
   version: 1
   path: script/script_v01.md
@@ -59,7 +129,7 @@ shots:
   time_start: 1.2
   time_end: 4.0
   method: ai_video
-  status: approved
+  status: qc_pending
   visual_change: body and receipt continue right while pavement stays fixed
 - id: S003
   role: equatorial_speed
@@ -83,7 +153,7 @@ shots:
   time_start: 11.0
   time_end: 16.0
   method: blender
-  status: approved
+  status: qc_pending
   visual_change: air and cloud layer keep the same eastward momentum
 - id: S006
   role: ocean_inertia

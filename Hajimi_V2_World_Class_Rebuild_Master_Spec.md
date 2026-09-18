@@ -221,7 +221,7 @@ hajimi/
 │       │   └── SKILL.md
 │       ├── shot-designer/
 │       │   └── SKILL.md
-│       ├── blender-shot/
+│       ├── blender-production/
 │       │   └── SKILL.md
 │       ├── ai-visual-producer/
 │       │   └── SKILL.md
@@ -1296,7 +1296,7 @@ Animatic fail：
 
 ---
 
-## 31.8 blender-shot
+## 31.8 blender-production
 
 职责：
 
@@ -1518,7 +1518,7 @@ If a task is primarily:
 - script → short-script-editor
 - storyboard → storyboard-director
 - animatic → animatic-director
-- Blender → blender-shot
+- Blender → blender-production
 - AI generation → ai-visual-producer
 - editing → resolve-editor
 - sound → sound-designer

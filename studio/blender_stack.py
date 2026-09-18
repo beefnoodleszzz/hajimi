@@ -159,6 +159,41 @@ def _json_hash(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
 
 
+def _portableize(root: Path, value: Any) -> Any:
+    """Remove machine-specific paths from generated Blender evidence."""
+
+    root = root.resolve()
+    assets_root = (root / "blender" / "assets").resolve()
+    root_text = str(root)
+    assets_text = str(assets_root)
+    blender_binary = _find_blender()
+
+    def walk(item: Any) -> Any:
+        if isinstance(item, dict):
+            return {key: walk(value) for key, value in item.items()}
+        if isinstance(item, list):
+            return [walk(value) for value in item]
+        if isinstance(item, tuple):
+            return [walk(value) for value in item]
+        if not isinstance(item, str):
+            return item
+        result = item.replace(assets_text, "${HAJIMI_ASSETS}")
+        result = result.replace(root_text, ".")
+        if blender_binary:
+            result = result.replace(blender_binary, "${BLENDER_BIN}")
+        return result
+
+    return walk(value)
+
+
+def _write_blender_json(root: Path, value: Any, path: Path) -> None:
+    write_json(_portableize(root, value), path)
+
+
+def _write_blender_yaml(root: Path, value: dict[str, Any], path: Path) -> None:
+    dump_yaml(_portableize(root, value), path)
+
+
 def _ensure_dirs(paths: dict[str, Path]) -> None:
     for path in paths.values():
         if path.suffix:
@@ -237,7 +272,7 @@ def _invoke_blender(
         }
     log_path = paths["logs"] / f"{name}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    log_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    log_path.write_text(json.dumps(_portableize(root, result), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     event = {
         "operation": name,
         "duration_sec": result.get("duration_sec"),
@@ -251,7 +286,7 @@ def _invoke_blender(
         "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
     event_path = paths["logs"] / f"{time.strftime('%Y%m%dT%H%M%S')}_{name}.jsonl"
-    event_path.write_text(json.dumps(event, ensure_ascii=False) + "\n", encoding="utf-8")
+    event_path.write_text(json.dumps(_portableize(root, event), ensure_ascii=False) + "\n", encoding="utf-8")
     result["event_log"] = str(event_path)
     return result
 
@@ -526,6 +561,11 @@ def _plugin_matrix(
         else:
             status = "BLOCKED"
         package_variant = "demo" if any("demo" in path.lower() for path in packages) else "full"
+        if package_variant == "demo":
+            # Finding a demo archive is not proof of a production-licensed
+            # capability.  Keep it explicitly limited even when its module
+            # loads successfully.
+            status = "DEMO_LIMITED" if loaded else "BLOCKED_LICENSE_PACKAGE"
         detected_version = loaded_entry.get("version") if loaded_entry else None
         matrix[key] = {
             "display_name": plugin.get("display_name", key),
@@ -564,10 +604,33 @@ def _plugin_matrix(
         if replacements:
             value["satisfied_by_replacements"] = replacements
             value["blocking"] = False
-            value["capability_status"] = "PASS_WITH_REPLACEMENT"
+            value["capability_status"] = "PARTIAL"
         else:
             value["satisfied_by_replacements"] = []
             value["capability_status"] = "PASS" if value.get("status") == "PASS" else value.get("status")
+        plugin_config = config.get("plugins", {}).get(key, {})
+        configured_capabilities = plugin_config.get("capabilities", ["core_plugin"])
+        if isinstance(configured_capabilities, dict):
+            capability_names = [str(name) for name in configured_capabilities]
+        elif isinstance(configured_capabilities, list):
+            capability_names = [str(name) for name in configured_capabilities]
+        else:
+            capability_names = ["core_plugin"]
+        capability_status = value.get("capability_status")
+        value["capabilities"] = {
+            name: {
+                "status": capability_status,
+                "provided_by": key,
+                "production_final_allowed": capability_status in {"PASS", "PASS_NATIVE"},
+            }
+            for name in capability_names
+        }
+        value["production_final_allowed"] = capability_status in {"PASS", "PASS_NATIVE"}
+        if value.get("distribution_variant") == "demo":
+            value["production_final_allowed"] = False
+            for capability in value["capabilities"].values():
+                capability["status"] = "DEMO_LIMITED"
+                capability["production_final_allowed"] = False
     return matrix
 
 
@@ -603,6 +666,7 @@ def _doctor_impl(root: Path) -> dict[str, Any]:
         )
     if probe_path.exists():
         probe = json.loads(probe_path.read_text(encoding="utf-8"))
+        _write_blender_json(root, probe, probe_path)
     else:
         probe = {"bpy_import": False, "smoke": {}, "addon_modules": [], "error": "probe did not write output"}
     packages = _detect_local_packages(root, config)
@@ -627,6 +691,7 @@ def _doctor_impl(root: Path) -> dict[str, Any]:
         )
     if plugin_probe_path.exists():
         plugin_probe = json.loads(plugin_probe_path.read_text(encoding="utf-8"))
+        _write_blender_json(root, plugin_probe, plugin_probe_path)
     hardware = _host_hardware(binary)
     hardware.update(
         {
@@ -638,9 +703,9 @@ def _doctor_impl(root: Path) -> dict[str, Any]:
             "bpy_python_version": probe.get("python_version"),
         }
     )
-    write_json(hardware, paths["generated_config"] / "hardware.json")
+    _write_blender_json(root, hardware, paths["generated_config"] / "hardware.json")
     plugins = _plugin_matrix(config, probe, packages, plugin_probe)
-    write_json(plugins, paths["generated_config"] / "plugin_matrix.json")
+    _write_blender_json(root, plugins, paths["generated_config"] / "plugin_matrix.json")
     required_plugin_blockers = [key for key, value in plugins.items() if value.get("blocking")]
     smoke = probe.get("smoke", {})
     core_smoke = {
@@ -701,7 +766,7 @@ def _doctor_impl(root: Path) -> dict[str, Any]:
         "invocation": invoke,
         "plugin_invocation": plugin_invoke,
     }
-    write_json(payload, paths["generated_config"] / "blender_doctor.json")
+    _write_blender_json(root, payload, paths["generated_config"] / "blender_doctor.json")
     return payload
 
 
@@ -735,22 +800,35 @@ def _asset_index(root: Path, config: dict[str, Any], paths: dict[str, Path]) -> 
                 metadata_errors.append(f"asset source missing: {file}")
             if not sidecar.get("license"):
                 metadata_errors.append(f"asset license missing: {file}")
+            try:
+                portable_asset_path = str(file.relative_to(root))
+            except ValueError:
+                portable_asset_path = "${HAJIMI_ASSETS}/" + str(file.relative_to(assets_root)).replace("\\", "/")
+            try:
+                portable_sidecar_path = str(sidecar_path.relative_to(root)) if sidecar_path.exists() else None
+            except ValueError:
+                portable_sidecar_path = "${HAJIMI_ASSETS}/" + str(sidecar_path.relative_to(assets_root)).replace("\\", "/") if sidecar_path.exists() else None
             asset_records.append(
                 {
-                    "path": str(file.relative_to(root)),
+                    "path": portable_asset_path,
                     "sha256": actual_hash,
                     "source": sidecar.get("source", ""),
                     "license": sidecar.get("license", ""),
                     "asset_name": sidecar.get("asset_name"),
                     "tags": sidecar.get("tags", []),
-                    "sidecar": str(sidecar_path.relative_to(root)) if sidecar_path.exists() else None,
+                    "sidecar": portable_sidecar_path,
                 }
             )
+        try:
+            portable_library_path = str(path.relative_to(root))
+        except ValueError:
+            portable_library_path = "${HAJIMI_ASSETS}/" + str(path.relative_to(assets_root)).replace("\\", "/")
         libraries.append(
             {
                 "name": library.get("name"),
                 "category": library.get("category"),
                 "path": str(path),
+                "portable_path": portable_library_path,
                 "exists": path.exists(),
                 "writable": os.access(path, os.W_OK),
                 "asset_count": len(files),
@@ -765,9 +843,21 @@ def _asset_index(root: Path, config: dict[str, Any], paths: dict[str, Path]) -> 
         "libraries": libraries,
         "required_library_names": ["Hajimi Curated", "Hajimi Cameras", "Hajimi Materials", "Hajimi Environments", "Hajimi FX"],
     }
-    write_json(payload, paths["generated_config"] / "asset_library_matrix.json")
-    write_json(payload, paths["generated_artifacts"] / "asset_libraries.json")
-    write_json(payload, assets_root / "asset_library_index.json")
+    portable_payload = {
+        **payload,
+        "asset_root": "${HAJIMI_ASSETS}",
+        "libraries": [
+            {
+                **library,
+                "path": library.get("portable_path"),
+                "portable_path": library.get("portable_path"),
+            }
+            for library in libraries
+        ],
+    }
+    _write_blender_json(root, payload, paths["generated_config"] / "asset_library_matrix.json")
+    _write_blender_json(root, payload, paths["generated_artifacts"] / "asset_libraries.json")
+    _write_blender_json(root, portable_payload, assets_root / "asset_library_index.json")
     return payload
 
 
@@ -781,7 +871,7 @@ def configure_gpu(root: str | Path) -> dict[str, Any]:
     selected = next((device for device in devices if device.get("use") and device.get("type") != "CPU"), None)
     hardware["selected_device"] = selected
     hardware["selection_policy"] = "METAL on Apple Silicon; platform backend otherwise; CPU only as explicit fallback"
-    write_json(hardware, project / "config" / "generated" / "hardware_profile.json")
+    _write_blender_json(project, hardware, project / "config" / "generated" / "hardware_profile.json")
     return {"command": "configure_gpu", "status": report.get("status"), "hardware": hardware, "doctor": str(project / "config/generated/blender_doctor.json")}
 
 
@@ -795,7 +885,7 @@ def configure_assets(root: str | Path) -> dict[str, Any]:
     result = _asset_index(project, config, paths)
     result["command"] = "configure_assets"
     result["status"] = "PASS" if all(item.get("exists") and item.get("writable") for item in result.get("libraries", [])) else "BLOCKED"
-    write_json(result, paths["generated_config"] / "asset_browser_config.json")
+    _write_blender_json(project, result, paths["generated_config"] / "asset_browser_config.json")
     return result
 
 
@@ -816,7 +906,7 @@ def configure_render(root: str | Path) -> dict[str, Any]:
         "final_output_policy": "image_sequence",
         "final_resolution": [config.get("render", {}).get("final_width"), config.get("render", {}).get("final_height")],
     }
-    write_json(payload, paths["generated_config"] / "render_profiles.json")
+    _write_blender_json(project, payload, paths["generated_config"] / "render_profiles.json")
     return payload
 
 
@@ -1447,7 +1537,7 @@ def _bootstrap_impl(root: Path) -> dict[str, Any]:
         "write_scope": "project-local Blender directories only",
         "global_preferences_mutated": False,
     }
-    write_json(payload, paths["generated_config"] / "bootstrap.json")
+    _write_blender_json(root, payload, paths["generated_config"] / "bootstrap.json")
     return payload
 
 
@@ -1612,7 +1702,7 @@ def _build_impl(root: Path, target: str, shot_id: str | None, force: bool = Fals
         "assets": {"source": "procedural project-local validation primitives", "license": "project-authored"},
         "direction": info.get("direction_check"),
     }
-    dump_yaml(shot_config, shot_config_path)
+    _write_blender_yaml(root, shot_config, shot_config_path)
     metadata = {
         "target": info,
         "scene": str(scene_path),
@@ -1627,7 +1717,7 @@ def _build_impl(root: Path, target: str, shot_id: str | None, force: bool = Fals
         "build_invocation": invoke,
         "built_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
-    write_json(metadata, metadata_path)
+    _write_blender_json(root, metadata, metadata_path)
     return {"command": "build", "status": "PASS", "target": info, "artifact": str(artifact), "scene": str(scene_path), "scaffold": scaffold, "metadata": metadata}
 
 
@@ -1756,6 +1846,7 @@ def _preflight(root: Path, paths: dict[str, Path], info: dict[str, Any], profile
     probe = _invoke_blender(root, paths, f"preflight_{info['target']}_{info.get('shot_id', '')}".replace("-", "_"), _preflight_body(scene_path, preflight_path, expected), timeout=180)
     if preflight_path.exists():
         scene_checks = json.loads(preflight_path.read_text(encoding="utf-8"))
+        _write_blender_json(root, scene_checks, preflight_path)
     else:
         scene_checks = {"pass": False, "error": "Blender preflight did not write output"}
     checks["blender"] = scene_checks
@@ -1999,7 +2090,7 @@ def _render_impl(root: Path, target: str, shot_id: str | None, *, profile_name: 
     checks = _preflight(root, paths, info, profile, scene_path, output_dir, preflight_path)
     if not checks.get("pass"):
         payload = {"command": "preview" if preview else "render", "status": "BLOCKED_PREFLIGHT", "target": info, "profile": profile, "preflight": checks}
-        write_json(payload, artifact / ("preview_render.json" if preview else "render.json"))
+        _write_blender_json(root, payload, artifact / ("preview_render.json" if preview else "render.json"))
         raise BlenderStackError(f"Blender preflight failed; see {preflight_path}")
     invoke: dict[str, Any] | None = None
     if missing:
@@ -2031,8 +2122,9 @@ def _render_impl(root: Path, target: str, shot_id: str | None, *, profile_name: 
         "cache_hit": cache_hit and not bool(invoke),
         "final_output_policy": "PNG image sequence; Blender does not encode final MP4",
     }
-    write_json(payload, render_metadata_path)
-    write_json(
+    _write_blender_json(root, payload, render_metadata_path)
+    _write_blender_json(
+        root,
         {
             "schema_version": "hajimi-blender-render-manifest-v2",
             "episode_id": info.get("episode_id"),
@@ -2066,33 +2158,60 @@ def _render_impl(root: Path, target: str, shot_id: str | None, *, profile_name: 
     return payload
 
 
-def _sequence_qc(artifact: Path, info: dict[str, Any], profile: dict[str, Any], sequence_dir: Path, kind: str) -> dict[str, Any]:
+def _sequence_qc(
+    artifact: Path,
+    info: dict[str, Any],
+    profile: dict[str, Any],
+    sequence_dir: Path,
+    kind: str,
+    *,
+    mode: str = "FAST",
+) -> dict[str, Any]:
+    mode = mode.upper()
+    if mode not in {"FAST", "DEEP"}:
+        raise BlenderStackError("sequence QC mode must be FAST or DEEP")
     frames = _sequence_frames(sequence_dir)
     expected_start, expected_end = info["frame_start"], info["frame_end"]
     expected = [_frame_path(sequence_dir, frame, profile) for frame in range(expected_start, expected_end + 1)]
     missing = [str(path) for path in expected if not path.exists()]
+    existing_expected = [path for path in expected if path.exists()]
+    if mode == "DEEP":
+        inspected = existing_expected
+    else:
+        if existing_expected:
+            positions = [0.0, 0.10, 0.50, 0.90, 1.0]
+            indexes = sorted({int(position * (len(existing_expected) - 1) + 0.5) for position in positions})
+            inspected = [existing_expected[index] for index in indexes]
+        else:
+            inspected = []
     dimensions: list[list[int]] = []
     brightness: list[float] = []
     hashes: list[str] = []
     errors: list[str] = []
     alpha_modes: list[bool] = []
+    decoded_frames = 0
     try:
         from PIL import Image, ImageStat
     except ImportError:
         Image = None  # type: ignore[assignment]
         ImageStat = None  # type: ignore[assignment]
-    for frame in frames:
+    for frame in inspected:
         try:
+            if frame.stat().st_size == 0:
+                raise ValueError("zero-byte frame")
             if Image is None:
                 data = frame.read_bytes()
                 hashes.append(hashlib.sha256(data).hexdigest())
+                decoded_frames += 1
                 continue
             with Image.open(frame) as image:
+                image.load()
                 dimensions.append([image.width, image.height])
                 alpha_modes.append("A" in image.mode)
                 stat = ImageStat.Stat(image.convert("L"))
                 brightness.append(round(float(stat.mean[0]), 3))
                 hashes.append(_sha256(frame))
+                decoded_frames += 1
         except Exception as exc:
             errors.append(f"{frame.name}: {type(exc).__name__}: {exc}")
     expected_dimensions = [profile["width"], profile["height"]]
@@ -2103,8 +2222,12 @@ def _sequence_qc(artifact: Path, info: dict[str, Any], profile: dict[str, Any], 
     expected_alpha = bool(profile.get("alpha", False))
     alpha_mismatch = sum(1 for value in alpha_modes if value != expected_alpha)
     visual_checks = {
-        "frame_count": len(frames),
+        "mode": mode,
+        "total_frames": len(frames),
         "expected_frame_count": len(expected),
+        "decoded_frames": decoded_frames,
+        "representative_frames": [str(path) for path in inspected],
+        "sequence_continuity_checked": True,
         "missing_frames": missing,
         "wrong_dimensions": [list(value) for value in wrong_dimensions],
         "decode_errors": errors,
@@ -2113,28 +2236,29 @@ def _sequence_qc(artifact: Path, info: dict[str, Any], profile: dict[str, Any], 
         "expected_alpha": expected_alpha,
         "alpha_mismatch_frames": alpha_mismatch,
         "color_mode": profile.get("color_mode"),
-        "first_frame": str(frames[0]) if frames else None,
-        "middle_frame": str(frames[len(frames) // 2]) if frames else None,
-        "last_frame": str(frames[-1]) if frames else None,
+        "first_frame": str(existing_expected[0]) if existing_expected else None,
+        "middle_frame": str(existing_expected[len(existing_expected) // 2]) if existing_expected else None,
+        "last_frame": str(existing_expected[-1]) if existing_expected else None,
     }
     checks = {
         "sequence_complete": not missing,
         "dimensions_match_profile": not wrong_dimensions,
         "frames_decode": not errors,
-        "not_all_dark": dark_ratio < 1.0,
+        "not_all_dark": bool(brightness) and dark_ratio < 1.0,
         "alpha_matches_profile": alpha_mismatch == 0,
         "direction_metadata": info.get("screen_direction") == "RIGHT",
         "ground_lock_metadata": bool(info.get("ground_lock")),
         "camera_rig_metadata": True,
     }
     decision = "PASS" if all(checks.values()) else "REVIEW"
-    if not frames or missing or errors:
+    if not existing_expected or missing or errors:
         decision = "BLOCKED"
     return {
         "command": "qc",
         "decision": decision,
         "status": decision,
         "kind": kind,
+        "mode": mode,
         "target": info,
         "profile": profile,
         "sequence_dir": str(sequence_dir),
@@ -2148,7 +2272,7 @@ def _sequence_qc(artifact: Path, info: dict[str, Any], profile: dict[str, Any], 
     }
 
 
-def _qc_impl(root: Path, target: str, shot_id: str | None, profile_name: str | None) -> dict[str, Any]:
+def _qc_impl(root: Path, target: str, shot_id: str | None, profile_name: str | None, *, mode: str = "FAST") -> dict[str, Any]:
     config = _blender_config(root)
     profiles = _render_profiles(root)
     paths = _configured_paths(root, config)
@@ -2166,10 +2290,10 @@ def _qc_impl(root: Path, target: str, shot_id: str | None, profile_name: str | N
     chosen: tuple[str, Path, str] | None = next((item for item in candidates if _sequence_frames(item[1])), None)
     if not chosen:
         payload = {"command": "qc", "decision": "BLOCKED", "status": "BLOCKED_NO_SEQUENCE", "target": info, "artifact": str(artifact)}
-        write_json(payload, artifact / "qc_report.json")
+        _write_blender_json(root, payload, artifact / "qc_report.json")
         return payload
     profile = _profile(config, profiles, chosen[0])
-    report = _sequence_qc(artifact, info, profile, chosen[1], chosen[2])
+    report = _sequence_qc(artifact, info, profile, chosen[1], chosen[2], mode=mode)
     report["scene"] = str(artifact / "scene.blend")
     report["scene_sha256"] = _sha256(artifact / "scene.blend") if (artifact / "scene.blend").exists() else None
     render_metadata_path = artifact / ("render.json" if chosen[2] == "render" else "preview_render.json")
@@ -2200,7 +2324,7 @@ def _qc_impl(root: Path, target: str, shot_id: str | None, profile_name: str | N
     report["sidecar"] = {"exists": render_manifest_path.exists(), "errors": sidecar_errors, "value": render_manifest}
     if not render_manifest_path.exists() or sidecar_errors:
         report["decision"] = "BLOCKED"
-    write_json(report, artifact / "qc_report.json")
+    _write_blender_json(root, report, artifact / "qc_report.json")
     handoff = {
         "schema_version": "hajimi-resolve-handoff-v1",
         "target": info,
@@ -2219,7 +2343,7 @@ def _qc_impl(root: Path, target: str, shot_id: str | None, profile_name: str | N
         "qc_decision": report["decision"],
         "import_note": "Import as image sequence in DaVinci Resolve; do not expect Blender to author final MP4/subtitles/audio.",
     }
-    write_json(handoff, artifact / "resolve_handoff.json")
+    _write_blender_json(root, handoff, artifact / "resolve_handoff.json")
     report["resolve_handoff"] = str(artifact / "resolve_handoff.json")
     return report
 
@@ -2249,6 +2373,8 @@ def _benchmark_impl(root: Path) -> dict[str, Any]:
     gpu_output_path = output_root / "gpu_denoise.png"
     gpu_invoke = _invoke_blender(root, paths, "benchmark_gpu_denoise", _gpu_denoise_body(gpu_output_path, gpu_report_path), timeout=180)
     gpu_denoise = json.loads(gpu_report_path.read_text(encoding="utf-8")) if gpu_report_path.exists() else {"status": "FAIL", "error": "GPU denoise probe did not write a report"}
+    if gpu_report_path.exists():
+        _write_blender_json(root, gpu_denoise, gpu_report_path)
     gpu_denoise["invocation"] = gpu_invoke
     machine = _host_hardware(_find_blender())
     doctor_path = paths["generated_config"] / "blender_doctor.json"
@@ -2275,7 +2401,7 @@ def _benchmark_impl(root: Path) -> dict[str, Any]:
         "policy": "benchmark selects a bounded starting point; shot-specific overrides remain explicit",
     }
     render_tuning_path = paths["generated_config"] / "render_tuning.yaml"
-    dump_yaml(render_tuning, render_tuning_path)
+    _write_blender_yaml(root, render_tuning, render_tuning_path)
     payload = {
         "command": "benchmark",
         "decision": "PASS" if entries.get("eevee", {}).get("status") == "PASS" and entries.get("cycles", {}).get("status") == "PASS" else "BLOCKED",
@@ -2297,11 +2423,23 @@ def _benchmark_impl(root: Path) -> dict[str, Any]:
         "machine": machine,
         "tuning_policy": "Use measured result to choose samples; do not auto-change global preferences",
     }
-    write_json(payload, paths["generated_config"] / "benchmark.json")
+    _write_blender_json(root, payload, paths["generated_config"] / "benchmark.json")
     return payload
 
 
-def run_blender_command(root: str | Path, command: str, target: str | None = None, shot_id: str | None = None, *, profile: str | None = None, force: bool = False, start: int | None = None, end: int | None = None, resume: bool = True) -> dict[str, Any]:
+def run_blender_command(
+    root: str | Path,
+    command: str,
+    target: str | None = None,
+    shot_id: str | None = None,
+    *,
+    profile: str | None = None,
+    force: bool = False,
+    start: int | None = None,
+    end: int | None = None,
+    resume: bool = True,
+    deep: bool = False,
+) -> dict[str, Any]:
     """Run one public Blender-stack operation and return its JSON payload."""
     project = _root(root)
     command = command.replace("-", "_")
@@ -2332,7 +2470,7 @@ def run_blender_command(root: str | Path, command: str, target: str | None = Non
     if command == "qc":
         if not target:
             raise BlenderStackError("qc requires a target")
-        return _qc_impl(project, target, shot_id, profile)
+        return _qc_impl(project, target, shot_id, profile, mode="DEEP" if deep else "FAST")
     raise BlenderStackError(f"Unknown Blender command {command}")
 
 

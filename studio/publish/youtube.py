@@ -15,7 +15,7 @@ from typing import Any
 
 from ..config import load_yaml, write_json
 from ..db import StateStore
-from ..manifest import assert_valid_manifest, load_manifest, manifest_hash, write_manifest
+from ..manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, write_manifest
 from ..media.hashing import sha256_file
 from ..provenance import validate_episode_provenance
 from ..resolve.sync import validate_resolve_readback
@@ -49,6 +49,14 @@ def _animatic_gate(episode_root: Path) -> dict[str, Any] | None:
 def _resolve_path(root: Path, value: str | Path) -> Path:
     path = Path(value).expanduser()
     return path if path.is_absolute() else root / path
+
+
+def _portable_path(root: Path, value: str | Path) -> str:
+    path = Path(value).resolve()
+    try:
+        return str(path.relative_to(root.resolve()))
+    except ValueError:
+        return str(path)
 
 
 def _active_master(root: Path, episode_root: Path, manifest: dict[str, Any]) -> Path | None:
@@ -129,6 +137,33 @@ def _human_review_passed(report: dict[str, Any] | None) -> bool:
     )
 
 
+def _master_qc_passes(report: dict[str, Any] | None, manifest: dict[str, Any], master_sha256: str | None) -> bool:
+    return bool(
+        report
+        and report.get("decision") == "PASS"
+        and master_sha256
+        and report.get("master_sha256") == master_sha256
+        and report.get("manifest_sha256") == manifest_input_hash(manifest)
+    )
+
+
+def _master_approval_passes(report: dict[str, Any] | None, manifest: dict[str, Any], master_sha256: str | None) -> bool:
+    if not report or not master_sha256:
+        return False
+    if report.get("manifest_sha256") != manifest_input_hash(manifest):
+        return False
+    target = report.get("approval_target")
+    review = report.get("human_review")
+    review_target = review.get("approval_target") if isinstance(review, dict) else None
+    return bool(
+        isinstance(target, dict)
+        and target.get("asset_sha256") == master_sha256
+        and isinstance(review_target, dict)
+        and review_target.get("asset_sha256") == master_sha256
+        and review_target.get("manifest_sha256") == manifest_input_hash(manifest)
+    )
+
+
 def _shot_qc_evidence_passes(episode_root: Path, manifest: dict[str, Any]) -> bool:
     """Require PASS evidence for every approved shot, not only editable flags."""
 
@@ -145,6 +180,8 @@ def _shot_qc_evidence_passes(episode_root: Path, manifest: dict[str, Any]) -> bo
         return False
     for shot in shots:
         shot_id = str(shot.get("id"))
+        if shot.get("method") == "animatic_card":
+            return False
         evidence = results.get(shot_id)
         automated_pass = evidence.get("decision") == "PASS" if evidence else False
         director_override = bool(
@@ -163,6 +200,11 @@ def _shot_qc_evidence_passes(episode_root: Path, manifest: dict[str, Any]) -> bo
         if not source_path.is_absolute():
             source_path = episode_root.parent.parent / source_path
         if not source_path.is_file() or sha256_file(source_path) != asset_hash:
+            return False
+        approval_target = evidence.get("approval_target")
+        if not isinstance(approval_target, dict):
+            return False
+        if approval_target.get("asset_sha256") != asset_hash or approval_target.get("manifest_sha256") != manifest_input_hash(manifest):
             return False
     return True
 
@@ -213,13 +255,14 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
     shots = manifest.get("shots", [])
 
     checks = {
-        "animatic_gate": bool(animatic_gate and animatic_gate.get("decision") == "PASS"),
+        "animatic_gate": bool(animatic_gate and animatic_gate.get("production_gate") == "PASS"),
         "all_shots_approved": bool(shots) and all(shot.get("status") == "approved" for shot in shots),
         "shot_qc_evidence": _shot_qc_evidence_passes(episode_root, manifest),
         "shot_provenance": _shot_provenance_passes(root, episode_id, manifest),
         "resolve_readback": resolve_readback_pass,
-        "master_qc": bool(master_report and master_report.get("decision") == "PASS"),
+        "master_qc": _master_qc_passes(master_report, manifest, master_sha256),
         "human_playback_recorded": _human_review_passed(master_report),
+        "master_approval_hash_bound": _master_approval_passes(master_report, manifest, master_sha256),
         "master_exists": bool(master_path),
         "master_hash_recorded": bool(master_sha256),
         "master_hash_matches_qc": bool(master_report and master_sha256 and master_report.get("master_sha256") == master_sha256),
@@ -234,12 +277,13 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
         "episode_id": episode_id,
         "created_at": _utc_now(),
         "status": "READY" if all(checks.values()) else "BLOCKED",
+        "lifecycle_status": "PREFLIGHT_READY" if all(checks.values()) else "BLOCKED",
         "checks": checks,
         "stage_policy": {
             "required_sequence": ["animatic_gate", "shot_approval", "master_qc", "human_playback", "private_upload", "checks_readback"],
             "animatic_gate": animatic_gate.get("decision") if animatic_gate else "NOT_RUN",
         },
-        "master": {"path": str(master_path) if master_path else None, "sha256": master_sha256},
+        "master": {"path": _portable_path(root, master_path) if master_path else None, "sha256": master_sha256},
         "metadata": {
             "title": title,
             "description": description,
@@ -270,6 +314,28 @@ def preflight(root: str | Path, episode_id: str, requested_visibility: str = PRI
     destination = Path(root) / "episodes" / episode_id / "publish" / "youtube.json"
     write_json(plan, destination)
     return plan
+
+
+def publish_doctor(root: str | Path, episode_id: str | None = None) -> dict[str, Any]:
+    """Report browser-publisher readiness without logging in or uploading."""
+
+    project = Path(root).resolve()
+    skill_present = (project / ".agents" / "skills" / "youtube-publisher" / "SKILL.md").exists()
+    checks = {
+        "ego_browser": "EXTERNAL_RUNTIME_REQUIRED",
+        "youtube_studio_session": "NOT_PROBED",
+        "upload_capability": "EXTERNAL_RUNTIME_REQUIRED",
+        "publisher_skill": "PASS" if skill_present else "BLOCKED",
+        "credentials_touched": False,
+        "upload_attempted": False,
+    }
+    return {
+        "command": "publish doctor",
+        "episode_id": episode_id,
+        "status": "EXTERNAL_RUNTIME_REQUIRED" if skill_present else "BLOCKED",
+        "checks": checks,
+        "next_action": "Use the youtube-publisher skill with ego-browser for a visible private upload; do not infer readiness from this doctor.",
+    }
 
 
 def _metadata_matches(plan: dict[str, Any], actual: dict[str, Any]) -> list[str]:

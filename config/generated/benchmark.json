@@ -2,67 +2,67 @@
   "command": "benchmark",
   "decision": "PASS",
   "core_renderer_decision": "PASS",
-  "scene": "/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/hajimi_blender_benchmark.blend",
+  "scene": "./blender/benchmarks/hajimi_blender_benchmark.blend",
   "scene_exists": true,
   "build": {
     "command": [
-      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "${BLENDER_BIN}",
       "--background",
       "--factory-startup",
       "--python",
-      "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/build_benchmark_scene.py",
+      "./blender/generated/runtime/build_benchmark_scene.py",
       "--"
     ],
     "returncode": 0,
     "duration_sec": 0.803,
     "stdout_tail": "Info: Saved as \"hajimi_blender_benchmark.blend\"\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
-    "stderr_tail": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/build_benchmark_scene.py:53: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  value.use_nodes = True\n/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/build_benchmark_scene.py:409: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  volume_mat.use_nodes = True\n",
+    "stderr_tail": "./blender/generated/runtime/build_benchmark_scene.py:53: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  value.use_nodes = True\n./blender/generated/runtime/build_benchmark_scene.py:409: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  volume_mat.use_nodes = True\n",
     "ok": true,
-    "event_log": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/logs/20260918T104802_build_benchmark_scene.jsonl"
+    "event_log": "./blender/generated/logs/20260918T104802_build_benchmark_scene.jsonl"
   },
   "engines": {
     "eevee": {
       "status": "PASS",
       "duration_sec": 4.425,
-      "render": "/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee",
+      "render": "./blender/benchmarks/renders/eevee",
       "frame_count": 10,
       "invocation": {
         "command": [
-          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "${BLENDER_BIN}",
           "--background",
           "--factory-startup",
           "--python",
-          "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/benchmark_eevee.py",
+          "./blender/generated/runtime/benchmark_eevee.py",
           "--"
         ],
         "returncode": 0,
         "duration_sec": 4.423,
-        "stdout_tail": "00:00.336  blend            | Read blend: \"/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/hajimi_blender_benchmark.blend\"\n00:00.895  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0001.png'\n00:01.246  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0002.png'\n00:01.594  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0003.png'\n00:01.942  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0004.png'\n00:02.293  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0005.png'\n00:02.642  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0006.png'\n00:02.990  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0007.png'\n00:03.340  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0008.png'\n00:03.689  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0009.png'\n00:04.052  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/eevee/frame_0010.png'\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
+        "stdout_tail": "00:00.336  blend            | Read blend: \"./blender/benchmarks/hajimi_blender_benchmark.blend\"\n00:00.895  render           | Saved: './blender/benchmarks/renders/eevee/frame_0001.png'\n00:01.246  render           | Saved: './blender/benchmarks/renders/eevee/frame_0002.png'\n00:01.594  render           | Saved: './blender/benchmarks/renders/eevee/frame_0003.png'\n00:01.942  render           | Saved: './blender/benchmarks/renders/eevee/frame_0004.png'\n00:02.293  render           | Saved: './blender/benchmarks/renders/eevee/frame_0005.png'\n00:02.642  render           | Saved: './blender/benchmarks/renders/eevee/frame_0006.png'\n00:02.990  render           | Saved: './blender/benchmarks/renders/eevee/frame_0007.png'\n00:03.340  render           | Saved: './blender/benchmarks/renders/eevee/frame_0008.png'\n00:03.689  render           | Saved: './blender/benchmarks/renders/eevee/frame_0009.png'\n00:04.052  render           | Saved: './blender/benchmarks/renders/eevee/frame_0010.png'\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
         "stderr_tail": "",
         "ok": true,
-        "event_log": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/logs/20260918T104806_benchmark_eevee.jsonl"
+        "event_log": "./blender/generated/logs/20260918T104806_benchmark_eevee.jsonl"
       }
     },
     "cycles": {
       "status": "PASS",
       "duration_sec": 2.348,
-      "render": "/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/cycles",
+      "render": "./blender/benchmarks/renders/cycles",
       "frame_count": 1,
       "invocation": {
         "command": [
-          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "${BLENDER_BIN}",
           "--background",
           "--factory-startup",
           "--python",
-          "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/benchmark_cycles.py",
+          "./blender/generated/runtime/benchmark_cycles.py",
           "--"
         ],
         "returncode": 0,
         "duration_sec": 2.345,
-        "stdout_tail": "00:00.350  blend            | Read blend: \"/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/hajimi_blender_benchmark.blend\"\n00:01.839  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/cycles/frame_0001.png'\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
+        "stdout_tail": "00:00.350  blend            | Read blend: \"./blender/benchmarks/hajimi_blender_benchmark.blend\"\n00:01.839  render           | Saved: './blender/benchmarks/renders/cycles/frame_0001.png'\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
         "stderr_tail": "",
         "ok": true,
-        "event_log": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/logs/20260918T104809_benchmark_cycles.jsonl"
+        "event_log": "./blender/generated/logs/20260918T104809_benchmark_cycles.jsonl"
       }
     }
   },
@@ -105,22 +105,22 @@
     "duration_sec": 0.521,
     "invocation": {
       "command": [
-        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "${BLENDER_BIN}",
         "--background",
         "--factory-startup",
         "--python",
-        "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/benchmark_gpu_denoise.py",
+        "./blender/generated/runtime/benchmark_gpu_denoise.py",
         "--"
       ],
       "returncode": 0,
       "duration_sec": 1.325,
-      "stdout_tail": "00:00.938  render           | Saved: '/Users/zhangxiaolong/Desktop/hajimi/blender/benchmarks/renders/gpu_denoise.png'\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
+      "stdout_tail": "00:00.938  render           | Saved: './blender/benchmarks/renders/gpu_denoise.png'\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
       "stderr_tail": "",
       "ok": true,
-      "event_log": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/logs/20260918T104810_benchmark_gpu_denoise.jsonl"
+      "event_log": "./blender/generated/logs/20260918T104810_benchmark_gpu_denoise.jsonl"
     }
   },
-  "render_tuning": "/Users/zhangxiaolong/Desktop/hajimi/config/generated/render_tuning.yaml",
+  "render_tuning": "./config/generated/render_tuning.yaml",
   "plugin_smoke_test": {
     "photographer": {
       "display_name": "Photographer 5",
@@ -464,7 +464,7 @@
     "cpu_count_logical": 12,
     "memory_bytes": 17179869184,
     "memory_gib": 16.0,
-    "blender_binary": "/Applications/Blender.app/Contents/MacOS/Blender",
+    "blender_binary": "${BLENDER_BIN}",
     "detected_at": "2026-09-18T10:48:10+0800"
   },
   "tuning_policy": "Use measured result to choose samples; do not auto-change global preferences"

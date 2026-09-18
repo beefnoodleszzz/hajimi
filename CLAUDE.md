@@ -13,6 +13,8 @@ uv run hajimi status EP001_earth-stop
 uv run hajimi animatic EP001_earth-stop
 uv run hajimi qc episode EP001_earth-stop
 uv run hajimi qc master EP001_earth-stop
+uv run hajimi resolve doctor
+uv run hajimi publish doctor EP001_earth-stop
 bd ready
 ```
 

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from ..config import write_json
-from ..manifest import assert_valid_manifest, load_manifest, manifest_hash
+from ..manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash
 from ..media.hashing import sha256_file
 from ..provenance import validate_episode_provenance
 
@@ -34,13 +34,64 @@ def _load_json(path: Path) -> dict[str, Any]:
     return value
 
 
+def _portableize(value: Any, root: Path) -> Any:
+    """Keep handoff metadata clone-safe while runtime probes remain local."""
+
+    if isinstance(value, dict):
+        return {key: _portableize(item, root) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_portableize(item, root) for item in value]
+    if isinstance(value, str):
+        path = Path(value).expanduser()
+        if path.is_absolute():
+            try:
+                return str(path.resolve().relative_to(root.resolve()))
+            except ValueError:
+                return value
+    return value
+
+
 def resolve_capability() -> dict[str, Any]:
     candidates = [
         "/Applications/DaVinci Resolve/DaVinci Resolve.app/Contents/MacOS/Resolve",
         "/Applications/DaVinci Resolve Studio/DaVinci Resolve Studio.app/Contents/MacOS/Resolve",
     ]
     found = next((candidate for candidate in candidates if Path(candidate).exists()), None)
-    return {"available": bool(found), "binary": found, "version_target": "DaVinci Resolve 21.1", "mutation": False}
+    return {
+        "available": bool(found),
+        "binary": found,
+        "version_target": "DaVinci Resolve 21.1",
+        "status": "PARTIAL" if found else "EXTERNAL_RUNTIME_REQUIRED",
+        "mutation": False,
+        "mode": "HANDOFF_ONLY",
+        "checks": {
+            "app": "PASS" if found else "BLOCKED",
+            "version": "UNKNOWN",
+            "scripting_developer_files": "UNKNOWN",
+            "mcp": "UNKNOWN",
+            "runtime_connection": "UNKNOWN",
+            "readback": "CONTRACT_ONLY",
+        },
+        "reason": "A local app path is not evidence of scripting, MCP, mutation, or readback readiness.",
+    }
+
+
+def resolve_doctor(root: str | Path) -> dict[str, Any]:
+    """Return conservative Resolve readiness without mutating Resolve."""
+
+    capability = resolve_capability()
+    return {
+        "command": "resolve doctor",
+        "status": capability["status"],
+        "capability": capability,
+        "handoff": {
+            "mode": "HANDOFF_ONLY",
+            "mutation": False,
+            "readback_validator": "studio.resolve.sync.validate_resolve_readback",
+            "project_root": str(Path(root).resolve()),
+        },
+        "next_action": "Run the local Resolve runtime probe and record a verified readback before treating Resolve as runtime-ready.",
+    }
 
 
 def _resolve_path(root: Path, episode_root: Path, value: str | Path) -> Path:
@@ -121,6 +172,44 @@ def _shot_media(root: Path, episode_root: Path, episode_id: str, shot: dict[str,
         ],
         "image_sequence": sequence,
     }
+
+
+def _shot_qc_approved(episode_root: Path, manifest: dict[str, Any], shot: dict[str, Any], media: dict[str, Any]) -> bool:
+    """Bind Resolve ingest approval to the exact active media evidence."""
+
+    if shot.get("method") == "animatic_card" or shot.get("status") != "approved":
+        return False
+    report_path = episode_root / "qc" / "report.json"
+    if not report_path.exists():
+        return False
+    try:
+        report = _load_json(report_path)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return False
+    evidence = next((item for item in report.get("shots", []) if str(item.get("shot_id")) == str(shot.get("id"))), None)
+    if not isinstance(evidence, dict):
+        return False
+    pass_evidence = evidence.get("decision") == "PASS" or (
+        evidence.get("decision") == "REVIEW"
+        and isinstance(evidence.get("director_review"), dict)
+        and evidence["director_review"].get("status") == "PASS"
+    )
+    target = evidence.get("approval_target")
+    if not pass_evidence or not isinstance(target, dict) or target.get("manifest_sha256") != manifest_input_hash(manifest):
+        return False
+    source = evidence.get("source")
+    asset_hash = evidence.get("asset_hash")
+    source_path = Path(str(source)).expanduser() if source else None
+    if source_path is not None and not source_path.is_absolute():
+        source_path = episode_root.parent.parent / source_path
+    return bool(
+        source_path
+        and source_path.is_file()
+        and isinstance(asset_hash, str)
+        and sha256_file(source_path) == asset_hash
+        and target.get("asset_sha256") == asset_hash
+        and media.get("active")
+    )
 
 
 def _expected_timeline(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -270,9 +359,13 @@ def sync_episode(root: str | Path, episode_id: str) -> Path:
                 "time_start": shot.get("time_start"),
                 "time_end": shot.get("time_end"),
                 "status": shot.get("status"),
-                "approved_for_ingest": bool(shot.get("status") == "approved" and media.get("active") and provenance.get("valid")),
-                "media": media,
-                "provenance": provenance,
+                "approved_for_ingest": bool(
+                    media.get("active")
+                    and provenance.get("valid")
+                    and _shot_qc_approved(episode_root, manifest, shot, media)
+                ),
+                "media": _portableize(media, root),
+                "provenance": _portableize(provenance, root),
             }
         )
     payload = {
@@ -284,7 +377,7 @@ def sync_episode(root: str | Path, episode_id: str) -> Path:
         "capability": resolve_capability(),
         "timeline": {**_expected_timeline(manifest), "timebase": f"{manifest['master']['fps']} fps"},
         "manifest_sha256": manifest_hash(manifest_path),
-        "provenance": provenance_report,
+        "provenance": _portableize(provenance_report, root),
         "shots": shots,
         "readback_contract": {"path": "edit/resolve_production_readback.json", "validator": "studio.resolve.sync.validate_resolve_readback"},
         "mode": "handoff_plan",
@@ -312,9 +405,10 @@ def record_resolve_readback(root: str | Path, episode_id: str, readback: dict[st
     if configured_master:
         expected["master_path"] = str(_resolve_path(root, manifest_path.parent, configured_master).resolve())
     result = validate_resolve_readback(expected, readback, root=root)
+    result = _portableize(result, root)
     result["episode_id"] = episode_id
     result["recorded_at"] = _utc_now()
-    result["source_readback"] = str(raw_destination.resolve())
+    result["source_readback"] = str(raw_destination.resolve().relative_to(root))
     destination = manifest_path.parent / "edit" / "resolve_readback_validation.json"
     write_json(result, destination)
     return result

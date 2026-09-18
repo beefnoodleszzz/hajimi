@@ -40,8 +40,9 @@ analytics/*.duckdb
 analytics/*.parquet
 analytics/export_status.json
 analytics/records.jsonl
-config/generated/*.png
-config/generated/blender_smoke/
+# Blender/runtime probes are machine evidence, never repository source of truth.
+config/generated/*
+!config/generated/.gitkeep
 episodes/*/edit/*.drp
 *.aiff
 

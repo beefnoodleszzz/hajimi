@@ -53,3 +53,21 @@ class ManifestTests(unittest.TestCase):
             path = Path(directory) / "episode.yaml"
             write_manifest({"episode_id": "EP001_test", "_path": "/private/runtime/path"}, path)
             self.assertNotIn("_path", path.read_text(encoding="utf-8"))
+
+    def test_animatic_card_cannot_be_approved_in_production_phase(self):
+        manifest = {
+            "episode_id": "EP001_test",
+            "status": "production",
+            "channel": "test",
+            "format": "youtube_short",
+            "language": "en-US",
+            "aspect_ratio": "9:16",
+            "master": {"width": 1080, "height": 1920, "fps": 30, "sample_rate": 48000},
+            "creative": {"promise": "test", "hero_shot": "S001", "target_duration_sec": 1},
+            "script": {"path": "script.md"},
+            "audio": {"narrator": "test", "target_lufs": -14, "true_peak_max_db": -1},
+            "publish": {"title": "test", "description": "test", "ai_disclosure": True, "visibility": "private"},
+            "shots": [{"id": "S001", "role": "hook", "duration_target": 1, "method": "animatic_card", "status": "approved"}],
+        }
+
+        assert any("animatic_card" in error for error in validate_manifest(manifest))

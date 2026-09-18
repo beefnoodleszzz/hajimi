@@ -1,0 +1,26 @@
+name: core-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install core development dependencies
+        run: uv sync --extra dev
+      - name: Run core tests
+        run: uv run pytest
+      - name: Compile studio package
+        run: uv run python -m compileall studio
+
+  blender-integration:
+    if: ${{ false }}
+    runs-on: [self-hosted, macOS, blender]
+    steps:
+      - run: echo "Optional self-hosted Blender integration is not part of ordinary Core CI."

@@ -104,7 +104,8 @@ Use project skills under `.agents/skills/`:
 - storyboard → `storyboard-director`
 - animatic → `animatic-director`
 - shot method → `shot-designer`
-- Blender → `blender-shot`
+- Blender environment/bootstrap → `blender-bootstrap`
+- Blender shot production, preview, render QC → `blender-production`
 - AI generation → `ai-visual-producer`
 - edit → `resolve-editor`
 - sound → `sound-designer`

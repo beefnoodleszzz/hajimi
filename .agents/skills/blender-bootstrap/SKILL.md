@@ -1,11 +1,6 @@
 ---
 name: blender-bootstrap
 description: Configure and verify Hajimi's local Blender production environment without upgrading Blender, downloading assets, or installing unlicensed commercial plugins.
----
-
----
-name: blender-bootstrap
-description: Configure and verify Hajimi's local Blender production environment without upgrading Blender, downloading assets, or installing unlicensed commercial plugins.
 triggers:
   - Blender bootstrap
   - Blender doctor

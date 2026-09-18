@@ -1,12 +1,13 @@
 {
-  "asset_root": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets",
+  "asset_root": "${HAJIMI_ASSETS}",
   "source_policy": "local curated/vendor files only; no online fallback",
   "metadata_contract": "sidecar JSON must provide source, license, and matching sha256",
   "libraries": [
     {
       "name": "Hajimi Curated",
       "category": "curated",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/curated",
+      "path": "${HAJIMI_ASSETS}/curated",
+      "portable_path": "blender/assets/curated",
       "exists": true,
       "writable": true,
       "asset_count": 1,
@@ -31,7 +32,8 @@
     {
       "name": "Hajimi Cameras",
       "category": "cameras",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/cameras",
+      "path": "${HAJIMI_ASSETS}/cameras",
+      "portable_path": "blender/assets/cameras",
       "exists": true,
       "writable": true,
       "asset_count": 1,
@@ -56,7 +58,8 @@
     {
       "name": "Hajimi Materials",
       "category": "materials",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/materials",
+      "path": "${HAJIMI_ASSETS}/materials",
+      "portable_path": "blender/assets/materials",
       "exists": true,
       "writable": true,
       "asset_count": 1,
@@ -81,7 +84,8 @@
     {
       "name": "Hajimi Environments",
       "category": "environments",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/environments",
+      "path": "${HAJIMI_ASSETS}/environments",
+      "portable_path": "blender/assets/environments",
       "exists": true,
       "writable": true,
       "asset_count": 1,
@@ -106,7 +110,8 @@
     {
       "name": "Hajimi FX",
       "category": "fx",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/fx",
+      "path": "${HAJIMI_ASSETS}/fx",
+      "portable_path": "blender/assets/fx",
       "exists": true,
       "writable": true,
       "asset_count": 1,

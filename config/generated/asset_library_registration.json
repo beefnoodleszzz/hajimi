@@ -3,27 +3,27 @@
   "libraries": [
     {
       "name": "Hajimi Curated",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/curated",
+      "path": "${HAJIMI_ASSETS}/curated",
       "exists": true
     },
     {
       "name": "Hajimi Cameras",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/cameras",
+      "path": "${HAJIMI_ASSETS}/cameras",
       "exists": true
     },
     {
       "name": "Hajimi Materials",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/materials",
+      "path": "${HAJIMI_ASSETS}/materials",
       "exists": true
     },
     {
       "name": "Hajimi Environments",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/environments",
+      "path": "${HAJIMI_ASSETS}/environments",
       "exists": true
     },
     {
       "name": "Hajimi FX",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/fx",
+      "path": "${HAJIMI_ASSETS}/fx",
       "exists": true
     }
   ]

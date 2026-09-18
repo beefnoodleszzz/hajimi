@@ -12,15 +12,17 @@ from .analytics.schema import initialize_record
 from .blender_stack import BlenderStackError, run_blender_command
 from .config import write_json
 from .db import StateStore
-from .manifest import assert_valid_manifest, load_manifest, manifest_hash, new_manifest, write_manifest
+from .manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, new_manifest, write_manifest
 from .master import register_resolve_master
+from .media.hashing import sha256_file
 from .paths import StudioPaths, project_root
-from .pipeline.animatic import run_animatic_gate
+from .pipeline.animatic import record_animatic_review, run_animatic_gate
 from .publish.youtube import preflight as youtube_preflight
+from .publish.youtube import publish_doctor
 from .publish.youtube import publish_status as youtube_status
 from .publish.youtube import record_checks, record_upload_readback
 from .qc.engine import record_human_playback, record_shot_review, run_episode_qc, run_master_qc, run_shot_qc
-from .resolve.sync import record_resolve_readback, sync_episode
+from .resolve.sync import record_resolve_readback, resolve_doctor, sync_episode
 
 
 def _paths(root_arg: str | None) -> StudioPaths:
@@ -64,14 +66,31 @@ def _cmd_status(args: argparse.Namespace, paths: StudioPaths) -> int:
     episode_root = manifest_path.parent
     gate_path = episode_root / "animatic" / "gate.json"
     master_report = episode_root / "qc" / "master_report.json"
+    gate = json.loads(gate_path.read_text(encoding="utf-8")) if gate_path.exists() else {}
+    director_review = gate.get("director_review", {})
+    director_status = director_review.get("status", "NOT_RUN") if isinstance(director_review, dict) else str(director_review)
+    master_value = "NOT_RUN"
+    if master_report.exists():
+        report = json.loads(master_report.read_text(encoding="utf-8"))
+        master_value = report.get("decision", "NOT_RUN")
+        master_path = Path(str(report.get("master", "")))
+        if not master_path.is_absolute():
+            master_path = paths.root / master_path
+        if report.get("manifest_sha256") != manifest_input_hash(manifest) or (
+            report.get("master_sha256") and master_path.is_file() and sha256_file(master_path) != report.get("master_sha256")
+        ):
+            master_value = "STALE"
     payload = {
         "episode_id": args.episode_id,
         "manifest_status": manifest.get("status"),
         "manifest": str(manifest_path.resolve()),
         "shot_count": len(manifest.get("shots", [])),
         "hero_shot": manifest.get("creative", {}).get("hero_shot"),
-        "animatic_gate": json.loads(gate_path.read_text(encoding="utf-8")).get("decision") if gate_path.exists() else "NOT_RUN",
-        "master_qc": json.loads(master_report.read_text(encoding="utf-8")).get("decision") if master_report.exists() else "NOT_RUN",
+        "animatic_gate": gate.get("decision", "NOT_RUN"),
+        "automation_gate": gate.get("automation_gate", "NOT_RUN"),
+        "director_review": director_status,
+        "production_gate": gate.get("production_gate", "NOT_RUN"),
+        "master_qc": master_value,
         "database": str(paths.state_db.resolve()),
     }
     _print(payload, args.json)
@@ -83,7 +102,13 @@ def _cmd_research(args: argparse.Namespace, paths: StudioPaths) -> int:
     episode_root = manifest_path.parent
     required = [episode_root / "research" / "topic_brief.md", episode_root / "research" / "fact_pack.md", episode_root / "research" / "reference_deconstruction.json"]
     missing = [str(path) for path in required if not path.exists()]
-    payload = {"episode_id": args.episode_id, "stage": "research", "decision": "PASS" if not missing else "FAIL", "required_outputs": [str(path) for path in required], "missing": missing}
+    payload = {
+        "episode_id": args.episode_id,
+        "stage": "research",
+        "decision": "PASS" if not missing else "FAIL",
+        "required_outputs": [str(path.relative_to(paths.root)) for path in required],
+        "missing": [str(Path(item).relative_to(paths.root)) if Path(item).is_absolute() else item for item in missing],
+    }
     write_json(payload, episode_root / "research" / "research_status.json")
     _print(payload, args.json)
     return 0 if not missing else 1
@@ -92,7 +117,19 @@ def _cmd_research(args: argparse.Namespace, paths: StudioPaths) -> int:
 def _cmd_animatic(args: argparse.Namespace, paths: StudioPaths) -> int:
     gate = run_animatic_gate(args.episode_id, root=paths.root, force=args.force)
     _print(gate, args.json)
-    return 0 if gate.get("decision") == "PASS" else 1
+    return 0 if gate.get("production_gate") == "PASS" else 1
+
+
+def _cmd_animatic_review(args: argparse.Namespace, paths: StudioPaths) -> int:
+    result = record_animatic_review(
+        args.episode_id,
+        root=paths.root,
+        approve=args.approve,
+        reviewer=args.reviewer,
+        notes=args.notes,
+    )
+    _print(result, args.json)
+    return 0 if result.get("production_gate") == "PASS" else 1
 
 
 def _cmd_qc(args: argparse.Namespace, paths: StudioPaths) -> int:
@@ -142,6 +179,10 @@ def _cmd_master(args: argparse.Namespace, paths: StudioPaths) -> int:
 
 
 def _cmd_resolve_sync(args: argparse.Namespace, paths: StudioPaths) -> int:
+    if args.resolve_command == "doctor":
+        result = resolve_doctor(paths.root)
+        _print(result, args.json)
+        return 0 if result.get("status") == "READY" else 1
     if args.resolve_command == "sync":
         destination = sync_episode(paths.root, args.episode_id)
         _print({"handoff": str(destination.resolve()), "mutation": False}, args.json)
@@ -156,7 +197,9 @@ def _cmd_resolve_sync(args: argparse.Namespace, paths: StudioPaths) -> int:
 
 
 def _cmd_publish(args: argparse.Namespace, paths: StudioPaths) -> int:
-    if args.publish_command == "youtube":
+    if args.publish_command == "doctor":
+        result = publish_doctor(paths.root, getattr(args, "episode_id", None))
+    elif args.publish_command == "youtube":
         result = youtube_preflight(paths.root, args.episode_id, requested_visibility=args.visibility)
     elif args.publish_command == "record":
         readback_path = Path(args.file)
@@ -171,7 +214,7 @@ def _cmd_publish(args: argparse.Namespace, paths: StudioPaths) -> int:
     else:
         result = youtube_status(paths.root, args.episode_id)
     _print(result, args.json)
-    return 0 if result.get("status") in {"READY", "NOT_INITIALIZED", "UPLOADED_PRIVATE", "CHECKS_RECORDED"} else 1
+    return 0 if result.get("status") in {"READY", "PREFLIGHT_READY", "NOT_INITIALIZED", "UPLOADED_PRIVATE", "CHECKS_RECORDED"} else 1
 
 
 def _cmd_analytics(args: argparse.Namespace, paths: StudioPaths) -> int:
@@ -191,6 +234,7 @@ def _cmd_blender(args: argparse.Namespace, paths: StudioPaths) -> int:
         start=getattr(args, "start", None),
         end=getattr(args, "end", None),
         resume=not getattr(args, "no_resume", False),
+        deep=getattr(args, "deep", False),
     )
     _print(result, args.json)
     return 0 if result.get("decision", result.get("status")) not in {"FAIL", "BLOCKED_NO_SEQUENCE", "BLOCKED_PREFLIGHT"} else 1
@@ -215,6 +259,14 @@ def build_parser() -> argparse.ArgumentParser:
     animatic.add_argument("episode_id")
     animatic.add_argument("--force", action="store_true")
     animatic.add_argument("--json", action="store_true")
+    animatic_review = sub.add_parser("animatic-review", help="record director approval for the exact current animatic")
+    animatic_review.add_argument("episode_id")
+    review_decision = animatic_review.add_mutually_exclusive_group(required=True)
+    review_decision.add_argument("--approve", action="store_true")
+    review_decision.add_argument("--reject", action="store_false", dest="approve")
+    animatic_review.add_argument("--reviewer", default="director")
+    animatic_review.add_argument("--notes")
+    animatic_review.add_argument("--json", action="store_true")
 
     qc = sub.add_parser("qc")
     qc_sub = qc.add_subparsers(dest="qc_command", required=True)
@@ -247,6 +299,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     resolve = sub.add_parser("resolve")
     resolve_sub = resolve.add_subparsers(dest="resolve_command", required=True)
+    resolve_doctor_parser = resolve_sub.add_parser("doctor")
+    resolve_doctor_parser.add_argument("--json", action="store_true")
     resolve_sync = resolve_sub.add_parser("sync")
     resolve_sync.add_argument("episode_id")
     resolve_sync.add_argument("--json", action="store_true")
@@ -257,6 +311,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     publish = sub.add_parser("publish")
     publish_sub = publish.add_subparsers(dest="publish_command", required=True)
+    publish_doctor_parser = publish_sub.add_parser("doctor")
+    publish_doctor_parser.add_argument("episode_id", nargs="?")
+    publish_doctor_parser.add_argument("--json", action="store_true")
     youtube = publish_sub.add_parser("youtube")
     youtube.add_argument("episode_id")
     youtube.add_argument("--private", dest="visibility", action="store_const", const="private", default="private")
@@ -296,13 +353,29 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--start", type=int)
             command.add_argument("--end", type=int)
             command.add_argument("--no-resume", action="store_true")
+        if name == "qc":
+            command.add_argument("--deep", action="store_true", help="decode and validate every frame")
         command.add_argument("--json", action="store_true")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
+    raw_argv = list(argv) if argv is not None else sys.argv[1:]
+    # Keep the concise documented form ``hajimi animatic review EP001`` while
+    # retaining the original ``hajimi animatic EP001`` invocation.
+    try:
+        animatic_index = raw_argv.index("animatic")
+    except ValueError:
+        animatic_index = -1
+    if animatic_index >= 0 and len(raw_argv) > animatic_index + 2 and raw_argv[animatic_index + 1] == "review":
+        raw_argv = [
+            *raw_argv[:animatic_index],
+            "animatic-review",
+            raw_argv[animatic_index + 2],
+            *raw_argv[animatic_index + 3:],
+        ]
     parser = build_parser()
-    args = parser.parse_args(argv)
+    args = parser.parse_args(raw_argv)
     paths = _paths(args.root)
     try:
         if args.command == "new":
@@ -313,6 +386,8 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_research(args, paths)
         if args.command == "animatic":
             return _cmd_animatic(args, paths)
+        if args.command == "animatic-review":
+            return _cmd_animatic_review(args, paths)
         if args.command == "qc":
             return _cmd_qc(args, paths)
         if args.command == "master":

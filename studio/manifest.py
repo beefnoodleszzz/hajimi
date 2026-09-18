@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 from pathlib import Path
 from typing import Any
@@ -36,6 +37,7 @@ EPISODE_STATUSES = {
 }
 METHODS = {"blender", "ai_video", "ai_image", "fusion", "footage", "animatic_card"}
 SUPPORTED_SHORT_ASPECT_RATIO = "9:16"
+PRODUCTION_PHASES = {"production", "qc_pending", "master_qc", "uploaded_private", "checks_pending", "complete"}
 
 
 def load_manifest(path: str | Path) -> dict[str, Any]:
@@ -153,6 +155,27 @@ def validate_manifest(manifest: dict[str, Any], path: str | Path | None = None) 
             errors.append("publish.visibility must be private, public, or scheduled")
         if "ai_disclosure" in publish and not isinstance(publish.get("ai_disclosure"), bool):
             errors.append("publish.ai_disclosure must be boolean")
+    errors.extend(validate_phase_contract(manifest))
+    return errors
+
+
+def validate_phase_contract(manifest: dict[str, Any]) -> list[str]:
+    """Reject storyboard-only media when an episode enters production phases."""
+
+    errors: list[str] = []
+    if manifest.get("status") not in PRODUCTION_PHASES:
+        return errors
+    for index, shot in enumerate(manifest.get("shots", [])):
+        if not isinstance(shot, dict) or shot.get("method") != "animatic_card":
+            continue
+        active = shot.get("active_media")
+        output = shot.get("output") if isinstance(shot.get("output"), dict) else {}
+        has_production_output = any(
+            isinstance(value, str) and ("production" in value or "render" in value or "master" in value)
+            for value in output.values()
+        )
+        if shot.get("status") == "approved" or active or has_production_output:
+            errors.append(f"shots[{index}] animatic_card cannot be an active production shot")
     return errors
 
 
@@ -169,6 +192,27 @@ def manifest_hash(path: str | Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def manifest_input_hash(manifest: dict[str, Any]) -> str:
+    """Hash creative/production inputs while ignoring mutable derived status.
+
+    Approval evidence is stored next to the asset it approves.  Excluding
+    status-like fields prevents recording an approval from invalidating itself
+    merely because the canonical manifest records that approval's phase.
+    """
+
+    ignored_keys = {"_path", "status", "approval", "qc_evidence", "director_review"}
+
+    def normalize(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {key: normalize(item) for key, item in sorted(value.items()) if key not in ignored_keys}
+        if isinstance(value, list):
+            return [normalize(item) for item in value]
+        return value
+
+    encoded = json.dumps(normalize(manifest), ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def new_manifest(episode_id: str) -> dict[str, Any]:

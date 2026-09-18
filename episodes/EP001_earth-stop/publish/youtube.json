@@ -1,16 +1,18 @@
 {
   "schema_version": "youtube-publish-v2",
   "episode_id": "EP001_earth-stop",
-  "created_at": "2026-09-18T02:49:18.496168+00:00",
+  "created_at": "2026-09-18T04:09:04.425457+00:00",
   "status": "BLOCKED",
+  "lifecycle_status": "BLOCKED",
   "checks": {
-    "animatic_gate": true,
+    "animatic_gate": false,
     "all_shots_approved": false,
     "shot_qc_evidence": false,
     "shot_provenance": true,
     "resolve_readback": true,
-    "master_qc": true,
+    "master_qc": false,
     "human_playback_recorded": false,
+    "master_approval_hash_bound": false,
     "master_exists": true,
     "master_hash_recorded": true,
     "master_hash_matches_qc": true,
@@ -29,10 +31,10 @@
       "private_upload",
       "checks_readback"
     ],
-    "animatic_gate": "PASS"
+    "animatic_gate": "FAIL"
   },
   "master": {
-    "path": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+    "path": "episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
     "sha256": "8b20eb848d0ebd259de9a20f984e4aab5bf7959b32f6c97eeba37baa5e3028ac"
   },
   "metadata": {

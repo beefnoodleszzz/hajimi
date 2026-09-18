@@ -7,8 +7,9 @@ import pytest
 
 from studio.config import dump_yaml, write_json
 from studio.media.hashing import sha256_file
-from studio.publish.youtube import build_publish_plan, record_upload_readback
-from studio.resolve.sync import record_resolve_readback, validate_resolve_readback
+from studio.manifest import manifest_input_hash
+from studio.publish.youtube import build_publish_plan, publish_doctor, record_upload_readback
+from studio.resolve.sync import record_resolve_readback, resolve_doctor, validate_resolve_readback
 
 
 def _manifest() -> dict:
@@ -82,19 +83,43 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
         },
         shot_media.parent.parent / "provenance.json",
     )
-    dump_yaml(_manifest(), episode_root / "episode.yaml")
+    manifest = _manifest()
+    dump_yaml(manifest, episode_root / "episode.yaml")
     master = episode_root / "master" / "EP999_contract_master_final.mp4"
     master.write_bytes(b"master-contract-media")
     write_json(
         {
             "decision": "PASS",
             "master_sha256": sha256_file(master),
-            "human_review": {"status": "PASS", "reviewer": "human", "confirmed_at": "2026-09-18T00:00:00Z"},
+            "manifest_sha256": manifest_input_hash(manifest),
+            "approval_target": {
+                "asset_sha256": sha256_file(master),
+                "manifest_sha256": manifest_input_hash(manifest),
+                "profile_version": "fast-qc-v2",
+            },
+            "human_review": {
+                "status": "PASS",
+                "reviewer": "human",
+                "confirmed_at": "2026-09-18T00:00:00Z",
+                "approval_target": {
+                    "asset_sha256": sha256_file(master),
+                    "manifest_sha256": manifest_input_hash(manifest),
+                    "profile_version": "fast-qc-v2",
+                },
+            },
             "human_review_recorded": True,
         },
         episode_root / "qc" / "master_report.json",
     )
-    write_json({"decision": "PASS"}, episode_root / "animatic" / "gate.json")
+    write_json(
+        {
+            "decision": "PASS",
+            "automation_gate": "PASS",
+            "director_review": {"status": "APPROVED"},
+            "production_gate": "PASS",
+        },
+        episode_root / "animatic" / "gate.json",
+    )
     write_json(
         {
             "episode_id": "EP999_contract",
@@ -104,6 +129,11 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
                     "decision": "PASS",
                     "source": str(shot_media),
                     "asset_hash": sha256_file(shot_media),
+                    "approval_target": {
+                        "asset_sha256": sha256_file(shot_media),
+                        "manifest_sha256": manifest_input_hash(manifest),
+                        "profile_version": "fast-qc-v2",
+                    },
                 }
             ],
         },
@@ -138,6 +168,19 @@ def test_publish_plan_has_ego_upload_contract_and_human_gate(tmp_path: Path) -> 
     assert plan["upload"]["operation"] == "uploadFile"
     assert plan["master"]["sha256"] == sha256_file(master)
     assert plan["readback_contract"]["required"] == ["video_url", "visibility", "metadata", "checks", "processing", "schedule"]
+
+
+def test_publish_plan_does_not_call_stale_master_qc_fresh(tmp_path: Path) -> None:
+    root, episode_root, _ = _ready_root(tmp_path)
+    report_path = episode_root / "qc" / "master_report.json"
+    report = json.loads(report_path.read_text())
+    report["manifest_sha256"] = "stale-manifest"
+    write_json(report, report_path)
+
+    plan = build_publish_plan(root, "EP999_contract")
+
+    assert plan["checks"]["master_qc"] is False
+    assert plan["status"] == "BLOCKED"
 
 
 def test_upload_readback_is_validated_and_persisted(tmp_path: Path) -> None:
@@ -260,3 +303,14 @@ def test_resolve_readback_persists_raw_export_and_separate_validation(tmp_path: 
     validation = json.loads((episode_root / "edit" / "resolve_readback_validation.json").read_text())
     assert raw["timeline_name"] == "EP999_Master"
     assert validation["decision"] == "PASS"
+
+
+def test_runtime_doctors_do_not_fabricate_external_readiness(tmp_path: Path) -> None:
+    resolve = resolve_doctor(tmp_path)
+    publish = publish_doctor(tmp_path, "EP999_contract")
+
+    assert resolve["capability"]["mutation"] is False
+    assert resolve["capability"]["mode"] == "HANDOFF_ONLY"
+    assert resolve["status"] in {"PARTIAL", "EXTERNAL_RUNTIME_REQUIRED"}
+    assert publish["status"] in {"BLOCKED", "EXTERNAL_RUNTIME_REQUIRED"}
+    assert publish["checks"]["upload_attempted"] is False

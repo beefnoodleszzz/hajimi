@@ -33,6 +33,7 @@ uv run hajimi blender build EP001_TEST_01 --force
 uv run hajimi blender preview EP001_TEST_01 --profile P1
 uv run hajimi blender render EP001_TEST_01 --profile P3
 uv run hajimi blender qc EP001_TEST_01 --profile P3
+uv run hajimi blender qc EP001_TEST_01 --profile P3 --deep
 ```
 
 Blender final output is a PNG image sequence plus a Resolve handoff manifest;
@@ -46,6 +47,30 @@ Geo-Scatter `5.6.4`, and Physical Atmosphere² remain correctly marked
 The repository contains a reproducible EP001 storyboard animatic. It is a
 deliberate pre-production gate: deterministic cards and temporary sound stems
 prove the story rhythm before costly AI shot generation or Resolve finishing.
+
+Animatic approval is split into three machine-readable states:
+`automation_gate`, `director_review`, and `production_gate`. Run the automation
+gate first, then approve the exact unchanged asset with:
+
+```bash
+uv run hajimi animatic EP001_earth-stop --force
+uv run hajimi animatic review EP001_earth-stop --approve --reviewer director
+```
+
+Blender QC defaults to `FAST`: sequence continuity plus representative frame
+decode. Use `--deep` only when full-sequence integrity is explicitly required.
+Generated Blender/runtime evidence under `config/generated/` is local machine
+evidence and is not the repository source of truth; portable asset indexes use
+repo-relative paths or `${HAJIMI_ASSETS}`.
+
+Resolve and YouTube checks are capability/readiness contracts, not hidden
+automation. Use `uv run hajimi resolve doctor` and
+`uv run hajimi publish doctor EP001_earth-stop`; an external visible runtime is
+required before any mutation or upload. YouTube defaults to a private upload.
+
+Ordinary GitHub Core CI runs the Python contracts and compile checks only. A
+real Blender integration check belongs on an explicitly configured local or
+self-hosted macOS runner and is not required for ordinary CI.
 
 ## Architecture
 

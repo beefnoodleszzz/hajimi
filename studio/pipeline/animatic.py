@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import shutil
 import subprocess
 import wave
@@ -19,7 +20,8 @@ from typing import Any
 from PIL import Image, ImageDraw, ImageFont
 
 from ..config import load_yaml, write_json
-from ..manifest import assert_valid_manifest, load_manifest
+from ..manifest import assert_valid_manifest, load_manifest, manifest_hash
+from ..media.hashing import sha256_file
 from ..media.probe import executable, probe_media
 from ..paths import StudioPaths, project_root
 
@@ -260,7 +262,12 @@ def create_audio_stems(episode_root: str | Path, duration: float = 38.0) -> dict
         "voice_status": voice_status,
         "layer_count": 4,
     }
-    write_json(stems, audio_root / "stems.json")
+    root = Path(episode_root).resolve().parent.parent
+    persisted_stems = {
+        key: _relative_to_root(root, value) if key in {"voice", "music", "ambience", "sfx"} else value
+        for key, value in stems.items()
+    }
+    write_json(persisted_stems, audio_root / "stems.json")
     return stems
 
 
@@ -349,8 +356,246 @@ def render_animatic(episode_root: str | Path, manifest: dict[str, Any]) -> Path:
     muxed = subprocess.run([ffmpeg_bin, "-y", "-hide_banner", "-nostdin", "-i", str(video_only), "-i", str(mixed_audio), "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(output)], capture_output=True, text=True, check=False)
     if muxed.returncode != 0:
         raise RuntimeError(muxed.stderr[-3000:] or "animatic audio mux failed")
-    write_json({"episode_id": manifest["episode_id"], "cards": [str(path) for path in cards], "segments": [str(path) for path in segments], "audio": stems, "output": str(output), "duration_target": sum(float(shot["duration_target"]) for shot in manifest["shots"])}, episode_root / "animatic" / "build.json")
+    root = episode_root.parent.parent.resolve()
+    relative = lambda path: str(Path(path).resolve().relative_to(root))
+    write_json(
+        {
+            "episode_id": manifest["episode_id"],
+            "cards": [relative(path) for path in cards],
+            "segments": [relative(path) for path in segments],
+            "audio": {key: relative(value) if key in {"voice", "music", "ambience", "sfx"} else value for key, value in stems.items()},
+            "output": relative(output),
+            "duration_target": sum(float(shot["duration_target"]) for shot in manifest["shots"]),
+        },
+        episode_root / "animatic" / "build.json",
+    )
     return output
+
+
+ANIMATIC_EVENT_TYPES = {
+    "state_change",
+    "camera_change",
+    "subject_motion",
+    "information_reveal",
+    "graphic_reveal",
+    "composition_change",
+    "cut",
+    "transition",
+    "scale_change",
+    "impact",
+}
+
+
+def _animatic_settings(root: Path) -> dict[str, Any]:
+    config_path = root / "config" / "animatic.yaml"
+    if not config_path.exists():
+        return {
+            "profile_version": "animatic-gate-v2",
+            "visual_cadence": {"target_min_sec": 1.0, "target_max_sec": 3.0},
+            "static_hold": {"max_sec": 5.0, "low_variation_threshold": 0.02},
+        }
+    loaded = load_yaml(config_path).get("animatic", {})
+    return loaded if isinstance(loaded, dict) else {}
+
+
+def _relative_to_root(root: Path, value: str | Path) -> str:
+    path = Path(value).resolve()
+    try:
+        return str(path.relative_to(root.resolve()))
+    except ValueError:
+        return str(path)
+
+
+def _timeline_duration(shots: list[dict[str, Any]]) -> float:
+    return max(
+        (
+            float(shot.get("time_end", 0.0))
+            if shot.get("time_end") is not None
+            else float(shot.get("duration_target", 0.0))
+        )
+        for shot in shots
+    ) if shots else 0.0
+
+
+def _planned_visual_events(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    events: list[dict[str, Any]] = []
+    top_level = manifest.get("visual_events", [])
+    if isinstance(top_level, list):
+        events.extend(item for item in top_level if isinstance(item, dict))
+    for shot in manifest.get("shots", []):
+        shot_events = shot.get("visual_events", []) if isinstance(shot, dict) else []
+        if isinstance(shot_events, list):
+            events.extend(item for item in shot_events if isinstance(item, dict))
+    return sorted(events, key=lambda item: float(item.get("time", 0.0)))
+
+
+def _cadence_check(manifest: dict[str, Any], settings: dict[str, Any]) -> dict[str, Any]:
+    shots = manifest.get("shots", [])
+    duration = _timeline_duration(shots)
+    events = _planned_visual_events(manifest)
+    cadence = settings.get("visual_cadence", {}) if isinstance(settings.get("visual_cadence"), dict) else {}
+    minimum = float(cadence.get("target_min_sec", 1.0))
+    maximum = float(cadence.get("target_max_sec", 3.0))
+    errors: list[str] = []
+    normalized: list[dict[str, Any]] = []
+    for index, event in enumerate(events):
+        time_value = event.get("time")
+        event_type = str(event.get("type", ""))
+        description = str(event.get("description", "")).strip()
+        if not isinstance(time_value, (int, float)):
+            errors.append(f"event[{index}].time must be numeric")
+            continue
+        if not 0.0 <= float(time_value) <= duration:
+            errors.append(f"event[{index}].time outside timeline")
+        if event_type not in ANIMATIC_EVENT_TYPES:
+            errors.append(f"event[{index}].type unsupported: {event_type or '<missing>'}")
+        if not description:
+            errors.append(f"event[{index}].description is required")
+        normalized.append({"time": round(float(time_value), 3), "type": event_type, "description": description})
+    times = [float(item["time"]) for item in normalized]
+    boundaries = [0.0, *times, duration]
+    gaps = [round(right - left, 3) for left, right in zip(boundaries, boundaries[1:]) if right - left > 1e-6]
+    long_gaps = [gap for gap in gaps if gap > maximum]
+    short_gaps = [gap for gap in gaps if gap < minimum]
+    if not events:
+        errors.append("visual_events are required; shot count is not a cadence proof")
+    if long_gaps:
+        errors.append(f"visual cadence gaps exceed {maximum:.3g}s: {long_gaps}")
+    status = "FAIL" if errors else ("REVIEW" if short_gaps else "PASS")
+    return {
+        "name": "meaningful_visual_change_every_1_to_3_seconds",
+        "status": status,
+        "value": {
+            "duration_sec": duration,
+            "events": normalized,
+            "event_count": len(normalized),
+            "gaps_sec": gaps,
+            "target_min_sec": minimum,
+            "target_max_sec": maximum,
+            "long_gaps_sec": long_gaps,
+            "short_gaps_sec": short_gaps,
+        },
+        "errors": errors,
+    }
+
+
+_FREEZE_START_RE = re.compile(r"freeze_start:\s*([0-9.]+)")
+_FREEZE_DURATION_RE = re.compile(r"freeze_duration:\s*([0-9.]+)")
+
+
+def _freeze_events(probe: dict[str, Any]) -> list[dict[str, float]]:
+    lines = probe.get("filters", {}).get("video_events", []) if isinstance(probe.get("filters"), dict) else []
+    starts = [float(match.group(1)) for line in lines if (match := _FREEZE_START_RE.search(str(line)))]
+    durations = [float(match.group(1)) for line in lines if (match := _FREEZE_DURATION_RE.search(str(line)))]
+    return [
+        {"start": start, "duration": duration, "end": round(start + duration, 3)}
+        for start, duration in zip(starts, durations)
+    ]
+
+
+def _static_hold_check(manifest: dict[str, Any], probe: dict[str, Any], settings: dict[str, Any]) -> dict[str, Any]:
+    static_settings = settings.get("static_hold", {}) if isinstance(settings.get("static_hold"), dict) else {}
+    threshold = float(static_settings.get("max_sec", 5.0))
+    shots = manifest.get("shots", [])
+    freezes = _freeze_events(probe)
+    findings: list[dict[str, Any]] = []
+    for freeze in freezes:
+        if freeze["duration"] <= threshold:
+            continue
+        midpoint = freeze["start"] + freeze["duration"] / 2
+        shot = next(
+            (
+                item
+                for item in shots
+                if float(item.get("time_start", 0.0)) <= midpoint < float(item.get("time_end", item.get("time_start", 0.0)))
+            ),
+            None,
+        )
+        justification = shot.get("long_hold_justification") if isinstance(shot, dict) else None
+        intentional = isinstance(justification, dict) and justification.get("intentional") is True and bool(str(justification.get("reason", "")).strip())
+        findings.append(
+            {
+                **freeze,
+                "shot_id": shot.get("id") if isinstance(shot, dict) else None,
+                "justified": intentional,
+                "justification": justification,
+            }
+        )
+    status = "PASS" if all(item["justified"] for item in findings) else "FAIL"
+    return {
+        "name": "no_unjustified_static_hold_over_threshold",
+        "status": status,
+        "threshold_sec": threshold,
+        "events": findings,
+        "errors": [] if status == "PASS" else ["one or more rendered freeze intervals exceed the configured threshold without an intentional reason"],
+    }
+
+
+def _animatic_target(root: Path, episode_root: Path, manifest_path: Path, settings: dict[str, Any], output: Path) -> dict[str, Any]:
+    input_paths = [
+        episode_root / "animatic" / "cards",
+        episode_root / "audio" / "stems.json",
+    ]
+    digest_parts = [manifest_hash(manifest_path)]
+    config_path = root / "config" / "animatic.yaml"
+    if config_path.exists():
+        digest_parts.append(sha256_file(config_path))
+    for base in input_paths:
+        candidates = sorted(base.rglob("*") if base.is_dir() else [base])
+        for path in candidates:
+            if path.is_file():
+                digest_parts.append(f"{_relative_to_root(root, path)}:{sha256_file(path)}")
+    import hashlib
+
+    input_sha256 = hashlib.sha256("\n".join(digest_parts).encode("utf-8")).hexdigest()
+    return {
+        "asset_sha256": sha256_file(output) if output.is_file() else None,
+        "manifest_sha256": manifest_hash(manifest_path),
+        "input_sha256": input_sha256,
+        "profile_version": str(settings.get("profile_version", "animatic-gate-v2")),
+    }
+
+
+def record_animatic_review(
+    episode_id: str,
+    *,
+    root: str | Path | None = None,
+    approve: bool,
+    reviewer: str = "director",
+    notes: str | None = None,
+) -> dict[str, Any]:
+    """Record a human review bound to the exact current animatic inputs."""
+
+    if not isinstance(reviewer, str) or not reviewer.strip():
+        raise ValueError("animatic review requires a reviewer")
+    paths = StudioPaths(Path(root).resolve() if root else project_root())
+    episode_root = paths.episode(episode_id)
+    manifest_path = paths.manifest(episode_id)
+    gate_path = episode_root / "animatic" / "gate.json"
+    if not gate_path.exists():
+        raise FileNotFoundError(f"animatic gate not found: {gate_path}")
+    gate = json.loads(gate_path.read_text(encoding="utf-8"))
+    settings = _animatic_settings(paths.root)
+    output = episode_root / "animatic" / f"{episode_id}_animatic.mp4"
+    target = _animatic_target(paths.root, episode_root, manifest_path, settings, output)
+    if gate.get("automation_gate") != "PASS":
+        raise RuntimeError("director review requires automation_gate=PASS")
+    if gate.get("approval_target") != target:
+        raise RuntimeError("animatic inputs changed after automation gate; rerun the animatic gate before review")
+    if not target.get("asset_sha256"):
+        raise RuntimeError("animatic media is missing; rerun the animatic gate")
+    decision = "APPROVED" if approve else "REJECTED"
+    gate["director_review"] = {
+        "status": decision,
+        "reviewer": reviewer.strip(),
+        "notes": notes,
+        "recorded_at": datetime.now(timezone.utc).isoformat(),
+        "approval_target": target,
+    }
+    gate["production_gate"] = "PASS" if approve else "BLOCKED"
+    gate["decision"] = "PASS" if approve else "FAIL"
+    write_json(gate, gate_path)
+    return gate
 
 
 def run_animatic_gate(episode_id: str, *, root: str | Path | None = None, force: bool = False) -> dict[str, Any]:
@@ -360,8 +605,17 @@ def run_animatic_gate(episode_id: str, *, root: str | Path | None = None, force:
     manifest = load_manifest(manifest_path)
     assert_valid_manifest(manifest, manifest_path)
     output = episode_root / "animatic" / f"{manifest['episode_id']}_animatic.mp4"
+    gate_path = episode_root / "animatic" / "gate.json"
+    old_gate: dict[str, Any] = {}
+    if gate_path.exists():
+        try:
+            loaded = json.loads(gate_path.read_text(encoding="utf-8"))
+            old_gate = loaded if isinstance(loaded, dict) else {}
+        except (OSError, json.JSONDecodeError):
+            old_gate = {}
     if force or not output.exists():
         render_animatic(episode_root, manifest)
+    settings = _animatic_settings(paths.root)
     checks: list[dict[str, Any]] = []
     shots = manifest.get("shots", [])
     checks.append({"name": "manifest_valid", "status": "PASS"})
@@ -369,33 +623,53 @@ def run_animatic_gate(episode_id: str, *, root: str | Path | None = None, force:
     if anomaly_time is None and shots:
         anomaly_time = shots[0].get("time_end", shots[0].get("duration_target", 0))
     checks.append({"name": "anomaly_inside_1_5_seconds", "status": "PASS" if float(anomaly_time or 0) <= 1.5 else "FAIL", "value": anomaly_time})
-    checks.append({"name": "meaningful_visual_change_every_1_to_3_seconds", "status": "PASS" if len(shots) >= 8 else "FAIL", "shot_count": len(shots)})
-    checks.append({"name": "no_unjustified_static_hold_over_5_seconds", "status": "PASS" if max(float(shot["duration_target"]) for shot in shots) <= 6.0 else "FAIL", "max_duration": max(float(shot["duration_target"]) for shot in shots)})
+    cadence_check = _cadence_check(manifest, settings)
+    checks.append(cadence_check)
     checks.append({"name": "hero_shot_exists", "status": "PASS" if manifest["creative"]["hero_shot"] in {shot.get("id") for shot in shots} else "FAIL", "shot": manifest["creative"]["hero_shot"]})
     checks.append({"name": "layered_sound_stems", "status": "PASS" if len(list((episode_root / "audio").glob("*_temp.wav"))) >= 4 else "FAIL", "required": ["VO", "MUSIC", "AMB", "SFX"]})
     probe = probe_media(output)
     checks.append({"name": "animatic_decodes", "status": "PASS" if probe.get("ok") else "FAIL", "probe": probe})
-    decision = "PASS" if all(item["status"] == "PASS" for item in checks) else "FAIL"
+    checks.append(_static_hold_check(manifest, probe, settings))
+    automation_statuses = [item["status"] for item in checks]
+    automation_gate = "FAIL" if "FAIL" in automation_statuses else ("REVIEW" if "REVIEW" in automation_statuses else "PASS")
+    target = _animatic_target(paths.root, episode_root, manifest_path, settings, output)
+    old_review = old_gate.get("director_review") if isinstance(old_gate.get("director_review"), dict) else None
+    review_target = old_review.get("approval_target") if old_review else None
+    review_is_current = bool(old_review and review_target == target and old_review.get("status") == "APPROVED")
+    director_review: dict[str, Any] = old_review if review_is_current else {
+        "status": "PENDING",
+        "required": True,
+        "reason": "complete playback review is required before production-quality shot spend",
+    }
+    production_gate = "PASS" if automation_gate == "PASS" and review_is_current else "BLOCKED"
+    decision = "PASS" if production_gate == "PASS" else ("FAIL" if automation_gate == "FAIL" else "REVIEW")
     gate = {
-        "schema_version": "animatic-gate-v1",
+        "schema_version": "animatic-gate-v2",
         "episode_id": episode_id,
         "decision": decision,
+        "automation_gate": automation_gate,
+        "director_review": director_review,
+        "production_gate": production_gate,
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "output": str(output),
+        "output": _relative_to_root(paths.root, output),
+        "approval_target": target,
         "checks": checks,
-        "human_review": "complete playback is still required before production shot spend",
+        "human_review": director_review.get("status", "PENDING"),
         "prohibited_next_step_until_pass": "AI/production-quality shot generation",
     }
-    write_json(gate, episode_root / "animatic" / "gate.json")
+    write_json(gate, gate_path)
     state = {
         "mode": "CREATIVE_AMV",
         "phase": "animatic_gate",
-        "accepted_timeline": str(output) if decision == "PASS" else None,
+        "accepted_timeline": _relative_to_root(paths.root, output) if production_gate == "PASS" else None,
+        "automation_gate": automation_gate,
+        "director_review": director_review.get("status", "PENDING"),
+        "production_gate": production_gate,
         "render": {"path": str(output), "fps": manifest["master"]["fps"], "frame_origin": 1},
-        "input_hashes": {},
+        "input_hashes": target,
         "findings": [item for item in checks if item["status"] != "PASS"],
         "skipped_gates": ["Resolve mutation: no external Resolve session was opened"],
-        "next_action": "director playback review, then approve shot production" if decision == "PASS" else "repair failed animatic checks",
+        "next_action": "director playback review and approval" if automation_gate == "PASS" and not review_is_current else ("production blocked by animatic gate" if production_gate != "PASS" else "proceed to shot production"),
     }
     write_json(state, paths.project_state)
     return gate

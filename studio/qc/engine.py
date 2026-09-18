@@ -18,7 +18,7 @@ from typing import Any
 
 from ..config import load_yaml, write_json
 from ..db import StateStore
-from ..manifest import assert_valid_manifest, load_manifest, manifest_hash, write_manifest
+from ..manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, write_manifest
 from ..media.audio import audio_qc, validate_sound_layers
 from ..media.contact_sheet import build_contact_sheet
 from ..media.hashing import sha256_file
@@ -263,7 +263,11 @@ def run_media_qc(
             scenes,
             samples_dir,
             short_threshold=float(sampling.get("short_threshold_sec", 1.2)),
-            max_samples=int(sampling.get("max_samples_per_shot", 3)),
+            long_threshold=float(sampling.get("long_threshold_sec", 8.0)),
+            short_positions=[float(value) for value in sampling.get("short_positions", [0.25, 0.75])],
+            default_positions=[float(value) for value in sampling.get("default_positions", [0.10, 0.50, 0.90])],
+            long_positions=[float(value) for value in sampling.get("long_positions", [0.0, 0.25, 0.50, 0.75, 1.0])],
+            max_samples_per_scene=int(sampling.get("max_samples_per_scene", 3)),
         )
     except Exception as exc:
         errors.append(f"frame sampling failed: {exc.__class__.__name__}")
@@ -414,6 +418,11 @@ def record_shot_review(
         "recorded_at": utc_now(),
         "automated_decision": evidence.get("decision"),
         "asset_hash": asset_hash,
+        "approval_target": {
+            "asset_sha256": asset_hash,
+            "manifest_sha256": manifest_input_hash(manifest),
+            "profile_version": evidence.get("profile_version", QC_PROFILE_VERSION),
+        },
     }
     evidence["director_review"] = review
     evidence["reviewed_decision"] = normalized_decision
@@ -502,6 +511,14 @@ def run_episode_qc(episode_id: str, *, root: str | Path | None = None, force: bo
     results = [results_by_shot[str(shot["id"])] for shot in manifest.get("shots", [])]
     for result in results:
         shot_id = str(result["shot_id"])
+        if result.get("asset_hash"):
+            result["approval_target"] = {
+                "asset_sha256": result.get("asset_hash"),
+                "manifest_sha256": manifest_input_hash(manifest),
+                "profile_version": result.get("profile_version", profile_version),
+                "reviewer": "automation",
+                "recorded_at": utc_now(),
+            }
         status = "approved" if result.get("decision") == "PASS" else "qc_pending"
         old_evidence = previous_evidence.get(shot_id, {})
         old_review = old_evidence.get("director_review")
@@ -510,6 +527,7 @@ def run_episode_qc(episode_id: str, *, root: str | Path | None = None, force: bo
             and isinstance(old_review, dict)
             and old_review.get("status") == "PASS"
             and old_evidence.get("asset_hash") == result.get("asset_hash")
+            and old_review.get("approval_target", {}).get("manifest_sha256") == manifest_input_hash(manifest)
         ):
             result["director_review"] = old_review
             result["reviewed_decision"] = "PASS"
@@ -534,8 +552,19 @@ def run_episode_qc(episode_id: str, *, root: str | Path | None = None, force: bo
         "profile_version": profile_version,
         "decision": decision,
         "created_at": utc_now(),
+        "manifest_sha256": manifest_input_hash(manifest),
         "shots": results,
-        "policy": {"proxy_first": True, "base_samples_per_scene": "2 for <1.2s, otherwise 3", "max_samples_per_shot": 3, "vlm_default": False, "workers": worker_count},
+        "policy": {
+            "proxy_first": True,
+            "sampling": {
+                "short": "configured short_positions",
+                "default": "configured default_positions",
+                "long": "configured long_positions",
+                "max_samples_per_scene": int(_config(paths.root).get("qc", {}).get("sampling", {}).get("max_samples_per_scene", 3)),
+            },
+            "vlm_default": False,
+            "workers": worker_count,
+        },
     }
     build_contact_sheet(contact_items, episode_root / "qc" / "contact_sheet.jpg")
     _write_episode_report(episode_root, report)
@@ -714,6 +743,7 @@ def run_master_qc(episode_id: str, *, root: str | Path | None = None, force: boo
         "created_at": utc_now(),
         "master": str(master),
         "master_sha256": sha256_file(master),
+        "manifest_sha256": manifest_input_hash(manifest),
         "technical": result,
         "geometry": geometry,
         "loudness": loudness,
@@ -723,6 +753,11 @@ def run_master_qc(episode_id: str, *, root: str | Path | None = None, force: boo
         "asr": result.get("audio", {}).get("asr", {"status": "not_run"}),
         "human_review": {"status": "PENDING", "required": True, "instruction": "Complete playback once and record explicit human approval."},
         "human_review_recorded": False,
+        "approval_target": {
+            "asset_sha256": sha256_file(master),
+            "manifest_sha256": manifest_input_hash(manifest),
+            "profile_version": result.get("profile_version", QC_PROFILE_VERSION),
+        },
     }
     write_json(report, episode_root / "qc" / "master_report.json")
     master_lines = [
@@ -750,9 +785,24 @@ def record_human_playback(root: str | Path, episode_id: str, *, reviewer: str = 
     if report.get("decision") != "PASS":
         raise RuntimeError("Cannot record human playback until automated master QC is PASS")
     master_path = Path(report.get("master", ""))
-    if not master_path.exists() or report.get("master_sha256") != sha256_file(master_path):
+    current_manifest = load_manifest(paths.manifest(episode_id))
+    if (
+        not master_path.exists()
+        or report.get("master_sha256") != sha256_file(master_path)
+        or report.get("manifest_sha256") != manifest_input_hash(current_manifest)
+    ):
         raise RuntimeError("Master changed after automated QC; rerun master QC before human playback")
-    report["human_review"] = {"status": "PASS", "reviewer": reviewer.strip(), "notes": notes, "confirmed_at": utc_now()}
+    report["human_review"] = {
+        "status": "PASS",
+        "reviewer": reviewer.strip(),
+        "notes": notes,
+        "confirmed_at": utc_now(),
+        "approval_target": {
+            "asset_sha256": report["master_sha256"],
+            "manifest_sha256": manifest_input_hash(current_manifest),
+            "profile_version": report.get("technical", {}).get("profile_version", QC_PROFILE_VERSION),
+        },
+    }
     report["human_review_recorded"] = True
     write_json(report, report_path)
     return report

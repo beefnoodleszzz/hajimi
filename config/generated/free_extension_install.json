@@ -5,7 +5,7 @@
   "results": [
     {
       "package_id": "scatter_objects",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/installers/scatter-objects-0.2.0.zip",
+      "path": "./blender/installers/scatter-objects-0.2.0.zip",
       "role": "Geo-Scatter free replacement",
       "exists": true,
       "status": "PASS",
@@ -13,7 +13,7 @@
     },
     {
       "package_id": "bagapie",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/installers/bagapie-11.0.12.zip",
+      "path": "./blender/installers/bagapie-11.0.12.zip",
       "role": "Geo-Scatter free/community replacement",
       "exists": true,
       "status": "PASS",
@@ -21,7 +21,7 @@
     },
     {
       "package_id": "physical_motion_blur",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/installers/physical-motion-blur-1.1.0.zip",
+      "path": "./blender/installers/physical-motion-blur-1.1.0.zip",
       "role": "Photographer motion-blur replacement",
       "exists": true,
       "status": "PASS",
@@ -29,7 +29,7 @@
     },
     {
       "package_id": "sun_position",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/installers/sun-position-4.4.0.zip",
+      "path": "./blender/installers/sun-position-4.4.0.zip",
       "role": "Photographer sun/exposure replacement",
       "exists": true,
       "status": "PASS",
@@ -37,7 +37,7 @@
     },
     {
       "package_id": "dynamic_sky",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/installers/dynamic-sky-1.1.0.zip",
+      "path": "./blender/installers/dynamic-sky-1.1.0.zip",
       "role": "Physical Atmosphere replacement",
       "exists": true,
       "status": "PASS",
@@ -45,7 +45,7 @@
     },
     {
       "package_id": "helio",
-      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/installers/helio-1.1.1.zip",
+      "path": "./blender/installers/helio-1.1.1.zip",
       "role": "Physical Atmosphere solar/sky replacement",
       "exists": true,
       "status": "PASS",

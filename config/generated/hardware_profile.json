@@ -6,7 +6,7 @@
   "cpu_count_logical": 12,
   "memory_bytes": 17179869184,
   "memory_gib": 16.0,
-  "blender_binary": "/Applications/Blender.app/Contents/MacOS/Blender",
+  "blender_binary": "${BLENDER_BIN}",
   "detected_at": "2026-09-18T10:02:24+0800",
   "blender_version": "5.2.2",
   "required_blender_version": "5.2.2",
