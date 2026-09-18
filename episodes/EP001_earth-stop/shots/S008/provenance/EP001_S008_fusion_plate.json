@@ -1,0 +1,16 @@
+{
+  "schema_version": "shot-production-provenance-v1",
+  "episode_id": "EP001_earth-stop",
+  "shot_id": "S008",
+  "candidate_id": "S008-fusion-plate-001",
+  "media_type": "video",
+  "production_method": "deterministic_still_plate_with_fusion_handoff",
+  "source_asset": "episodes/EP001_earth-stop/shots/S008/preview/storyboard.png",
+  "source_sha256": "0fa183346b939a5550d57cc5b8331070c933d5f361d1a638aae4ead392d4e7e6",
+  "output_asset": "episodes/EP001_earth-stop/shots/S008/production/EP001_S008_still_plate.mp4",
+  "output_sha256": "5dc6e49f472d957b7cdc7ed6d33c01f9563cc5027c021a5d80ff75e8c4b38fd1",
+  "dimensions": {"width": 1080, "height": 1920, "fps": 30, "duration_seconds": 4.0, "video_codec": "h264", "audio": false},
+  "authoring": {"graphic_owner": "Fusion handoff", "text_source": "GRAVITY STAYS", "flow_used": false, "imagegen_used": false, "resolve_fusion_comp": "Composition 1"},
+  "qc": {"ffprobe": "PASS", "decode": "PASS", "human_playback": "pending"},
+  "license": {"source": "project-original artwork", "external_references": []}
+}

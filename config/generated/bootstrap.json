@@ -1,0 +1,639 @@
+{
+  "command": "bootstrap",
+  "status": "PASS",
+  "decision": "PASS",
+  "version_status": "PASS",
+  "assets": {
+    "asset_root": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets",
+    "source_policy": "local curated/vendor files only; no online fallback",
+    "libraries": [
+      {
+        "name": "Hajimi Curated",
+        "category": "curated",
+        "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/curated",
+        "exists": true,
+        "writable": true,
+        "asset_count": 2,
+        "assets": [
+          {
+            "path": "blender/assets/curated/HJ_Curated_BlankRedReceipt.blend.json",
+            "sha256": "1eb91535097a317442700871973189467e589e36830cd476b82378e71fc662f6",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          },
+          {
+            "path": "blender/assets/curated/HJ_Curated_BlankRedReceipt.blend",
+            "sha256": "07e6a1a604fb1713cabd15ae0e4fe370df066fddb1af166da656063843005b2f",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          }
+        ]
+      },
+      {
+        "name": "Hajimi Cameras",
+        "category": "cameras",
+        "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/cameras",
+        "exists": true,
+        "writable": true,
+        "asset_count": 2,
+        "assets": [
+          {
+            "path": "blender/assets/cameras/HJ_Camera_35mm_Action.blend.json",
+            "sha256": "e148d686125ead4f924438363d7f5cc0e8437c4cf053b24a53443057e7bd355e",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          },
+          {
+            "path": "blender/assets/cameras/HJ_Camera_35mm_Action.blend",
+            "sha256": "c152ed2583728bf70c90ccad1a3c2c6de54cff7f160960101ca35ba538ff2df5",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          }
+        ]
+      },
+      {
+        "name": "Hajimi Materials",
+        "category": "materials",
+        "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/materials",
+        "exists": true,
+        "writable": true,
+        "asset_count": 2,
+        "assets": [
+          {
+            "path": "blender/assets/materials/HJ_MAT_LateAfternoon_Asphalt.blend",
+            "sha256": "2d431bd1fee0d9a645e31f67274cf2740f8d21a8312996eab10a8a952166538e",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          },
+          {
+            "path": "blender/assets/materials/HJ_MAT_LateAfternoon_Asphalt.blend.json",
+            "sha256": "9536ae3f25d0bb82df73631d9ef3b00c04b06b79b499ce51d49da62996a59480",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          }
+        ]
+      },
+      {
+        "name": "Hajimi Environments",
+        "category": "environments",
+        "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/environments",
+        "exists": true,
+        "writable": true,
+        "asset_count": 2,
+        "assets": [
+          {
+            "path": "blender/assets/environments/HJ_Environment_CityRoad_Block.blend",
+            "sha256": "6bc735a28493979af22dc983285c07dea545bafbc033ef0558c5d80445fea8f0",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          },
+          {
+            "path": "blender/assets/environments/HJ_Environment_CityRoad_Block.blend.json",
+            "sha256": "97f0ae161703f3b6dd217a19f4515a6a2cb9408d4ad21f55f7c500240691124c",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          }
+        ]
+      },
+      {
+        "name": "Hajimi FX",
+        "category": "fx",
+        "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/fx",
+        "exists": true,
+        "writable": true,
+        "asset_count": 2,
+        "assets": [
+          {
+            "path": "blender/assets/fx/HJ_FX_DustRibbon.blend",
+            "sha256": "f88336847eefac62fc22720efbbc8902b17cd79d79cb297e3def3b915e1a2b53",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          },
+          {
+            "path": "blender/assets/fx/HJ_FX_DustRibbon.blend.json",
+            "sha256": "dfeef3afa194c8b0214e8923baf114b0bbf5f1b66ac2ca0868c3518223db6767",
+            "source": "local",
+            "license": "record in asset sidecar before production use"
+          }
+        ]
+      }
+    ],
+    "required_library_names": [
+      "Hajimi Curated",
+      "Hajimi Cameras",
+      "Hajimi Materials",
+      "Hajimi Environments",
+      "Hajimi FX"
+    ]
+  },
+  "templates": {
+    "templates": [
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/short_9x16.blend",
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/science_cutaway.blend",
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/cinematic_exterior.blend",
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/studio_diagram.blend"
+    ],
+    "created": [
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/short_9x16.blend",
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/science_cutaway.blend",
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/cinematic_exterior.blend",
+      "/Users/zhangxiaolong/Desktop/hajimi/blender/templates/studio_diagram.blend"
+    ],
+    "invocation": {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "--background",
+        "--factory-startup",
+        "--python",
+        "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/build_templates.py",
+        "--"
+      ],
+      "returncode": 0,
+      "duration_sec": 0.869,
+      "stdout_tail": "Info: Saved as \"short_9x16.blend\"\nInfo: Saved as \"science_cutaway.blend\"\nInfo: Saved as \"cinematic_exterior.blend\"\nInfo: Saved as \"studio_diagram.blend\"\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
+      "stderr_tail": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/build_templates.py:19: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  m=bpy.data.materials.get(name) or bpy.data.materials.new(name); m.diffuse_color=(*color,1); m.use_nodes=True\n",
+      "ok": true,
+      "event_log": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/logs/20260918T102844_build_templates.jsonl"
+    }
+  },
+  "geometry_nodes": {
+    "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/artifacts/geometry_nodes_library.blend",
+    "group_count": 12,
+    "groups": [
+      {
+        "name": "HJ_DebrisScatter",
+        "purpose": "Instance debris on a surface with preview/final density.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_DustTrail",
+        "purpose": "Directional dust trail driven by motion.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_VectorTrail",
+        "purpose": "Readable vector and motion trail.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_ImpactWave",
+        "purpose": "Procedural impact ring with controlled falloff.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_CityRepeater",
+        "purpose": "Instanced city block repetition without object explosion.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_CloudLayerGuide",
+        "purpose": "Preview-safe cloud layer guide for exterior shots.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_OceanSurface",
+        "purpose": "Shader/geometry guide for non-hero water surfaces.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_ProceduralRoad",
+        "purpose": "Deterministic road and lane dressing.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_ArrowVector",
+        "purpose": "Scientific direction arrows with stable orientation.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_ScaleMarkers",
+        "purpose": "Reusable human/scale markers.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_ParticleBurst",
+        "purpose": "Low-cost procedural burst for impact accents.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      },
+      {
+        "name": "HJ_AtmosphericDust",
+        "purpose": "Camera-aware atmospheric dust instances.",
+        "inputs": [
+          "Geometry",
+          "Density",
+          "Seed",
+          "Mode"
+        ]
+      }
+    ],
+    "invocation": {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "--background",
+        "--factory-startup",
+        "--python",
+        "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/runtime/build_geometry_library.py",
+        "--"
+      ],
+      "returncode": 0,
+      "duration_sec": 0.767,
+      "stdout_tail": "Info: Saved as \"geometry_nodes_library.blend\"\nBlender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:49:19)\n\nBlender quit\n",
+      "stderr_tail": "",
+      "ok": true,
+      "event_log": "/Users/zhangxiaolong/Desktop/hajimi/blender/generated/logs/20260918T102844_build_geometry_library.jsonl"
+    },
+    "exists": true
+  },
+  "plugin_matrix": {
+    "photographer": {
+      "display_name": "Photographer 5",
+      "required": true,
+      "expected_version": "5",
+      "status": "BLOCKED_LICENSE_PACKAGE",
+      "blocking": false,
+      "installed": false,
+      "enabled": false,
+      "detected_version": null,
+      "blender_compat": null,
+      "smoke_test": "BLOCKED_LICENSE_PACKAGE",
+      "block_reason": "BLOCKED_LICENSE_PACKAGE",
+      "module_name": null,
+      "loaded_markers": [],
+      "distribution_variant": null,
+      "replacement_for": null,
+      "local_packages": [],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [
+        "physical_motion_blur",
+        "sun_position"
+      ],
+      "capability_status": "PASS_WITH_REPLACEMENT"
+    },
+    "geoscatter": {
+      "display_name": "Geo-Scatter",
+      "required": true,
+      "expected_version": "5.6.4",
+      "status": "BLOCKED_LICENSE_PACKAGE",
+      "blocking": false,
+      "installed": false,
+      "enabled": false,
+      "detected_version": null,
+      "blender_compat": null,
+      "smoke_test": "BLOCKED_LICENSE_PACKAGE",
+      "block_reason": "BLOCKED_LICENSE_PACKAGE",
+      "module_name": null,
+      "loaded_markers": [],
+      "distribution_variant": null,
+      "replacement_for": null,
+      "local_packages": [],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [
+        "scatter_objects",
+        "bagapie"
+      ],
+      "capability_status": "PASS_WITH_REPLACEMENT"
+    },
+    "physical_atmosphere": {
+      "display_name": "Physical Atmosphere²",
+      "required": true,
+      "expected_version": "2",
+      "status": "BLOCKED_LICENSE_PACKAGE",
+      "blocking": false,
+      "installed": false,
+      "enabled": false,
+      "detected_version": null,
+      "blender_compat": null,
+      "smoke_test": "BLOCKED_LICENSE_PACKAGE",
+      "block_reason": "BLOCKED_LICENSE_PACKAGE",
+      "module_name": null,
+      "loaded_markers": [],
+      "distribution_variant": null,
+      "replacement_for": null,
+      "local_packages": [],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [
+        "dynamic_sky",
+        "helio"
+      ],
+      "capability_status": "PASS_WITH_REPLACEMENT"
+    },
+    "poliigon": {
+      "display_name": "Poliigon Blender Addon",
+      "required": false,
+      "expected_version": "1.16.3",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        1,
+        16,
+        3
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "poliigon-addon-blender",
+      "loaded_markers": [
+        "poliigon-addon-blender"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": null,
+      "local_packages": [
+        "blender/installers/poliigon-addon-blender-1.16.3.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "botaniq_engon": {
+      "display_name": "engon / botaniq",
+      "required": false,
+      "expected_version": "1.10.0",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        1,
+        10,
+        0
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "engon",
+      "loaded_markers": [
+        "engon"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": null,
+      "local_packages": [
+        "blender/installers/engon-1.10.0.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "flip_fluids": {
+      "display_name": "FLIP Fluids",
+      "required": false,
+      "expected_version": "1.8.8",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        1,
+        8,
+        8
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "flip_fluids_addon",
+      "loaded_markers": [
+        "flip_fluids_addon"
+      ],
+      "distribution_variant": "demo",
+      "replacement_for": null,
+      "local_packages": [
+        "blender/installers/FLIP_Fluids_addon_1.8.8_demo_release_2026-07-27.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "scatter_objects": {
+      "display_name": "Scatter Objects (Geo-Scatter replacement)",
+      "required": true,
+      "expected_version": "0.2.0",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        0,
+        2,
+        0
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "bl_ext.user_default.scatter_objects",
+      "loaded_markers": [
+        "bl_ext.user_default.scatter_objects"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": "geoscatter",
+      "local_packages": [
+        "blender/installers/scatter-objects-0.2.0.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "bagapie": {
+      "display_name": "BagaPie (Geo-Scatter community replacement)",
+      "required": true,
+      "expected_version": "11.0.12",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        11,
+        0,
+        12
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "bl_ext.user_default.Bagapie",
+      "loaded_markers": [
+        "bl_ext.user_default.Bagapie"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": "geoscatter",
+      "local_packages": [
+        "blender/installers/bagapie-11.0.12.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "physical_motion_blur": {
+      "display_name": "Physical Motion Blur (Photographer replacement)",
+      "required": true,
+      "expected_version": "1.1.0",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        1,
+        1,
+        0
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "bl_ext.user_default.Physical_Motion_Blur",
+      "loaded_markers": [
+        "bl_ext.user_default.Physical_Motion_Blur"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": "photographer",
+      "local_packages": [
+        "blender/installers/physical-motion-blur-1.1.0.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "sun_position": {
+      "display_name": "Sun Position (Photographer replacement)",
+      "required": true,
+      "expected_version": "4.4.0",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        4,
+        4,
+        0
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "bl_ext.user_default.sun_position",
+      "loaded_markers": [
+        "bl_ext.user_default.sun_position"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": "photographer",
+      "local_packages": [
+        "blender/installers/sun-position-4.4.0.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "dynamic_sky": {
+      "display_name": "Dynamic Sky (Physical Atmosphere replacement)",
+      "required": true,
+      "expected_version": "1.1.0",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        1,
+        1,
+        0
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "bl_ext.user_default.dynamic_sky",
+      "loaded_markers": [
+        "bl_ext.user_default.dynamic_sky"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": "physical_atmosphere",
+      "local_packages": [
+        "blender/installers/dynamic-sky-1.1.0.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    },
+    "helio": {
+      "display_name": "Helio (Physical Atmosphere solar replacement)",
+      "required": true,
+      "expected_version": "1.1.1",
+      "status": "PASS",
+      "blocking": false,
+      "installed": true,
+      "enabled": true,
+      "detected_version": [
+        1,
+        1,
+        1
+      ],
+      "blender_compat": true,
+      "smoke_test": "PASS",
+      "block_reason": null,
+      "module_name": "bl_ext.user_default.helio",
+      "loaded_markers": [
+        "bl_ext.user_default.helio"
+      ],
+      "distribution_variant": "full",
+      "replacement_for": "physical_atmosphere",
+      "local_packages": [
+        "blender/installers/helio-1.1.1.zip"
+      ],
+      "policy": "inspect-only; no automatic download or license bypass",
+      "satisfied_by_replacements": [],
+      "capability_status": "PASS"
+    }
+  },
+  "write_scope": "project-local Blender directories only",
+  "global_preferences_mutated": false
+}

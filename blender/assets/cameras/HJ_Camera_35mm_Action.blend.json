@@ -1,0 +1,16 @@
+{
+  "schema_version": "hajimi-asset-provenance-v1",
+  "asset": "blender/assets/cameras/HJ_Camera_35mm_Action.blend",
+  "asset_name": "HJ_Camera_35mm_Action",
+  "source": "Hajimi-original procedural sample",
+  "license": "Hajimi-original",
+  "sha256": "c152ed2583728bf70c90ccad1a3c2c6de54cff7f160960101ca35ba538ff2df5",
+  "asset_browser_datablock": "HJ_Camera_35mm_Action",
+  "description": "35mm action camera sample for vertical motion shots.",
+  "tags": [
+    "camera",
+    "35mm",
+    "action",
+    "vertical"
+  ]
+}

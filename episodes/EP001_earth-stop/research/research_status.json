@@ -1,0 +1,11 @@
+{
+  "episode_id": "EP001_earth-stop",
+  "stage": "research",
+  "decision": "PASS",
+  "required_outputs": [
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/research/topic_brief.md",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/research/fact_pack.md",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/research/reference_deconstruction.json"
+  ],
+  "missing": []
+}

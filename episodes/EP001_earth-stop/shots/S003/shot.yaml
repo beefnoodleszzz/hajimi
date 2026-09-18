@@ -1,0 +1,24 @@
+id: S003
+version: 1
+role: equatorial_speed
+method: fusion
+status: qc_pending
+intent: Reveal the measured equatorial speed as a visual punch.
+composition: centered number over road texture
+camera:
+  lens_mm: orthographic
+  motion: number_punch_and_vector_draw
+motion:
+  subject: cyan vector sweeps right
+  screen_direction: right
+graphics:
+  labels:
+    - 465 m/s
+    - AT THE EQUATOR
+output:
+  production: production/EP001_S003_still_plate.mp4
+  provenance: provenance/EP001_S003_fusion_plate.json
+  resolve_fusion_comp: Composition 1
+qc:
+  required: true
+  status: pass_technical_pending_human_playback

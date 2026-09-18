@@ -1,0 +1,35 @@
+id: S005
+version: 1
+role: air_inertia
+method: blender
+status: qc_pending
+intent: Expand the vector from person to atmosphere.
+composition: city slab plus atmosphere side cutaway
+camera:
+  lens_mm: 45
+  height_m: 4.0
+  motion: controlled_pull_back
+  preset: 24mm_environment
+renderer: eevee
+environment:
+  atmosphere: blender_world_volume
+  scatter: scatter_objects
+assets:
+  - HJ_Environment_CityRoad_Block
+  - HJ_MAT_LateAfternoon_Asphalt
+simulation:
+  type: rigid_layer_motion
+  deterministic: true
+motion:
+  subject: cloud and air band move right
+  screen_direction: right
+output:
+  preview: blender/generated/artifacts/EP001_S005/preview/P1
+  render: blender/generated/artifacts/EP001_S005/render/P3
+  production_mezzanine: production/EP001_S005_blender_P3_mezzanine.mp4
+  render_manifest: blender/generated/artifacts/EP001_S005/render_manifest.json
+  resolve_handoff: blender/generated/artifacts/EP001_S005/resolve_handoff.json
+  provenance: provenance/EP001_S005_blender_P3_mezzanine.json
+qc:
+  required: true
+  status: pass_technical_pending_human_playback

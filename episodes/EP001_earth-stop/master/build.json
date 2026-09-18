@@ -1,0 +1,457 @@
+{
+  "schema_version": "master-build-v2",
+  "episode_id": "EP001_earth-stop",
+  "source": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+  "output": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+  "source_sha256": "8b20eb848d0ebd259de9a20f984e4aab5bf7959b32f6c97eeba37baa5e3028ac",
+  "master_sha256": "8b20eb848d0ebd259de9a20f984e4aab5bf7959b32f6c97eeba37baa5e3028ac",
+  "probe": {
+    "ok": true,
+    "format": {
+      "name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "duration": 38.08,
+      "size": 16949046
+    },
+    "video": {
+      "width": 1080,
+      "height": 1920,
+      "fps": "30/1",
+      "pix_fmt": "yuv420p",
+      "sample_aspect_ratio": "1:1",
+      "display_aspect_ratio": "9:16"
+    },
+    "audio": {
+      "sample_rate": "48000",
+      "channels": 2,
+      "codec": "aac"
+    },
+    "decode": {
+      "ok": true,
+      "stderr": "",
+      "stdout": ""
+    },
+    "filters": {
+      "ok": true,
+      "blackdetect": "",
+      "freezedetect": "",
+      "audio": "",
+      "video_events": [
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 1.2",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 4",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 3",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 7",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 7",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 4",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 11",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 15",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 1",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 16",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 16",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 1.466667",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 17.466667",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 17.466667",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 1.066667",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 18.533333",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 18.533333",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 1.4",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 19.933333",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 19.933333",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 1.066667",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 21",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 21",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 6",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 27",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 27",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 4",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 31",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 31",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_duration: 4",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_end: 35",
+        "[Parsed_freezedetect_1 @ 0xafcc41f80] lavfi.freezedetect.freeze_start: 35"
+      ],
+      "audio_events": [
+        "Integrated loudness:",
+        "True peak:"
+      ],
+      "integrated_lufs": -14.0,
+      "true_peak_dbfs": -1.6
+    },
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "High",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "mime_codec_string": "avc1.640028",
+        "width": 1080,
+        "height": 1920,
+        "coded_width": 1080,
+        "coded_height": 1920,
+        "has_b_frames": 2,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "9:16",
+        "pix_fmt": "yuv420p",
+        "level": 40,
+        "color_range": "tv",
+        "color_space": "bt709",
+        "color_transfer": "bt709",
+        "color_primaries": "bt709",
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "30/1",
+        "avg_frame_rate": "30/1",
+        "time_base": "1/15360",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 583680,
+        "duration": "38.000000",
+        "bit_rate": "3242474",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "1140",
+        "extradata_size": 36,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "creation_time": "2026-09-17T19:10:25.000000Z",
+          "language": "und",
+          "handler_name": "VideoHandler",
+          "encoder": "H.264",
+          "timecode": "01:00:00:00"
+        }
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_long_name": "AAC (Advanced Audio Coding)",
+        "profile": "LC",
+        "codec_type": "audio",
+        "codec_tag_string": "mp4a",
+        "codec_tag": "0x6134706d",
+        "mime_codec_string": "mp4a.40.2",
+        "sample_fmt": "fltp",
+        "sample_rate": "48000",
+        "channels": 2,
+        "channel_layout": "stereo",
+        "bits_per_sample": 0,
+        "initial_padding": 0,
+        "id": "0x2",
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0",
+        "time_base": "1/48000",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 1827840,
+        "duration": "38.080000",
+        "bit_rate": "319985",
+        "nb_frames": "1785",
+        "extradata_size": 2,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "creation_time": "2026-09-17T19:10:25.000000Z",
+          "language": "und",
+          "handler_name": "SoundHandler"
+        }
+      },
+      {
+        "index": 2,
+        "codec_type": "data",
+        "codec_tag_string": "tmcd",
+        "codec_tag": "0x64636d74",
+        "id": "0x3",
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "15360/512",
+        "time_base": "1/15360",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 583680,
+        "duration": "38.000000",
+        "nb_frames": "1",
+        "extradata_size": 20,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "creation_time": "2026-09-17T19:10:25.000000Z",
+          "language": "eng",
+          "handler_name": "TimeCodeHandler",
+          "timecode": "01:00:00:00"
+        }
+      }
+    ]
+  },
+  "created_at": "2026-09-18T02:01:54.333052+00:00",
+  "master_type": "resolve_master",
+  "editor_of_record": "DaVinci Resolve 21.1",
+  "publishable": true,
+  "resolve_readback_validation": {
+    "schema_version": "resolve-readback-v1",
+    "decision": "PASS",
+    "errors": [],
+    "expected": {
+      "episode_id": "EP001_earth-stop",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "sample_rate": 48000,
+      "shot_ids": [
+        "S001",
+        "S002",
+        "S003",
+        "S004",
+        "S005",
+        "S006",
+        "S007",
+        "S008",
+        "S009",
+        "S010"
+      ],
+      "master_path": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4"
+    },
+    "readback": {
+      "schema_version": "resolve-production-readback-v1",
+      "readback_at": "2026-09-18T03:10:25+08:00",
+      "resolve_version": "21.1.0.14",
+      "project": {
+        "name": "Hajimi_EP001_V2_20260918",
+        "unique_id": "03c8b24e-cead-491f-836c-26dcf72d138e",
+        "timeline_count": 1
+      },
+      "timeline": {
+        "name": "EP001_V2_Master_38s",
+        "unique_id": "1a4561ca-04ee-4221-993d-d439778a76d4",
+        "start_frame": 108000,
+        "end_frame_exclusive": 109140,
+        "duration_frames": 1140,
+        "start_timecode": "01:00:00:00",
+        "resolution": "1080x1920",
+        "fps": 30,
+        "sample_rate": 48000,
+        "pixel_aspect_ratio": "square",
+        "color_management": {
+          "science": "davinciYRGB",
+          "timeline": "Rec.709 (Scene)",
+          "output": "Rec.709 (Scene)"
+        }
+      },
+      "video_shots": [
+        {
+          "id": "S001",
+          "start": 108000,
+          "end": 108036,
+          "frames": 36
+        },
+        {
+          "id": "S002",
+          "start": 108036,
+          "end": 108120,
+          "frames": 84
+        },
+        {
+          "id": "S003",
+          "start": 108120,
+          "end": 108210,
+          "frames": 90,
+          "fusion_comp": "Composition 1",
+          "fusion_tools": [
+            "MediaIn1",
+            "Transform1",
+            "MediaOut1",
+            "Text1"
+          ]
+        },
+        {
+          "id": "S004",
+          "start": 108210,
+          "end": 108330,
+          "frames": 120,
+          "fusion_comp": "Composition 1",
+          "fusion_tools": [
+            "MediaIn1",
+            "Transform1",
+            "MediaOut1",
+            "Text1"
+          ]
+        },
+        {
+          "id": "S005",
+          "start": 108330,
+          "end": 108480,
+          "frames": 150
+        },
+        {
+          "id": "S006",
+          "start": 108480,
+          "end": 108630,
+          "frames": 150
+        },
+        {
+          "id": "S007",
+          "start": 108630,
+          "end": 108810,
+          "frames": 180
+        },
+        {
+          "id": "S008",
+          "start": 108810,
+          "end": 108930,
+          "frames": 120,
+          "fusion_comp": "Composition 1",
+          "fusion_tools": [
+            "MediaIn1",
+            "Transform1",
+            "MediaOut1",
+            "Text1"
+          ]
+        },
+        {
+          "id": "S009",
+          "start": 108930,
+          "end": 109050,
+          "frames": 120,
+          "fusion_comp": "Composition 1",
+          "fusion_tools": [
+            "MediaIn1",
+            "Transform1",
+            "MediaOut1",
+            "Text1"
+          ]
+        },
+        {
+          "id": "S010",
+          "start": 109050,
+          "end": 109140,
+          "frames": 90
+        }
+      ],
+      "fairlight": {
+        "track_count": 4,
+        "tracks": [
+          {
+            "index": 1,
+            "name": "VO__Fairlight",
+            "stem": "voiceover",
+            "gain_db": 2.5
+          },
+          {
+            "index": 2,
+            "name": "MUSIC__Fairlight",
+            "stem": "music",
+            "gain_db": 2.5
+          },
+          {
+            "index": 3,
+            "name": "AMB__Fairlight",
+            "stem": "ambience",
+            "gain_db": 2.5
+          },
+          {
+            "index": 4,
+            "name": "SFX__Fairlight",
+            "stem": "narrative_sfx",
+            "gain_db": 2.5
+          }
+        ]
+      },
+      "render": {
+        "job_id": "e8fcad3c-65bf-492e-bc56-5addf8631c91",
+        "status": "Complete",
+        "output": "episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "alpha": false,
+        "video_codec": "H264",
+        "audio_codec": "aac",
+        "audio_sample_rate": 48000,
+        "mark_in": 108000,
+        "mark_out": 109139
+      }
+    },
+    "normalized": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "sample_rate": 48000,
+      "shot_ids": [
+        "S001",
+        "S002",
+        "S003",
+        "S004",
+        "S005",
+        "S006",
+        "S007",
+        "S008",
+        "S009",
+        "S010"
+      ],
+      "timeline_name": "EP001_V2_Master_38s",
+      "master_path": "episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+      "render_status": "Complete"
+    }
+  },
+  "resolve_readback": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/edit/resolve_production_readback.json",
+  "publish_block_reason": null
+}

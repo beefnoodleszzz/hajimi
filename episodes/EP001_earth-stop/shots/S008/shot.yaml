@@ -1,0 +1,24 @@
+id: S008
+version: 1
+role: gravity_sideways
+method: fusion
+status: qc_pending
+intent: Correct the idea that the danger is escaping gravity.
+composition: silhouette with orthographic vectors
+camera:
+  lens_mm: orthographic
+  motion: arrows_draw_on
+motion:
+  subject: right vector grows; down vector stays attached
+  screen_direction: right
+graphics:
+  labels:
+    - GRAVITY
+    - SIDEWAYS MOTION
+output:
+  production: production/EP001_S008_still_plate.mp4
+  provenance: provenance/EP001_S008_fusion_plate.json
+  resolve_fusion_comp: Composition 1
+qc:
+  required: true
+  status: pass_technical_pending_human_playback

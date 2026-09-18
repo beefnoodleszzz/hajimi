@@ -1,0 +1,6 @@
+models:
+  image: null
+  video: null
+  asr: faster-whisper
+  vlm: null
+  note: "Model names are recorded per asset; no provider is hard-coded into the pipeline."

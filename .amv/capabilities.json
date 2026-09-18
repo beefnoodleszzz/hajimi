@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-17T18:27:54.568457+00:00",
+  "os": "macOS",
+  "app_path": "/Applications/DaVinci Resolve/DaVinci Resolve.app",
+  "app": {
+    "short_version": "21.1.0",
+    "build": "21.1.00014",
+    "bundle_id": "com.blackmagic-design.DaVinciResolve"
+  },
+  "developer_root": "/Library/Application Support/Blackmagic Design/DaVinci Resolve/Developer",
+  "developer_files": {
+    "DaVinciResolveScript.pyi": true,
+    "CHANGELOG.md": true,
+    "README.md": true
+  },
+  "resolve": {
+    "status": "unsupported"
+  },
+  "mcp": {
+    "status": "runtime-tested",
+    "server": {
+      "name": "davinci_resolve",
+      "version": "21.1"
+    },
+    "protocol": "2024-11-05",
+    "tools": [
+      "launch_resolve",
+      "get_resolve_status",
+      "get_whats_new",
+      "get_scripting_api",
+      "search_scripting_api",
+      "run_script",
+      "run_script_unsafe",
+      "get_scripting_docs",
+      "list_dctls",
+      "list_luts",
+      "update_dctl",
+      "delete_dctl",
+      "delete_lut",
+      "generate_lut"
+    ]
+  },
+  "evidence_policy": "unknown is never supported"
+}

@@ -1,0 +1,7 @@
+youtube:
+  default_visibility: private
+  default_category: Education
+  default_language: en-US
+  default_timezone: Asia/Singapore
+  publisher: ego-browser
+  forbid_public_without_explicit_authorization: true

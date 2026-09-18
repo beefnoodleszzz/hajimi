@@ -1,0 +1,127 @@
+episode_id: EP001_earth-stop
+status: qc_pending
+channel: The World You Never Knew
+format: youtube_short
+language: en-US
+aspect_ratio: '9:16'
+master:
+  width: 1080
+  height: 1920
+  fps: 30
+  sample_rate: 48000
+  path: master/EP001_earth-stop_master_final.mp4
+creative:
+  promise: If Earth stopped for one second, the ground stops. You don't.
+  emotion:
+  - danger
+  - scale
+  - awe
+  visual_thesis: One eastward vector expands from a receipt to the entire land-air-water
+    system.
+  hero_shot: S007
+  target_duration_sec: 38
+  time_to_anomaly_sec: 0.38
+  loop_strategy: Return to the same road with the red receipt displaced.
+script:
+  version: 1
+  path: script/script_v01.md
+  locked: true
+audio:
+  narrator: science_female_main
+  target_lufs: -14
+  true_peak_max_db: -1.0
+  required_layers:
+  - voiceover
+  - music
+  - ambience
+  - narrative_sfx
+publish:
+  title: The Ground Stops. You Don't.
+  description: What would happen if Earth's rotation stopped for exactly one second?
+    A simplified equatorial thought experiment, grounded in NASA and NOAA sources.
+  ai_disclosure: true
+  ai_disclosure_reason: realistic_generated_scene
+  visibility: private
+  audience:
+    made_for_kids: false
+shots:
+- id: S001
+  role: hook_ground_locks
+  duration_target: 1.2
+  time_start: 0.0
+  time_end: 1.2
+  method: animatic_card
+  status: qc_pending
+  visual_change: ordinary road motion snaps into a locked horizon
+- id: S002
+  role: human_inertia
+  duration_target: 2.8
+  time_start: 1.2
+  time_end: 4.0
+  method: ai_video
+  status: approved
+  visual_change: body and receipt continue right while pavement stays fixed
+- id: S003
+  role: equatorial_speed
+  duration_target: 3.0
+  time_start: 4.0
+  time_end: 7.0
+  method: fusion
+  status: qc_pending
+  visual_change: 465 m/s punch replaces the street-scale read
+- id: S004
+  role: distance_scale
+  duration_target: 4.0
+  time_start: 7.0
+  time_end: 11.0
+  method: fusion
+  status: qc_pending
+  visual_change: one-second vector draws across 465 m of city blocks
+- id: S005
+  role: air_inertia
+  duration_target: 5.0
+  time_start: 11.0
+  time_end: 16.0
+  method: blender
+  status: approved
+  visual_change: air and cloud layer keep the same eastward momentum
+- id: S006
+  role: ocean_inertia
+  duration_target: 5.0
+  time_start: 16.0
+  time_end: 21.0
+  method: blender
+  status: qc_pending
+  visual_change: ocean surface joins the moving layer
+- id: S007
+  role: restart_mismatch
+  duration_target: 6.0
+  time_start: 21.0
+  time_end: 27.0
+  method: blender
+  status: qc_pending
+  visual_change: land restarts first; air and water lag right
+- id: S008
+  role: gravity_sideways
+  duration_target: 4.0
+  time_start: 27.0
+  time_end: 31.0
+  method: fusion
+  status: qc_pending
+  visual_change: downward gravity remains while sideways motion dominates
+- id: S009
+  role: payoff
+  duration_target: 4.0
+  time_start: 31.0
+  time_end: 35.0
+  method: fusion
+  status: qc_pending
+  visual_change: the mismatch resolves into the core sentence
+- id: S010
+  role: callback_loop
+  duration_target: 3.0
+  time_start: 35.0
+  time_end: 38.0
+  method: animatic_card
+  status: qc_pending
+  visual_change: same road, displaced receipt, earned comment hook

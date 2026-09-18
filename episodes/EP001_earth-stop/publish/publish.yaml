@@ -1,0 +1,25 @@
+youtube:
+  title: "The Ground Stops. You Don't."
+  description: |
+    What would happen if Earth's rotation stopped for exactly one second?
+    This is a simplified equatorial thought experiment about relative motion,
+    grounded in NASA and NOAA sources.
+
+    Sources:
+    NASA Science — Reference Systems
+    NASA GSFC — The Rotating Earth
+    NASA Cosmicopia — Earth and Moon Q&A
+    NOAA JetStream — Origin of Wind
+    NOAA National Ocean Service — Coriolis Effect
+  language: en-US
+  category: Education
+  audience:
+    made_for_kids: false
+  ai_use:
+    disclose: true
+    reason: realistic_generated_scene
+  visibility: private
+  schedule:
+    enabled: false
+    timezone: Asia/Singapore
+    datetime: null

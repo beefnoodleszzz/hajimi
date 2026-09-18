@@ -1,0 +1,51 @@
+{
+  "video": {
+    "episode_id": "EP001_earth-stop",
+    "platform": "youtube",
+    "published_at": null,
+    "format": "youtube_short"
+  },
+  "metadata": {
+    "title": "The Ground Stops. You Don't.",
+    "language": "en-US",
+    "duration_sec": 38.0
+  },
+  "creative": {
+    "hook_type": "hook_ground_locks",
+    "hero_shot_type": "restart_mismatch",
+    "time_to_anomaly": 0.38
+  },
+  "timeline_metrics": {
+    "avg_shot_duration": 3.8,
+    "shot_count": 10,
+    "visual_peak_count": 5,
+    "audio_peak_count": 9
+  },
+  "production_metrics": {
+    "blender_seconds": 16.0,
+    "ai_video_seconds": 2.8,
+    "fusion_seconds": 15.0,
+    "footage_seconds": 0.0,
+    "static_plate_seconds": 4.2,
+    "qc_fail_count": 0,
+    "regen_count": 0,
+    "production_mix": {
+      "static_plate": 0.1105,
+      "ai_video": 0.0737,
+      "fusion": 0.3947,
+      "blender": 0.4211
+    }
+  },
+  "retention": {
+    "views": null,
+    "avd_sec": null,
+    "apv": null,
+    "retention_drop_1": null,
+    "retention_drop_2": null,
+    "comments": null,
+    "likes": null,
+    "shares": null,
+    "subs": null
+  },
+  "learnings": []
+}

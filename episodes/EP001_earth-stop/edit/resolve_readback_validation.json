@@ -1,0 +1,208 @@
+{
+  "schema_version": "resolve-readback-v1",
+  "decision": "PASS",
+  "errors": [],
+  "expected": {
+    "episode_id": "EP001_earth-stop",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "sample_rate": 48000,
+    "shot_ids": [
+      "S001",
+      "S002",
+      "S003",
+      "S004",
+      "S005",
+      "S006",
+      "S007",
+      "S008",
+      "S009",
+      "S010"
+    ]
+  },
+  "readback": {
+    "schema_version": "resolve-production-readback-v1",
+    "readback_at": "2026-09-18T03:10:25+08:00",
+    "resolve_version": "21.1.0.14",
+    "project": {
+      "name": "Hajimi_EP001_V2_20260918",
+      "unique_id": "03c8b24e-cead-491f-836c-26dcf72d138e",
+      "timeline_count": 1
+    },
+    "timeline": {
+      "name": "EP001_V2_Master_38s",
+      "unique_id": "1a4561ca-04ee-4221-993d-d439778a76d4",
+      "start_frame": 108000,
+      "end_frame_exclusive": 109140,
+      "duration_frames": 1140,
+      "start_timecode": "01:00:00:00",
+      "resolution": "1080x1920",
+      "fps": 30,
+      "sample_rate": 48000,
+      "pixel_aspect_ratio": "square",
+      "color_management": {
+        "science": "davinciYRGB",
+        "timeline": "Rec.709 (Scene)",
+        "output": "Rec.709 (Scene)"
+      }
+    },
+    "video_shots": [
+      {
+        "id": "S001",
+        "start": 108000,
+        "end": 108036,
+        "frames": 36
+      },
+      {
+        "id": "S002",
+        "start": 108036,
+        "end": 108120,
+        "frames": 84
+      },
+      {
+        "id": "S003",
+        "start": 108120,
+        "end": 108210,
+        "frames": 90,
+        "fusion_comp": "Composition 1",
+        "fusion_tools": [
+          "MediaIn1",
+          "Transform1",
+          "MediaOut1",
+          "Text1"
+        ]
+      },
+      {
+        "id": "S004",
+        "start": 108210,
+        "end": 108330,
+        "frames": 120,
+        "fusion_comp": "Composition 1",
+        "fusion_tools": [
+          "MediaIn1",
+          "Transform1",
+          "MediaOut1",
+          "Text1"
+        ]
+      },
+      {
+        "id": "S005",
+        "start": 108330,
+        "end": 108480,
+        "frames": 150
+      },
+      {
+        "id": "S006",
+        "start": 108480,
+        "end": 108630,
+        "frames": 150
+      },
+      {
+        "id": "S007",
+        "start": 108630,
+        "end": 108810,
+        "frames": 180
+      },
+      {
+        "id": "S008",
+        "start": 108810,
+        "end": 108930,
+        "frames": 120,
+        "fusion_comp": "Composition 1",
+        "fusion_tools": [
+          "MediaIn1",
+          "Transform1",
+          "MediaOut1",
+          "Text1"
+        ]
+      },
+      {
+        "id": "S009",
+        "start": 108930,
+        "end": 109050,
+        "frames": 120,
+        "fusion_comp": "Composition 1",
+        "fusion_tools": [
+          "MediaIn1",
+          "Transform1",
+          "MediaOut1",
+          "Text1"
+        ]
+      },
+      {
+        "id": "S010",
+        "start": 109050,
+        "end": 109140,
+        "frames": 90
+      }
+    ],
+    "fairlight": {
+      "track_count": 4,
+      "tracks": [
+        {
+          "index": 1,
+          "name": "VO__Fairlight",
+          "stem": "voiceover",
+          "gain_db": 2.5
+        },
+        {
+          "index": 2,
+          "name": "MUSIC__Fairlight",
+          "stem": "music",
+          "gain_db": 2.5
+        },
+        {
+          "index": 3,
+          "name": "AMB__Fairlight",
+          "stem": "ambience",
+          "gain_db": 2.5
+        },
+        {
+          "index": 4,
+          "name": "SFX__Fairlight",
+          "stem": "narrative_sfx",
+          "gain_db": 2.5
+        }
+      ]
+    },
+    "render": {
+      "job_id": "e8fcad3c-65bf-492e-bc56-5addf8631c91",
+      "status": "Complete",
+      "output": "episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "alpha": false,
+      "video_codec": "H264",
+      "audio_codec": "aac",
+      "audio_sample_rate": 48000,
+      "mark_in": 108000,
+      "mark_out": 109139
+    }
+  },
+  "normalized": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "sample_rate": 48000,
+    "shot_ids": [
+      "S001",
+      "S002",
+      "S003",
+      "S004",
+      "S005",
+      "S006",
+      "S007",
+      "S008",
+      "S009",
+      "S010"
+    ],
+    "timeline_name": "EP001_V2_Master_38s",
+    "master_path": "episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+    "render_status": "Complete"
+  },
+  "episode_id": "EP001_earth-stop",
+  "recorded_at": "2026-09-18T01:44:30.590007+00:00",
+  "source_readback": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/edit/resolve_production_readback.json"
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": "asset-library-registration-v1",
+  "libraries": [
+    {
+      "name": "Hajimi Curated",
+      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/curated",
+      "exists": true
+    },
+    {
+      "name": "Hajimi Cameras",
+      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/cameras",
+      "exists": true
+    },
+    {
+      "name": "Hajimi Materials",
+      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/materials",
+      "exists": true
+    },
+    {
+      "name": "Hajimi Environments",
+      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/environments",
+      "exists": true
+    },
+    {
+      "name": "Hajimi FX",
+      "path": "/Users/zhangxiaolong/Desktop/hajimi/blender/assets/fx",
+      "exists": true
+    }
+  ]
+}

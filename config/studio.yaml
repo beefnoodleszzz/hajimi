@@ -1,0 +1,12 @@
+studio:
+  name: Hajimi V2
+  channel: The World You Never Knew
+  timezone: Asia/Shanghai
+  python: ">=3.12"
+  state_db: studio/studio.sqlite3
+  project_state: .amv/project-state.json
+paths:
+  episodes: episodes
+  references: references
+  assets: assets
+  brand: brand

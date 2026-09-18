@@ -1,0 +1,230 @@
+{
+  "schema_version": "animatic-gate-v1",
+  "episode_id": "EP001_earth-stop",
+  "decision": "PASS",
+  "created_at": "2026-09-18T01:49:12.466157+00:00",
+  "output": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/EP001_earth-stop_animatic.mp4",
+  "checks": [
+    {
+      "name": "manifest_valid",
+      "status": "PASS"
+    },
+    {
+      "name": "anomaly_inside_1_5_seconds",
+      "status": "PASS",
+      "value": 0.38
+    },
+    {
+      "name": "meaningful_visual_change_every_1_to_3_seconds",
+      "status": "PASS",
+      "shot_count": 10
+    },
+    {
+      "name": "no_unjustified_static_hold_over_5_seconds",
+      "status": "PASS",
+      "max_duration": 6.0
+    },
+    {
+      "name": "hero_shot_exists",
+      "status": "PASS",
+      "shot": "S007"
+    },
+    {
+      "name": "layered_sound_stems",
+      "status": "PASS",
+      "required": [
+        "VO",
+        "MUSIC",
+        "AMB",
+        "SFX"
+      ]
+    },
+    {
+      "name": "animatic_decodes",
+      "status": "PASS",
+      "probe": {
+        "ok": true,
+        "format": {
+          "name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "duration": 38.0,
+          "size": 1263522
+        },
+        "video": {
+          "width": 1080,
+          "height": 1920,
+          "fps": "30/1",
+          "pix_fmt": "yuv420p",
+          "sample_aspect_ratio": null,
+          "display_aspect_ratio": null
+        },
+        "audio": {
+          "sample_rate": "48000",
+          "channels": 2,
+          "codec": "aac"
+        },
+        "decode": {
+          "ok": true,
+          "stderr": "",
+          "stdout": ""
+        },
+        "filters": {
+          "ok": true,
+          "blackdetect": "",
+          "freezedetect": "",
+          "audio": "",
+          "video_events": [
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 0",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 1.2",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 1.2",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 1.2",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 2.8",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 4",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 4",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 3",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 7",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 7",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 4",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 11",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 11",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 5",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 16",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 16",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 5",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 21",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 21",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 6",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 27",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 27",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 4",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 31",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 31",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_duration: 4",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_end: 35",
+            "[Parsed_freezedetect_1 @ 0xb49021e00] lavfi.freezedetect.freeze_start: 35"
+          ],
+          "audio_events": [
+            "Integrated loudness:",
+            "True peak:"
+          ],
+          "integrated_lufs": -13.9,
+          "true_peak_dbfs": -3.5
+        },
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "profile": "High",
+            "codec_type": "video",
+            "codec_tag_string": "avc1",
+            "codec_tag": "0x31637661",
+            "mime_codec_string": "avc1.640028",
+            "width": 1080,
+            "height": 1920,
+            "coded_width": 1080,
+            "coded_height": 1920,
+            "has_b_frames": 2,
+            "pix_fmt": "yuv420p",
+            "level": 40,
+            "chroma_location": "left",
+            "field_order": "progressive",
+            "is_avc": "true",
+            "nal_length_size": "4",
+            "id": "0x1",
+            "r_frame_rate": "30/1",
+            "avg_frame_rate": "30/1",
+            "time_base": "1/15360",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 583680,
+            "duration": "38.000000",
+            "bit_rate": "64695",
+            "bits_per_raw_sample": "8",
+            "nb_frames": "1140",
+            "extradata_size": 45,
+            "disposition": {
+              "default": 1,
+              "dub": 0,
+              "original": 0,
+              "comment": 0,
+              "lyrics": 0,
+              "karaoke": 0,
+              "forced": 0,
+              "hearing_impaired": 0,
+              "visual_impaired": 0,
+              "clean_effects": 0,
+              "attached_pic": 0,
+              "timed_thumbnails": 0,
+              "non_diegetic": 0,
+              "captions": 0,
+              "descriptions": 0,
+              "metadata": 0,
+              "dependent": 0,
+              "still_image": 0,
+              "multilayer": 0
+            },
+            "tags": {
+              "language": "und",
+              "handler_name": "VideoHandler",
+              "encoder": "Lavc62.28.101 libx264"
+            }
+          },
+          {
+            "index": 1,
+            "codec_name": "aac",
+            "codec_long_name": "AAC (Advanced Audio Coding)",
+            "profile": "LC",
+            "codec_type": "audio",
+            "codec_tag_string": "mp4a",
+            "codec_tag": "0x6134706d",
+            "mime_codec_string": "mp4a.40.2",
+            "sample_fmt": "fltp",
+            "sample_rate": "48000",
+            "channels": 2,
+            "channel_layout": "stereo",
+            "bits_per_sample": 0,
+            "initial_padding": 0,
+            "id": "0x2",
+            "r_frame_rate": "0/0",
+            "avg_frame_rate": "0/0",
+            "time_base": "1/48000",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 1824000,
+            "duration": "38.000000",
+            "bit_rate": "192091",
+            "nb_frames": "1783",
+            "extradata_size": 5,
+            "disposition": {
+              "default": 1,
+              "dub": 0,
+              "original": 0,
+              "comment": 0,
+              "lyrics": 0,
+              "karaoke": 0,
+              "forced": 0,
+              "hearing_impaired": 0,
+              "visual_impaired": 0,
+              "clean_effects": 0,
+              "attached_pic": 0,
+              "timed_thumbnails": 0,
+              "non_diegetic": 0,
+              "captions": 0,
+              "descriptions": 0,
+              "metadata": 0,
+              "dependent": 0,
+              "still_image": 0,
+              "multilayer": 0
+            },
+            "tags": {
+              "language": "und",
+              "handler_name": "SoundHandler"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "human_review": "complete playback is still required before production shot spend",
+  "prohibited_next_step_until_pass": "AI/production-quality shot generation"
+}

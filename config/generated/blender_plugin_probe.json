@@ -1,0 +1,153 @@
+{
+  "addons": {
+    "bl_ext.user_default.Bagapie": {
+      "module": "bl_ext.user_default.Bagapie",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Bagapie",
+      "version": [
+        11,
+        0,
+        12
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/extensions/user_default/Bagapie/blender_manifest.toml"
+    },
+    "bl_ext.user_default.Physical_Motion_Blur": {
+      "module": "bl_ext.user_default.Physical_Motion_Blur",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Physical Motion Blur",
+      "version": [
+        1,
+        1,
+        0
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/extensions/user_default/Physical_Motion_Blur/blender_manifest.toml"
+    },
+    "bl_ext.user_default.dynamic_sky": {
+      "module": "bl_ext.user_default.dynamic_sky",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Dynamic Sky",
+      "version": [
+        1,
+        1,
+        0
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/extensions/user_default/dynamic_sky/blender_manifest.toml"
+    },
+    "bl_ext.user_default.helio": {
+      "module": "bl_ext.user_default.helio",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Helio",
+      "version": [
+        1,
+        1,
+        1
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/extensions/user_default/helio/blender_manifest.toml"
+    },
+    "bl_ext.user_default.scatter_objects": {
+      "module": "bl_ext.user_default.scatter_objects",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Scatter Objects",
+      "version": [
+        0,
+        2,
+        0
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/extensions/user_default/scatter_objects/blender_manifest.toml"
+    },
+    "bl_ext.user_default.sun_position": {
+      "module": "bl_ext.user_default.sun_position",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Sun Position",
+      "version": [
+        4,
+        4,
+        0
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/extensions/user_default/sun_position/blender_manifest.toml"
+    },
+    "engon": {
+      "module": "engon",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "engon",
+      "version": [
+        1,
+        10,
+        0
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/scripts/addons/engon/blender_manifest.toml"
+    },
+    "flip_fluids_addon": {
+      "module": "flip_fluids_addon",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "FLIP Fluids",
+      "version": [
+        1,
+        8,
+        8
+      ],
+      "manifest": "/Users/zhangxiaolong/Desktop/hajimi/blender/scripts/addons/flip_fluids_addon/blender_manifest.toml"
+    },
+    "geo_scatter": {
+      "module": "geo_scatter",
+      "available": false,
+      "enabled": false,
+      "loaded": false,
+      "name": null,
+      "version": null
+    },
+    "geoscatter": {
+      "module": "geoscatter",
+      "available": false,
+      "enabled": false,
+      "loaded": false,
+      "name": null,
+      "version": null
+    },
+    "photographer": {
+      "module": "photographer",
+      "available": false,
+      "enabled": false,
+      "loaded": false,
+      "name": null,
+      "version": null
+    },
+    "physical_atmosphere": {
+      "module": "physical_atmosphere",
+      "available": false,
+      "enabled": false,
+      "loaded": false,
+      "name": null,
+      "version": null
+    },
+    "poliigon-addon-blender": {
+      "module": "poliigon-addon-blender",
+      "available": true,
+      "enabled": true,
+      "loaded": true,
+      "name": "Poliigon",
+      "version": [
+        1,
+        16,
+        3
+      ]
+    }
+  },
+  "python_version": "3.13.13"
+}

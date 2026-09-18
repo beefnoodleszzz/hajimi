@@ -1,0 +1,335 @@
+{
+  "photographer": {
+    "display_name": "Photographer 5",
+    "required": true,
+    "expected_version": "5",
+    "status": "BLOCKED_LICENSE_PACKAGE",
+    "blocking": false,
+    "installed": false,
+    "enabled": false,
+    "detected_version": null,
+    "blender_compat": null,
+    "smoke_test": "BLOCKED_LICENSE_PACKAGE",
+    "block_reason": "BLOCKED_LICENSE_PACKAGE",
+    "module_name": null,
+    "loaded_markers": [],
+    "distribution_variant": null,
+    "replacement_for": null,
+    "local_packages": [],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [
+      "physical_motion_blur",
+      "sun_position"
+    ],
+    "capability_status": "PASS_WITH_REPLACEMENT"
+  },
+  "geoscatter": {
+    "display_name": "Geo-Scatter",
+    "required": true,
+    "expected_version": "5.6.4",
+    "status": "BLOCKED_LICENSE_PACKAGE",
+    "blocking": false,
+    "installed": false,
+    "enabled": false,
+    "detected_version": null,
+    "blender_compat": null,
+    "smoke_test": "BLOCKED_LICENSE_PACKAGE",
+    "block_reason": "BLOCKED_LICENSE_PACKAGE",
+    "module_name": null,
+    "loaded_markers": [],
+    "distribution_variant": null,
+    "replacement_for": null,
+    "local_packages": [],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [
+      "scatter_objects",
+      "bagapie"
+    ],
+    "capability_status": "PASS_WITH_REPLACEMENT"
+  },
+  "physical_atmosphere": {
+    "display_name": "Physical Atmosphere²",
+    "required": true,
+    "expected_version": "2",
+    "status": "BLOCKED_LICENSE_PACKAGE",
+    "blocking": false,
+    "installed": false,
+    "enabled": false,
+    "detected_version": null,
+    "blender_compat": null,
+    "smoke_test": "BLOCKED_LICENSE_PACKAGE",
+    "block_reason": "BLOCKED_LICENSE_PACKAGE",
+    "module_name": null,
+    "loaded_markers": [],
+    "distribution_variant": null,
+    "replacement_for": null,
+    "local_packages": [],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [
+      "dynamic_sky",
+      "helio"
+    ],
+    "capability_status": "PASS_WITH_REPLACEMENT"
+  },
+  "poliigon": {
+    "display_name": "Poliigon Blender Addon",
+    "required": false,
+    "expected_version": "1.16.3",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      1,
+      16,
+      3
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "poliigon-addon-blender",
+    "loaded_markers": [
+      "poliigon-addon-blender"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": null,
+    "local_packages": [
+      "blender/installers/poliigon-addon-blender-1.16.3.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "botaniq_engon": {
+    "display_name": "engon / botaniq",
+    "required": false,
+    "expected_version": "1.10.0",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      1,
+      10,
+      0
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "engon",
+    "loaded_markers": [
+      "engon"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": null,
+    "local_packages": [
+      "blender/installers/engon-1.10.0.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "flip_fluids": {
+    "display_name": "FLIP Fluids",
+    "required": false,
+    "expected_version": "1.8.8",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      1,
+      8,
+      8
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "flip_fluids_addon",
+    "loaded_markers": [
+      "flip_fluids_addon"
+    ],
+    "distribution_variant": "demo",
+    "replacement_for": null,
+    "local_packages": [
+      "blender/installers/FLIP_Fluids_addon_1.8.8_demo_release_2026-07-27.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "scatter_objects": {
+    "display_name": "Scatter Objects (Geo-Scatter replacement)",
+    "required": true,
+    "expected_version": "0.2.0",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      0,
+      2,
+      0
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "bl_ext.user_default.scatter_objects",
+    "loaded_markers": [
+      "bl_ext.user_default.scatter_objects"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": "geoscatter",
+    "local_packages": [
+      "blender/installers/scatter-objects-0.2.0.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "bagapie": {
+    "display_name": "BagaPie (Geo-Scatter community replacement)",
+    "required": true,
+    "expected_version": "11.0.12",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      11,
+      0,
+      12
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "bl_ext.user_default.Bagapie",
+    "loaded_markers": [
+      "bl_ext.user_default.Bagapie"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": "geoscatter",
+    "local_packages": [
+      "blender/installers/bagapie-11.0.12.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "physical_motion_blur": {
+    "display_name": "Physical Motion Blur (Photographer replacement)",
+    "required": true,
+    "expected_version": "1.1.0",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      1,
+      1,
+      0
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "bl_ext.user_default.Physical_Motion_Blur",
+    "loaded_markers": [
+      "bl_ext.user_default.Physical_Motion_Blur"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": "photographer",
+    "local_packages": [
+      "blender/installers/physical-motion-blur-1.1.0.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "sun_position": {
+    "display_name": "Sun Position (Photographer replacement)",
+    "required": true,
+    "expected_version": "4.4.0",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      4,
+      4,
+      0
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "bl_ext.user_default.sun_position",
+    "loaded_markers": [
+      "bl_ext.user_default.sun_position"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": "photographer",
+    "local_packages": [
+      "blender/installers/sun-position-4.4.0.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "dynamic_sky": {
+    "display_name": "Dynamic Sky (Physical Atmosphere replacement)",
+    "required": true,
+    "expected_version": "1.1.0",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      1,
+      1,
+      0
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "bl_ext.user_default.dynamic_sky",
+    "loaded_markers": [
+      "bl_ext.user_default.dynamic_sky"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": "physical_atmosphere",
+    "local_packages": [
+      "blender/installers/dynamic-sky-1.1.0.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  },
+  "helio": {
+    "display_name": "Helio (Physical Atmosphere solar replacement)",
+    "required": true,
+    "expected_version": "1.1.1",
+    "status": "PASS",
+    "blocking": false,
+    "installed": true,
+    "enabled": true,
+    "detected_version": [
+      1,
+      1,
+      1
+    ],
+    "blender_compat": true,
+    "smoke_test": "PASS",
+    "block_reason": null,
+    "module_name": "bl_ext.user_default.helio",
+    "loaded_markers": [
+      "bl_ext.user_default.helio"
+    ],
+    "distribution_variant": "full",
+    "replacement_for": "physical_atmosphere",
+    "local_packages": [
+      "blender/installers/helio-1.1.1.zip"
+    ],
+    "policy": "inspect-only; no automatic download or license bypass",
+    "satisfied_by_replacements": [],
+    "capability_status": "PASS"
+  }
+}

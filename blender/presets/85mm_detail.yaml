@@ -1,0 +1,4 @@
+name: 85mm_detail
+focal_length_mm: 85
+grammar: detail
+description: Short-duration detail lens for one focal subject.

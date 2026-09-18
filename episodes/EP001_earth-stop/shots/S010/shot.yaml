@@ -1,0 +1,25 @@
+id: S010
+version: 1
+role: callback_loop
+method: animatic_card
+status: qc_pending
+intent: Return to the opening road with a measurable visual change.
+composition: opening road with negative space for CTA
+camera:
+  lens_mm: 28
+  height_m: 1.2
+  motion: nearly_locked_dust_settle
+motion:
+  subject: receipt rests far right
+  screen_direction: right
+graphics:
+  labels:
+    - ONE SECOND
+    - 465 METERS
+    - WHAT MOVES FIRST?
+output:
+  production: production/EP001_S010_still_plate.mp4
+  provenance: provenance/EP001_S010_still_plate.json
+qc:
+  required: true
+  status: pass_technical_pending_human_playback

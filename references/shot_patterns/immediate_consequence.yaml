@@ -1,0 +1,19 @@
+pattern_id: immediate_consequence
+name: Immediate consequence
+use_for:
+  - thought experiments
+  - physics reversals
+  - invisible systems made visible
+grammar:
+  - time: 0.0-1.5
+    function: show_anomaly_before_explanation
+  - time: 1.5-8.0
+    function: personalize_and_scale
+  - time: 8.0-28.0
+    function: escalate_through_related_layers
+  - time: 28.0-38.0
+    function: payoff_and_loop
+quality_checks:
+  - anomaly_before_context
+  - one_screen_direction
+  - hero_shot_is_readable_as_a_still

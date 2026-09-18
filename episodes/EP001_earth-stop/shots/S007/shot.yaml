@@ -1,0 +1,43 @@
+id: S007
+version: 1
+role: restart_mismatch
+method: blender
+status: qc_pending
+intent: "Hero shot: make land, air, and water misalignment readable as a still."
+composition: orthographic three-layer scientific cutaway
+camera:
+  lens_mm: 50
+  height_m: 0.0
+  motion: land_snap_left_upper_layers_lag_right
+  preset: 50mm_documentary
+renderer: eevee
+environment:
+  atmosphere: blender_world_volume
+  scatter: none
+assets:
+  - HJ_Curated_BlankRedReceipt
+  - HJ_MAT_LateAfternoon_Asphalt
+simulation:
+  type: deterministic_layer_mismatch
+  deterministic: true
+frames:
+  start: 1
+  end: 180
+output:
+  renderer: eevee
+  preview: blender/generated/artifacts/EP001_S007/preview/P1
+  render: blender/generated/artifacts/EP001_S007/render/P3
+  production_mezzanine: production/EP001_S007_blender_P3_mezzanine.mp4
+  render_manifest: blender/generated/artifacts/EP001_S007/render_manifest.json
+  resolve_handoff: blender/generated/artifacts/EP001_S007/resolve_handoff.json
+  provenance: provenance/EP001_S007_blender_P3_mezzanine.json
+graphics:
+  labels:
+    - LAND
+    - AIR
+    - OCEAN
+    - RESTART
+    - SIDEWAYS MOTION
+qc:
+  required: true
+  status: pass_technical_pending_human_playback

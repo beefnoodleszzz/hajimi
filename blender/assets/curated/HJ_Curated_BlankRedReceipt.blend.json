@@ -1,0 +1,16 @@
+{
+  "schema_version": "hajimi-asset-provenance-v1",
+  "asset": "blender/assets/curated/HJ_Curated_BlankRedReceipt.blend",
+  "asset_name": "HJ_Curated_BlankRedReceipt",
+  "source": "Hajimi-original procedural sample",
+  "license": "Hajimi-original",
+  "sha256": "07e6a1a604fb1713cabd15ae0e4fe370df066fddb1af166da656063843005b2f",
+  "asset_browser_datablock": "HJ_Curated_BlankRedReceipt",
+  "description": "Blank red receipt prop with no generated text or logo.",
+  "tags": [
+    "receipt",
+    "prop",
+    "paper",
+    "no-text"
+  ]
+}

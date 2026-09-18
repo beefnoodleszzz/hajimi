@@ -1,0 +1,25 @@
+id: S004
+version: 1
+role: distance_scale
+method: fusion
+status: qc_pending
+intent: Convert speed into one-second distance.
+composition: top-down city grid with red origin and destination
+camera:
+  lens_mm: orthographic
+  motion: controlled_line_draw
+motion:
+  subject: cyan line grows across city blocks
+  screen_direction: right
+graphics:
+  labels:
+    - 1 SECOND
+    - ≈ 465 m
+input_reference: input/EP001_S004_imagegen_plate.png
+output:
+  production: production/EP001_S004_still_plate.mp4
+  provenance: provenance/EP001_S004_fusion_plate.json
+  resolve_fusion_comp: Composition 1
+qc:
+  required: true
+  status: pass_technical_pending_human_playback

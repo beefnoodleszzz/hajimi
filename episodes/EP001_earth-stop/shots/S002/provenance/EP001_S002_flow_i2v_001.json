@@ -1,0 +1,59 @@
+{
+  "schema_version": "ai-visual-provenance-v1",
+  "episode_id": "EP001_earth-stop",
+  "shot_id": "S002",
+  "candidate_id": "S002-flow-i2v-001",
+  "media_type": "video",
+  "model_provider": "Google Flow",
+  "model_version": "Omni 1.1 Flash",
+  "generation_mode": "image_to_video",
+  "generated_at": "2026-09-18T01:57:03+08:00",
+  "flow_project_url": "https://flow.google.com/project/0313ff2b-8be7-4a0e-af3d-e729956be585",
+  "source_asset": "episodes/EP001_earth-stop/shots/S002/input/EP001_S002_keyframe.png",
+  "source_sha256": "b654fe4547db4ba3eb16e37765bc3a99e8414f37b936f9ac6b419256bc1ccdfc",
+  "output_asset": "episodes/EP001_earth-stop/shots/S002/candidates/EP001_S002_flow_i2v_001.mp4",
+  "output_sha256": "10b04c04e33a1fc64f342b0f987521d8cf5be8e3198503bc1f52d6e73e0fc5b0",
+  "settings": {
+    "video_type": "frames",
+    "aspect_ratio": "9:16",
+    "resolution": "720p",
+    "duration_seconds": 8,
+    "outputs": 1,
+    "download_variant": "720p_original_size",
+    "credits_displayed_before_generation": 12
+  },
+  "dimensions": {
+    "width": 720,
+    "height": 1280,
+    "fps": 24,
+    "duration_seconds": 8.0,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "seed": null,
+  "references": [
+    "EP001_S002_keyframe-001"
+  ],
+  "prompt": "Preserve the uploaded image exactly: the runner identity and dark windbreaker, the road geometry and lane markings, the skyline, palms, late-afternoon amber light, cool shadows, the single blank red receipt, and the dust ribbon. Single continuous 8-second vertical 9:16 shot. Locked static camera, no camera movement, no cuts, no zoom. The asphalt, horizon, buildings, and lane markings remain fixed. The runner completes one natural forward stride away from camera. The blank red receipt is pulled sharply toward screen-right by eastward inertia and flutters with believable paper folds. The thin dust ribbon shears toward screen-right along the road surface. Environment pressure: warm crosswind pushes the dust and receipt while the street remains rigid. Body micro-motion: the runner’s shoulders pitch forward, right wrist resists the pull, jacket hem snaps once. Visual anchor: the blank red receipt and the fixed white lane markings. Last frame: the runner is one step farther away, the receipt is extended toward screen-right, the dust trail tapers at screen-right, and the road is still locked. No extra people, no vehicles, no logos, no readable text, no subtitles, no watermark, no duplicated paper, no distorted anatomy.",
+  "continuity_anchors": [
+    "screen-right motion direction",
+    "ground and lane markings remain fixed",
+    "one anonymous runner in dark windbreaker",
+    "one blank red receipt in right hand",
+    "late-afternoon amber screen-left light with cool building shadows"
+  ],
+  "qc": {
+    "text_or_logo_check": "PASS",
+    "visible_text": false,
+    "technical_probe": "PASS",
+    "fast_qc": "PASS",
+    "fast_qc_scope": "shot/EP001_earth-stop/S002",
+    "fast_qc_contact_sheet": "episodes/EP001_earth-stop/qc/contact_sheets/shot_EP001_earth-stop_S002_10b04c04e33a.jpg",
+    "human_director_selection": "pending",
+    "active_shot_assignment": "pending"
+  },
+  "license": {
+    "provider_terms": "Google Flow generation; project provenance retained",
+    "external_references": []
+  }
+}

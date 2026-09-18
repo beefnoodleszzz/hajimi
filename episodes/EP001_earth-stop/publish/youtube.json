@@ -1,0 +1,92 @@
+{
+  "schema_version": "youtube-publish-v2",
+  "episode_id": "EP001_earth-stop",
+  "created_at": "2026-09-18T02:49:18.496168+00:00",
+  "status": "BLOCKED",
+  "checks": {
+    "animatic_gate": true,
+    "all_shots_approved": false,
+    "shot_qc_evidence": false,
+    "shot_provenance": true,
+    "resolve_readback": true,
+    "master_qc": true,
+    "human_playback_recorded": false,
+    "master_exists": true,
+    "master_hash_recorded": true,
+    "master_hash_matches_qc": true,
+    "title_exists": true,
+    "description_exists": true,
+    "ai_disclosure_resolved": true,
+    "audience_resolved": true,
+    "visibility_private": true
+  },
+  "stage_policy": {
+    "required_sequence": [
+      "animatic_gate",
+      "shot_approval",
+      "master_qc",
+      "human_playback",
+      "private_upload",
+      "checks_readback"
+    ],
+    "animatic_gate": "PASS"
+  },
+  "master": {
+    "path": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4",
+    "sha256": "8b20eb848d0ebd259de9a20f984e4aab5bf7959b32f6c97eeba37baa5e3028ac"
+  },
+  "metadata": {
+    "title": "The Ground Stops. You Don't.",
+    "description": "What would happen if Earth's rotation stopped for exactly one second?\nThis is a simplified equatorial thought experiment about relative motion,\ngrounded in NASA and NOAA sources.\n\nSources:\nNASA Science — Reference Systems\nNASA GSFC — The Rotating Earth\nNASA Cosmicopia — Earth and Moon Q&A\nNOAA JetStream — Origin of Wind\nNOAA National Ocean Service — Coriolis Effect\n",
+    "language": "en-US",
+    "category": "Education",
+    "audience": {
+      "made_for_kids": false
+    },
+    "ai_use": {
+      "disclose": true,
+      "reason": "realistic_generated_scene"
+    },
+    "schedule": {
+      "enabled": false,
+      "timezone": "Asia/Singapore",
+      "datetime": null
+    }
+  },
+  "upload": {
+    "method": "ego-browser",
+    "operation": "uploadFile",
+    "visibility": "private",
+    "discovery": [
+      "snapshotText",
+      "discover current file input/control",
+      "uploadFile",
+      "snapshotText readback"
+    ]
+  },
+  "readback_contract": {
+    "required": [
+      "video_url",
+      "visibility",
+      "metadata",
+      "checks",
+      "processing",
+      "schedule"
+    ],
+    "must_match": [
+      "master_sha256",
+      "visibility",
+      "metadata.title",
+      "metadata.description",
+      "metadata.audience",
+      "metadata.ai_disclosure"
+    ]
+  },
+  "publisher": "ego-browser",
+  "youtube_checks": {
+    "copyright": "not_started",
+    "likeness": "not_started",
+    "upload": "not_started"
+  },
+  "note": "Plan only. Use the youtube-publisher skill and ego-browser for the visible logged-in upload; do not save credentials or cookies."
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "hajimi-asset-provenance-v1",
+  "asset": "blender/assets/fx/HJ_FX_DustRibbon.blend",
+  "asset_name": "HJ_FX_DustRibbon",
+  "source": "Hajimi-original procedural sample",
+  "license": "Hajimi-original",
+  "sha256": "f88336847eefac62fc22720efbbc8902b17cd79d79cb297e3def3b915e1a2b53",
+  "asset_browser_datablock": "HJ_FX_DustRibbon",
+  "description": "Original curve-based dust ribbon guide for eastward ground motion.",
+  "tags": [
+    "fx",
+    "dust",
+    "ribbon",
+    "ground-motion"
+  ]
+}

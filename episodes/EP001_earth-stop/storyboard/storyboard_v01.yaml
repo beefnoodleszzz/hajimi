@@ -1,0 +1,150 @@
+episode_id: EP001_earth-stop
+version: 1
+format: 9:16
+continuity:
+  location: broad equatorial city road at late afternoon
+  human_proxy: charcoal silhouette from behind
+  object_anchor: small red paper receipt
+  screen_direction: right/east
+  graphic_anchor: cyan vector line
+shots:
+  - shot_id: S001
+    composition: low road-level wide, horizon in upper third
+    lens: 28mm equivalent
+    camera_height: 1.2m
+    camera_motion: locked after snap
+    subject_motion: receipt starts moving right
+    screen_direction: right
+    visual_information: ground is fixed; event occurs before explanation
+    transition_in: hard cut from black
+    transition_out: match direction into human silhouette
+    sound_event: vacuum-drop + impact
+    expected_duration: 1.2
+    production_method: animatic_card_then_ai_video
+    risk: hook may read as generic freeze if receipt is not visible
+  - shot_id: S002
+    composition: medium rear three-quarter, road markings dominant
+    lens: 35mm equivalent
+    camera_height: 1.6m
+    camera_motion: subtle lateral track right
+    subject_motion: body and receipt travel right; road does not
+    screen_direction: right
+    visual_information: inertia is horizontal, not upward
+    transition_in: rightward motion match
+    transition_out: vector line match
+    sound_event: body whoosh + paper tick
+    expected_duration: 2.8
+    production_method: ai_video
+    risk: generated body/road continuity and motion direction
+  - shot_id: S003
+    composition: centered typographic diagram with road texture behind
+    lens: orthographic graphic
+    camera_height: n/a
+    camera_motion: number punch and vector draw
+    subject_motion: cyan vector sweeps right
+    screen_direction: right
+    visual_information: equatorial speed is 465 m/s
+    transition_in: cyan vector from S002
+    transition_out: vector extends into map
+    sound_event: rising tonal marker
+    expected_duration: 3.0
+    production_method: fusion
+    risk: number must be readable in one glance
+  - shot_id: S004
+    composition: top-down city blocks, red origin and destination points
+    lens: orthographic
+    camera_height: n/a
+    camera_motion: controlled line draw
+    subject_motion: vector grows across 465m
+    screen_direction: right
+    visual_information: one second becomes visible distance
+    transition_in: match from S003 vector
+    transition_out: line becomes air layer
+    sound_event: distance sweep + click
+    expected_duration: 4.0
+    production_method: fusion
+    risk: scale annotation must not become a decorative map
+  - shot_id: S005
+    composition: side cutaway of city slab and atmosphere band
+    lens: 45mm equivalent
+    camera_height: eye-level abstraction
+    camera_motion: controlled pull-back
+    subject_motion: air/cloud band moves right
+    screen_direction: right
+    visual_information: atmosphere shares inertia
+    transition_in: line becomes cloud trace
+    transition_out: cloud trace becomes ocean trace
+    sound_event: air rush
+    expected_duration: 5.0
+    production_method: blender
+    risk: layered motion must remain readable, not noisy
+  - shot_id: S006
+    composition: coastline cutaway with ocean cross-section
+    lens: 35mm equivalent
+    camera_height: high side view
+    camera_motion: single crane/pull-back
+    subject_motion: water surface moves right
+    screen_direction: right
+    visual_information: ocean is part of the mismatch
+    transition_in: air trace continues
+    transition_out: water layer hard-cuts to all layers
+    sound_event: low water surge
+    expected_duration: 5.0
+    production_method: blender
+    risk: avoid unrelated scenic coastline
+  - shot_id: S007
+    composition: clean horizontal three-layer scientific cutaway
+    lens: orthographic
+    camera_height: n/a
+    camera_motion: land snaps left; upper layers lag right
+    subject_motion: air and ocean offset right
+    screen_direction: right
+    visual_information: restart creates land-air-water mismatch
+    transition_in: hard cut on restart hit
+    transition_out: cyan offsets collapse into two vectors
+    sound_event: restart hit + layered lag
+    expected_duration: 6.0
+    production_method: blender
+    risk: hero shot must read as a still without narration
+  - shot_id: S008
+    composition: silhouette plus vector diagram, negative space on right
+    lens: orthographic graphic
+    camera_height: n/a
+    camera_motion: arrows draw on
+    subject_motion: right vector grows; down vector stays
+    screen_direction: right
+    visual_information: gravity remains; sideways motion is the danger
+    transition_in: layer offset becomes vectors
+    transition_out: right arrow becomes final receipt direction
+    sound_event: gravity thump + silence gap
+    expected_duration: 4.0
+    production_method: fusion
+    risk: no “fly into space” implication
+  - shot_id: S009
+    composition: centered thesis card with ghosted land/air/water offsets
+    lens: orthographic
+    camera_height: n/a
+    camera_motion: phrase resolves from offset layers
+    subject_motion: offsets pulse once
+    screen_direction: right
+    visual_information: one-second mismatch is the core disaster
+    transition_in: silence gap
+    transition_out: red accent returns to road
+    sound_event: restrained sub drop
+    expected_duration: 4.0
+    production_method: fusion
+    risk: avoid repeating S007 without a new verbal function
+  - shot_id: S010
+    composition: opening road, wider negative space, receipt far right
+    lens: 28mm equivalent
+    camera_height: 1.2m
+    camera_motion: almost locked; dust settles
+    subject_motion: receipt rests at changed position
+    screen_direction: right
+    visual_information: callback proves the distance visually
+    transition_in: match to S001 framing
+    transition_out: loop to opening lock
+    sound_event: dust settle + loop tail
+    expected_duration: 3.0
+    production_method: animatic_card_then_production
+    risk: callback must be recognizably the same road

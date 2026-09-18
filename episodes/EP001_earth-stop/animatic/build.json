@@ -1,0 +1,37 @@
+{
+  "episode_id": "EP001_earth-stop",
+  "cards": [
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S001.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S002.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S003.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S004.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S005.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S006.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S007.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S008.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S009.png",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/cards/S010.png"
+  ],
+  "segments": [
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S001.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S002.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S003.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S004.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S005.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S006.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S007.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S008.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S009.mp4",
+    "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/render_work/S010.mp4"
+  ],
+  "audio": {
+    "voice": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/audio/vo_temp.wav",
+    "music": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/audio/music_temp.wav",
+    "ambience": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/audio/ambience_temp.wav",
+    "sfx": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/audio/narrative_sfx_temp.wav",
+    "voice_status": "macos_say_temp_voice",
+    "layer_count": 4
+  },
+  "output": "/Users/zhangxiaolong/Desktop/hajimi/episodes/EP001_earth-stop/animatic/EP001_earth-stop_animatic.mp4",
+  "duration_target": 38.0
+}

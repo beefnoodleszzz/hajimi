@@ -1,127 +1,150 @@
-# Agent Instructions
+# Hajimi Studio Agent Operating Manual
 
-This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
+## Mission
 
-> **Architecture in one line:** Issues live in a local Dolt database
-> (`.beads/dolt/`); cross-machine sync uses `bd dolt push/pull` (a
-> git-compatible protocol), stored under `refs/dolt/data` on your git
-> remote — separate from `refs/heads/*` where your code lives.
-> `.beads/issues.jsonl` is a passive export, not the wire protocol.
->
-> See [SYNC_CONCEPTS.md](https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md)
-> for the one-screen overview and anti-patterns (don't treat JSONL as the
-> source of truth; don't `bd import` during normal operation; don't
-> reach for third-party Dolt hosting before trying the default).
+Hajimi is an AI-driven visual storytelling studio.
 
-## Quick Reference
+Primary objective: produce world-class knowledge-entertainment Shorts and
+long-form videos for `The World You Never Knew`.
 
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work atomically
-bd close <id>         # Complete work
-bd dolt push          # Push beads data to remote
+Optimization order:
+
+1. audience retention
+2. visual storytelling quality
+3. factual correctness
+4. sound and editing quality
+5. repeatability
+6. automation speed
+
+Never optimize production speed by sacrificing the first four.
+
+## Non-Negotiable Rules
+
+- Do not patch the legacy V1 production system or create compatibility folders.
+- `episodes/<episode>/episode.yaml` is the single source of truth.
+- Every shot has one stable shot ID and one active version in the manifest.
+- No production-quality shot is generated before the animatic passes.
+- FFmpeg is mechanical media infrastructure, not the creative editor.
+- DaVinci Resolve is the primary picture and sound editor.
+- Deterministic scientific motion prefers Blender/Fusion.
+- AI video must pass shot QC before entering the timeline.
+- Never QC every frame with an LLM/VLM.
+- Always run deterministic QC first and reuse results for unchanged hashes.
+- Every expensive action must be incremental and reproducible.
+- Never publish without final-master-qc PASS.
+
+## Required Workflow
+
+```text
+topic
+→ research
+→ creative brief
+→ reference deconstruction
+→ script beats
+→ storyboard
+→ animatic
+→ animatic gate
+→ shot production
+→ shot QC
+→ edit
+→ sound
+→ master
+→ master QC
+→ upload private
+→ YouTube checks
+→ publish/schedule
 ```
 
-## Non-Interactive Shell Commands
+Stages may not be skipped. If a stage is unavailable, record `skipped` and the
+reason in the episode manifest or `.amv/project-state.json`.
 
-**ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.
+## Quality Targets
 
-Shell commands like `cp`, `mv`, and `rm` may be aliased to include `-i` (interactive) mode on some systems, causing the agent to hang indefinitely waiting for y/n input.
+- anomaly or result inside 1.5 seconds
+- meaningful visual change every 1–3 seconds
+- visual/audio peak every 8–12 seconds
+- at least one hero shot
+- no static AI plate held over 4 seconds without a written justification
+- no narration-only mix
+- no unresolved visual artifact in an approved shot
 
-**Use these forms instead:**
-```bash
-# Force overwrite without prompting
-cp -f source dest           # NOT: cp source dest
-mv -f source dest           # NOT: mv source dest
-rm -f file                  # NOT: rm file
+## QC Policy
 
-# For recursive operations
-rm -rf directory            # NOT: rm -r directory
-cp -rf source dest          # NOT: cp -r source dest
-```
+Fast QC hierarchy:
 
-**Other commands that may prompt:**
-- `scp` - use `-o BatchMode=yes` for non-interactive
-- `ssh` - use `-o BatchMode=yes` to fail instead of prompting
-- `apt-get` - use `-y` flag
-- `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
+1. ffprobe / decode / black / freeze / silence
+2. 540p proxy
+3. scene detection
+4. 3-frame-per-shot sampling
+5. cheap CV metrics
+6. contact sheet
+7. VLM only for representative or suspicious frames
+8. human/director review when required
 
-<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:6cd5cc61 -->
-## Beads Issue Tracker
+Never reverse this order. A hash and QC profile version identify reusable QC
+results in SQLite.
 
-This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
+## Tool Responsibilities
 
-### Quick Reference
+- Blender: deterministic 3D, simulations, controlled cameras.
+- AI image/video: hero visuals, impossible imagery, controlled plates.
+- Resolve: editing, pacing, Fusion, Fairlight, delivery.
+- FFmpeg: proxy, extraction, analysis, encode, deterministic QC.
+- ego-browser: logged-in website interaction and YouTube Studio publishing.
+- Beads: durable task tracking and production blockers.
 
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
-```
+## Agent Skill Routing
 
-### Rules
+Use project skills under `.agents/skills/`:
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
-- Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
+- creative direction → `creative-director`
+- reference analysis → `reference-deconstructor`
+- factual research → `research-editor`
+- script beats → `short-script-editor`
+- storyboard → `storyboard-director`
+- animatic → `animatic-director`
+- shot method → `shot-designer`
+- Blender → `blender-shot`
+- AI generation → `ai-visual-producer`
+- edit → `resolve-editor`
+- sound → `sound-designer`
+- shot QC → `fast-media-qc`
+- master QC → `final-master-qc`
+- YouTube upload → `youtube-publisher`
+- analytics → `analytics-reviewer`
 
-**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md for details and anti-patterns.
+Do not silently combine unrelated roles.
 
-## Agent Context Profiles
+## Beads
 
-The managed Beads block is task-tracking guidance, not permission to override repository, user, or orchestrator instructions.
+Use `bd` for all durable task tracking. Every production blocker must be
+represented as a bead. Do not use markdown TODO files as the canonical tracker.
 
-- **Conservative (default)**: Use `bd` for task tracking. Do not run git commits, git pushes, or Dolt remote sync unless explicitly asked. At handoff, report changed files, validation, and suggested next commands.
-- **Minimal**: Keep tool instruction files as pointers to `bd prime`; use the same conservative git policy unless active instructions say otherwise.
-- **Team-maintainer**: Only when the repository explicitly opts in, agents may close beads, run quality gates, commit, and push as part of session close. A current "do not commit" or "do not push" instruction still wins.
+## Destructive Operations
 
-## Session Completion
+The V1 production architecture was explicitly scoped for removal by the
+rebuild request. Do not delete `.git` or `.beads`. After rebuild begins, never
+restore V1 folders into the active tree.
 
-This protocol applies when ending a Beads implementation workflow. It is subordinate to explicit user, repository, and orchestrator instructions.
+## Publish Safety
 
-1. **File issues for remaining work** - Create beads for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **Handle git/sync by active profile**:
-   ```bash
-   # Conservative/minimal/default: report status and proposed commands; wait for approval.
-   git status
+Default YouTube visibility is `private`. The agent may prepare metadata and
+record a publish preflight. It must not make a video public or scheduled unless
+the current task explicitly authorizes that action and supplies the schedule.
 
-   # Team-maintainer opt-in only, unless current instructions forbid it:
-   git pull --rebase
-   git push
-   git status
-   ```
-5. **Hand off** - Summarize changes, validation, issue status, and any blocked sync/commit/push step
+Never store cookies, tokens, or account credentials in the repository.
 
-**Critical rules:**
-- Explicit user or orchestrator instructions override this Beads block.
-- Do not commit or push without clear authority from the active profile or the current user request.
-- If a required sync or push is blocked, stop and report the exact command and error.
-<!-- END BEADS INTEGRATION -->
+## Completion Protocol
 
-<!-- BEGIN BEADS CODEX SETUP: generated by bd setup codex -->
-## Beads Issue Tracker
+Before closing an episode, confirm:
 
-Use Beads (`bd`) for durable task tracking in repositories that include it. Use the `beads` skill at `.agents/skills/beads/SKILL.md` (project install) or `~/.agents/skills/beads/SKILL.md` (global install) for Beads workflow guidance, then use the `bd` CLI for issue operations.
+- manifest is consistent;
+- all active shots are approved;
+- master exists;
+- master QC is PASS;
+- title/description package exists;
+- upload result and YouTube checks are recorded;
+- analytics record is initialized.
 
-### Quick Reference
-
-```bash
-bd ready                # Find available work
-bd show <id>            # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>           # Complete work
-bd prime                # Refresh Beads context
-```
-
-### Rules
-
-- Use `bd` for all task tracking; do not create markdown TODO lists.
-- Run `bd prime` when Beads context is missing or stale. Codex 0.129.0+ can load Beads context automatically through native hooks; use `/hooks` to inspect or toggle them.
-- Keep persistent project memory in Beads via `bd remember`; do not create ad hoc memory files.
-
-**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md for details and anti-patterns.
-<!-- END BEADS CODEX SETUP -->
+At session close, run quality gates, update the relevant Beads issue, and
+report changed files, validation, and any external step that was not executed.

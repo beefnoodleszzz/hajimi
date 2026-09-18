@@ -1,6 +1,67 @@
+# Python and local environments
+.venv/
+*.egg-info/
+*.blend1
+*.blend2
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Beads / Dolt files (added by bd init)
-.dolt/
+# Local databases and OS noise
 *.db
+*.sqlite3-shm
+*.sqlite3-wal
+.DS_Store
+
+# Generated media and QC work products
+episodes/*/animatic/render_work/
+episodes/*/qc/metrics/
+episodes/*/qc/suspicious/
+episodes/*/master/render_work/
+blender/generated/runtime/
+blender/benchmarks/renders/
+blender/generated/artifacts/*/preview/
+blender/generated/artifacts/*/render/
+blender/generated/artifacts/*/cache/
+episodes/*/qc/
+episodes/*/master/*.mp4
+episodes/*/audio/*.wav
+episodes/*/audio/*.aiff
+episodes/*/audio/final/*.wav
+episodes/*/shots/*/production/
+episodes/*/shots/*/candidates/
+episodes/*/shots/*/preview/
+episodes/*/shots/*/input/*.png
+episodes/*/animatic/*.mp4
+episodes/*/animatic/cards/
+analytics/*.duckdb
+analytics/*.parquet
+analytics/export_status.json
+analytics/records.jsonl
+config/generated/*.png
+config/generated/blender_smoke/
+episodes/*/edit/*.drp
+*.aiff
+
+# Local Blender installation and generated binary artifacts
+blender/extensions/
+blender/scripts/addons/
+blender/installers/
+blender/config/*.blend
+blender/benchmarks/*.blend*
+blender/templates/*.blend*
+blender/generated/
+blender/assets/*.blend1
+.amv/project-state.json
+studio/studio.sqlite3
+
+# Secrets
+.env
+!.env.example
 .beads-credential-key
 .beads/proxieddb/
+
+# Beads/Dolt internal files managed by bd
+.dolt/

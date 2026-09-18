@@ -1,80 +1,46 @@
 ---
 name: beads
-description: Use when working in a repository that uses bd or Beads for durable project task tracking, issue dependencies, blocker management, multi-session handoff, or shared work memory. Trigger when the user asks to find ready work, claim or close tasks, create follow-up work, inspect blockers, recover project context, or choose between local planning and persistent project tracking.
+description: Track durable Hajimi work, blockers, dependencies, and handoffs with bd.
+triggers: issue, task, blocker, claim, close, handoff
 ---
 
-# Beads
+# Objective
 
-Use Beads as the shared project task system. Local plans, scratch files, and personal memories are useful, but they are not the durable source of truth for project work.
+Keep production state durable across sessions without using markdown TODO files.
 
-## First Step
+# Inputs
 
-Run:
+User-authorized work, current repository state, and verification results.
 
-```bash
-bd prime
-```
+# Outputs
 
-If that prints nothing, check whether the repository has an active Beads workspace:
+Beads issues, status changes, blockers, and completion reasons.
 
-```bash
-bd where
-```
+# Required Workflow
 
-## Preferred Route
+1. Run `bd prime` when context is missing or stale.
+2. Create a bead before writing implementation code.
+3. Claim work with `bd update <id> --claim`.
+4. File follow-up blockers as child or related issues.
+5. Close only after quality gates and handoff evidence exist.
 
-Use the `bd` CLI when shell access is available. It is the most compact and direct Beads interface.
+# Quality Gate
 
-## Core CLI Workflow
+The active issue names scope, acceptance, current status, and any blocked
+external operation.
 
-1. Find work:
+# Failure Conditions
 
-```bash
-bd ready
-bd list --status=open
-bd list --status=in_progress
-```
+Untracked work, premature close, or a markdown task list treated as canonical.
 
-2. Inspect before editing:
+# Tools
 
-```bash
-bd show <id>
-```
+`bd ready`, `bd show`, `bd create`, `bd update`, `bd close`, `bd remember`.
 
-3. Claim work atomically:
+# Forbidden Patterns
 
-```bash
-bd update <id> --claim
-```
+Do not run `bd edit`, commit/push/sync without authority, or expose secrets.
 
-4. Create durable follow-up work when implementation reveals new tasks:
+# Handoff
 
-```bash
-bd create "Short title" --description="Why this exists and what needs to be done" --type=task --priority=2
-```
-
-5. Close completed work:
-
-```bash
-bd close <id> --reason="Completed"
-```
-
-## What Belongs In Beads
-
-Use Beads for:
-
-- shared project tasks
-- blockers and dependencies
-- discovered follow-up work
-- work that must survive thread reset, compaction, or handoff
-- status that another person or agent should be able to resume
-
-Use agent-local planning tools only for the current turn's execution checklist. Do not treat them as shared project state.
-
-## Rules
-
-- Do not create markdown TODO files as the source of truth when Beads is available.
-- Do not use `bd edit`; it opens an interactive editor. Use `bd update` flags instead.
-- Prefer `--json` when parsing `bd` output programmatically.
-- If hooks are installed, `bd prime` may already be injected. Run it manually when context is missing.
-- Do not auto-close or mutate tasks unless the work is actually complete.
+Report issue IDs, changed files, checks, and exact next command.

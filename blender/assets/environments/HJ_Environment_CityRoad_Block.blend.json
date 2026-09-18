@@ -1,0 +1,16 @@
+{
+  "schema_version": "hajimi-asset-provenance-v1",
+  "asset": "blender/assets/environments/HJ_Environment_CityRoad_Block.blend",
+  "asset_name": "HJ_Environment_CityRoad",
+  "source": "Hajimi-original procedural sample",
+  "license": "Hajimi-original",
+  "sha256": "6bc735a28493979af22dc983285c07dea545bafbc033ef0558c5d80445fea8f0",
+  "asset_browser_datablock": "HJ_Environment_CityRoad",
+  "description": "Procedural city-road block with skyline massing for shot layout.",
+  "tags": [
+    "environment",
+    "city",
+    "road",
+    "skyline"
+  ]
+}

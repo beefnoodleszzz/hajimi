@@ -1,0 +1,261 @@
+version:
+  required: "5.2.2"
+  channel: LTS
+  policy: exact_baseline
+
+paths:
+  assets: blender/assets
+  installers: blender/installers
+  extensions: blender/extensions
+  scripts: blender/scripts
+  config: blender/config
+  cache: blender/generated/cache
+  logs: blender/generated/logs
+  artifacts: blender/generated/artifacts
+  templates: blender/templates
+  benchmarks: blender/benchmarks
+
+environment:
+  assets_env: HAJIMI_ASSETS
+  installers_env: HAJIMI_INSTALLERS
+  extensions_env: HAJIMI_BLENDER_EXTENSIONS
+  scripts_env: BLENDER_USER_SCRIPTS
+  extensions_runtime_env: BLENDER_USER_EXTENSIONS
+  project_root_env: HAJIMI_PROJECT_ROOT
+
+render:
+  default_engine: EEVEE
+  final_width: 1080
+  final_height: 1920
+  final_fps: 30
+  final_output: image_sequence
+  final_format: PNG
+  final_alpha: false
+  final_passes:
+    - Combined
+
+cycles:
+  auto_detect_device: true
+  apple_silicon_backend: METAL
+  nvidia_priority: OPTIX
+  nvidia_fallback: CUDA
+  amd_backend: HIP
+  intel_backend: ONEAPI
+  cpu_is_fallback: true
+
+atmosphere:
+  physical_atmosphere_backend: auto
+  vulkan_policy: only_if_supported
+  macos_policy: do_not_force_vulkan; use Eevee/volume or image plate fallback
+
+assets:
+  prefer_local: true
+  allow_online_fallback: false
+  libraries:
+    - name: Hajimi Curated
+      path: curated
+      category: curated
+    - name: Hajimi Cameras
+      path: cameras
+      category: cameras
+    - name: Hajimi Materials
+      path: materials
+      category: materials
+    - name: Hajimi Environments
+      path: environments
+      category: environments
+    - name: Hajimi FX
+      path: fx
+      category: fx
+
+plugins:
+  photographer:
+    display_name: Photographer 5
+    required: true
+    expected_version: "5"
+    module_names:
+      - photographer
+    installer_patterns:
+      - photographer
+    smoke_markers:
+      - photographer
+  geoscatter:
+    display_name: Geo-Scatter
+    required: true
+    expected_version: "5.6.4"
+    module_names:
+      - geoscatter
+      - geo_scatter
+    installer_patterns:
+      - geoscatter
+      - geo-scatter
+    smoke_markers:
+      - geoscatter
+      - scatter
+  physical_atmosphere:
+    display_name: Physical Atmosphere²
+    required: true
+    expected_version: "2"
+    module_names:
+      - physical_atmosphere
+    installer_patterns:
+      - physical-atmosphere
+      - physical_atmosphere
+      - atmosphere
+    smoke_markers:
+      - atmosphere
+      - physical
+  poliigon:
+    display_name: Poliigon Blender Addon
+    required: false
+    expected_version: "1.16.3"
+    module_names:
+      - poliigon-addon-blender
+    installer_patterns:
+      - poliigon
+    smoke_markers:
+      - poliigon
+  botaniq_engon:
+    display_name: engon / botaniq
+    required: false
+    expected_version: "1.10.0"
+    module_names:
+      - engon
+    installer_patterns:
+      - engon
+      - botaniq
+    smoke_markers:
+      - engon
+      - botaniq
+  flip_fluids:
+    display_name: FLIP Fluids
+    required: false
+    expected_version: "1.8.8"
+    module_names:
+      - flip_fluids_addon
+    installer_patterns:
+      - flip
+      - flipfluids
+    smoke_markers:
+      - flip
+  scatter_objects:
+    display_name: Scatter Objects (Geo-Scatter replacement)
+    required: true
+    expected_version: "0.2.0"
+    replacement_for: geoscatter
+    module_names:
+      - bl_ext.user_default.scatter_objects
+    installer_patterns:
+      - scatter-objects
+    smoke_markers:
+      - scatter_objects
+  bagapie:
+    display_name: BagaPie (Geo-Scatter community replacement)
+    required: true
+    expected_version: "11.0.12"
+    replacement_for: geoscatter
+    module_names:
+      - bl_ext.user_default.Bagapie
+    installer_patterns:
+      - bagapie
+    smoke_markers:
+      - bagapie
+  physical_motion_blur:
+    display_name: Physical Motion Blur (Photographer replacement)
+    required: true
+    expected_version: "1.1.0"
+    replacement_for: photographer
+    module_names:
+      - bl_ext.user_default.Physical_Motion_Blur
+    installer_patterns:
+      - physical-motion-blur
+    smoke_markers:
+      - physical-motion-blur
+  sun_position:
+    display_name: Sun Position (Photographer replacement)
+    required: true
+    expected_version: "4.4.0"
+    replacement_for: photographer
+    module_names:
+      - bl_ext.user_default.sun_position
+    installer_patterns:
+      - sun-position
+    smoke_markers:
+      - sun-position
+  dynamic_sky:
+    display_name: Dynamic Sky (Physical Atmosphere replacement)
+    required: true
+    expected_version: "1.1.0"
+    replacement_for: physical_atmosphere
+    module_names:
+      - bl_ext.user_default.dynamic_sky
+    installer_patterns:
+      - dynamic-sky
+    smoke_markers:
+      - dynamic-sky
+  helio:
+    display_name: Helio (Physical Atmosphere solar replacement)
+    required: true
+    expected_version: "1.1.1"
+    replacement_for: physical_atmosphere
+    module_names:
+      - bl_ext.user_default.helio
+    installer_patterns:
+      - helio
+    smoke_markers:
+      - helio
+
+camera:
+  rig_file: blender/assets/cameras/hajimi_camera_rig.blend
+  default_preset: 24mm_environment
+  presets:
+    - 18mm_epic
+    - 24mm_environment
+    - 35mm_action
+    - 50mm_documentary
+    - 85mm_detail
+  safe_guides:
+    right_interaction_ui_reserve_pct: 18
+    bottom_title_description_reserve_pct: 16
+    subtitle_safe_pct: 12
+    story_typography_safe_pct: 10
+    overlay_default: true
+
+geometry_nodes:
+  library: blender/generated/artifacts/geometry_nodes_library.blend
+  inventory: blender/presets/geometry_nodes_library.yaml
+  groups:
+    - HJ_DebrisScatter
+    - HJ_DustTrail
+    - HJ_VectorTrail
+    - HJ_ImpactWave
+    - HJ_CityRepeater
+    - HJ_CloudLayerGuide
+    - HJ_OceanSurface
+    - HJ_ProceduralRoad
+    - HJ_ArrowVector
+    - HJ_ScaleMarkers
+    - HJ_ParticleBurst
+    - HJ_AtmosphericDust
+
+qc:
+  proxy_width: 540
+  proxy_height: 960
+  sample_frames: 3
+  use_cache: true
+  vlm_default: false
+  pre_render_required: true
+  full_frame_vlm_scan: false
+
+benchmark:
+  scene: blender/benchmarks/hajimi_blender_benchmark.blend
+  preview_frames: 10
+  viewport_seconds: 10
+  generated_report: config/generated/benchmark.json
+
+policy:
+  no_auto_upgrade: true
+  no_network_download: true
+  no_commercial_license_bypass: true
+  blender_final_mp4: false
+  resolve_editor_of_record: DaVinci Resolve 21.1

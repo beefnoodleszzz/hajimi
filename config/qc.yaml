@@ -1,0 +1,19 @@
+qc:
+  profile_version: fast-qc-v2
+  proxy:
+    height: 540
+    video_bitrate: 3M
+    prefer_videotoolbox: true
+  sampling:
+    default_positions: [0.10, 0.50, 0.90]
+    short_positions: [0.25, 0.75]
+    short_threshold_sec: 1.2
+    max_samples_per_shot: 3
+  workers:
+    ffmpeg: 6
+    cv: 8
+    vlm: 2
+  thresholds:
+    max_black_ratio: 0.98
+    freeze_sec: 0.8
+    silence_db: -50

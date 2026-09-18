@@ -1,0 +1,18 @@
+{
+  "schema_version": "shot-production-provenance-v1",
+  "episode_id": "EP001_earth-stop",
+  "shot_id": "S006",
+  "candidate_id": "S006-blender-p3-mezzanine-001",
+  "media_type": "video",
+  "production_method": "blender_p3_image_sequence_mezzanine",
+  "source_manifest": "blender/generated/artifacts/EP001_S006/render_manifest.json",
+  "source_scene": "blender/generated/artifacts/EP001_S006/scene.blend",
+  "source_scene_sha256": "860d0151ab22cd57a32467500e8a538dc6ef8b29f3ff8600549abb9cc6156872",
+  "source_sequence": "blender/generated/artifacts/EP001_S006/render/P3/frame_%04d.png",
+  "output_asset": "episodes/EP001_earth-stop/shots/S006/production/EP001_S006_blender_P3_mezzanine.mp4",
+  "output_sha256": "a336015bb2e595c30426fabc70a0c5ed56f1013d297a3a4806087f0e40e4592d",
+  "dimensions": {"width": 1080, "height": 1920, "fps": 30, "duration_seconds": 5.0, "frames": 150, "video_codec": "h264", "audio": false},
+  "derivation": {"source_start_frame": 481, "source_end_frame": 630, "pixel_format": "yuv420p", "purpose": "Resolve ingest; original P3 sequence remains authoritative"},
+  "qc": {"blender_p3": "PASS", "resolve_ingest": "PASS", "human_playback": "pending"},
+  "license": {"source": "project-original Blender scene and local legal assets", "external_references": []}
+}
