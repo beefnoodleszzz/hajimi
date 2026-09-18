@@ -4,7 +4,7 @@ from pathlib import Path
 
 from studio.config import dump_yaml, write_json
 from studio.media.audio import audio_qc
-from studio.qc.engine import _find_master, _media_for_shot, run_episode_qc
+from studio.qc.engine import _asr_needs_review, _find_master, _media_for_shot, run_episode_qc
 
 
 def test_find_master_uses_resolve_registered_output(tmp_path: Path) -> None:
@@ -53,6 +53,20 @@ def test_audio_qc_does_not_attempt_asr_for_video_only_media(monkeypatch) -> None
     result = audio_qc("video-only.mp4")
 
     assert result == {"status": "NO_AUDIO", "asr": {"status": "not_run"}}
+
+
+def test_master_asr_gate_reviews_any_nonpassing_transcript_diff() -> None:
+    asr = {
+        "status": "PASS",
+        "language_match": True,
+        "diff": {"decision": "REVIEW", "coverage": 0.99, "missing_key_tokens": []},
+    }
+
+    assert _asr_needs_review(asr, "The locked narration") is True
+    assert _asr_needs_review(
+        {"status": "PASS", "language_match": True, "diff": {"decision": "PASS"}},
+        "The locked narration",
+    ) is False
 
 
 def test_active_media_resolves_episode_relative_manifest_path(tmp_path: Path) -> None:

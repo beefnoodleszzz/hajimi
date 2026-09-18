@@ -22,11 +22,11 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: angry
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: controlled, pace: medium-fast,
-      emphasis: ground, motion'
+    instruct: '压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: controlled, pace: medium-fast, emphasis:
+      ground, motion'
     candidate_count: 3
 - id: B002
   text: That key is carrying the speed of the surface it was sitting on.
@@ -40,10 +40,10 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: gentle
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: precise, pace: medium, emphasis:
+    instruct: '轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: precise, pace: medium, emphasis:
       carrying, speed'
     candidate_count: 2
 - id: B003
@@ -59,10 +59,10 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: gentle
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: clear, pace: medium, emphasis:
+    instruct: '轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: clear, pace: medium, emphasis:
       equator, four hundred sixty-five meters per second'
     candidate_count: 2
 - id: B004
@@ -77,10 +77,10 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: angry
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: ominous, pace: medium, emphasis:
+    instruct: '压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: ominous, pace: medium, emphasis:
       air, old vector'
     candidate_count: 2
 - id: B005
@@ -95,11 +95,11 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: angry
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: grave, pace: medium-slow,
-      emphasis: ocean, loses its seam'
+    instruct: '压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: grave, pace: medium-slow, emphasis:
+      ocean, loses its seam'
     candidate_count: 2
 - id: B006
   text: When the ground restarts, Earth is no longer one shared frame.
@@ -113,10 +113,10 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: gentle
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: calm authority, pace: medium-slow,
+    instruct: '轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: calm authority, pace: medium-slow,
       emphasis: restarts, shared frame'
     candidate_count: 3
 - id: B007
@@ -167,9 +167,9 @@ beats:
     pause_before_ms: 80
     pause_after_ms: 80
   voxcpm2:
-    emotion: neutral
+    emotion: gentle
     style: neutral
     mode: controllable
-    instruct: '自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: inviting question, pace:
-      slow, emphasis: restarts first, which layer'
+    instruct: '轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: inviting question, pace: slow,
+      emphasis: restarts first, which layer'
     candidate_count: 3

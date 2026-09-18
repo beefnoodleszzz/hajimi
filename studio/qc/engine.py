@@ -182,6 +182,7 @@ def run_media_qc(
     work_dir: str | Path,
     profile_version: str | None = None,
     expected_transcript: str | None = None,
+    expected_language: str | None = None,
     force: bool = False,
 ) -> dict[str, Any]:
     source = Path(source).resolve()
@@ -229,7 +230,11 @@ def run_media_qc(
     if errors:
         contact_path = work_dir / "contact_sheets" / f"{scope.replace('/', '_')}_{asset_hash[:12]}.jpg"
         build_contact_sheet([], contact_path)
-        audio = audio_qc(source, expected_transcript=expected_transcript)
+        audio = audio_qc(
+            source,
+            expected_transcript=expected_transcript,
+            expected_language=expected_language,
+        )
         result = {
             "schema_version": "qc-result-v1",
             "source": str(source),
@@ -293,7 +298,11 @@ def run_media_qc(
     if any(frame.get("laplacian_variance_approx", 0) < 2 for frame in metrics["frames"]):
         suspicious.append({"type": "possible_blur", "detail": "low edge variance in sampled frame"})
 
-    audio = audio_qc(source, expected_transcript=expected_transcript)
+    audio = audio_qc(
+        source,
+        expected_transcript=expected_transcript,
+        expected_language=expected_language,
+    )
     contact_path = work_dir / "contact_sheets" / f"{scope.replace('/', '_')}_{asset_hash[:12]}.jpg"
     contact_items = [(f"{scope} / {index + 1}", sample.path) for index, sample in enumerate(frame_samples)]
     build_contact_sheet(contact_items, contact_path)
@@ -645,6 +654,15 @@ def _master_visual_samples(analysis_source: Path, duration: float, work_dir: Pat
     }
 
 
+def _asr_needs_review(asr: dict[str, Any], expected_transcript: str | None) -> bool:
+    if not expected_transcript:
+        return False
+    if asr.get("status") != "PASS" or asr.get("language_match") is not True:
+        return True
+    diff = asr.get("diff")
+    return not isinstance(diff, dict) or diff.get("decision") != "PASS"
+
+
 def run_master_qc(episode_id: str, *, root: str | Path | None = None, force: bool = False) -> dict[str, Any]:
     paths = _paths(root)
     store = StateStore(paths.state_db)
@@ -660,6 +678,7 @@ def run_master_qc(episode_id: str, *, root: str | Path | None = None, force: boo
         store=store,
         work_dir=episode_root / "qc",
         expected_transcript=_locked_transcript(manifest, episode_root),
+        expected_language=manifest.get("language"),
         force=force,
     )
     expected = manifest.get("master", {})
@@ -716,15 +735,7 @@ def run_master_qc(episode_id: str, *, root: str | Path | None = None, force: boo
     asr = result.get("audio", {}).get("asr", {})
     sound_layers = validate_sound_layers(paths.root, episode_root, manifest)
     sound_layers_pass = sound_layers.get("decision") in {"PASS", "NOT_CONFIGURED"}
-    asr_diff = asr.get("diff") if isinstance(asr, dict) else None
-    asr_review = bool(
-        isinstance(asr_diff, dict)
-        and asr_diff.get("decision") != "PASS"
-        and (
-            float(asr_diff.get("coverage", 0.0) or 0.0) < 0.98
-            or bool(asr_diff.get("missing_key_tokens"))
-        )
-    )
+    asr_review = _asr_needs_review(asr, _locked_transcript(manifest, episode_root))
     if (
         result.get("decision") not in {"PASS", "REVIEW"}
         or not geometry["pass"]

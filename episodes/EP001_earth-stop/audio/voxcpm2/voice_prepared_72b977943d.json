@@ -1,0 +1,414 @@
+{
+  "seed": 42,
+  "inference_timesteps": 30,
+  "cfg_value": 2.0,
+  "warmup_patches": 0,
+  "max_tokens": 2000,
+  "candidates": 2,
+  "profile": "production",
+  "normalization_profile": "narration",
+  "project_lexicon": {},
+  "episode_lexicon": {},
+  "project": "hajimi_EP001_earth-stop_voxcpm2",
+  "lines": [
+    {
+      "id": "B001",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "The ground can stop without taking your motion with it.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: controlled, pace: medium-fast, emphasis: ground, motion",
+      "candidates": 3,
+      "seed": null,
+      "preparation": {
+        "text_original": "The ground can stop without taking your motion with it.",
+        "text_normalized": "The ground can stop without taking your motion with it.",
+        "text_spoken": "The ground can stop without taking your motion with it.",
+        "text_expected": "The ground can stop without taking your motion with it.",
+        "normalization": {
+          "original": "The ground can stop without taking your motion with it.",
+          "normalized": "The ground can stop without taking your motion with it.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: The",
+            "Review spoken form of identifier: ground",
+            "Review spoken form of identifier: can",
+            "Review spoken form of identifier: stop",
+            "Review spoken form of identifier: without",
+            "Review spoken form of identifier: taking",
+            "Review spoken form of identifier: your",
+            "Review spoken form of identifier: motion",
+            "Review spoken form of identifier: with",
+            "Review spoken form of identifier: it."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "The ground can stop without taking your motion with it.",
+          "expected": "The ground can stop without taking your motion with it.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B002",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "That key is carrying the speed of the surface it was sitting on.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: precise, pace: medium, emphasis: carrying, speed",
+      "candidates": 2,
+      "seed": null,
+      "preparation": {
+        "text_original": "That key is carrying the speed of the surface it was sitting on.",
+        "text_normalized": "That key is carrying the speed of the surface it was sitting on.",
+        "text_spoken": "That key is carrying the speed of the surface it was sitting on.",
+        "text_expected": "That key is carrying the speed of the surface it was sitting on.",
+        "normalization": {
+          "original": "That key is carrying the speed of the surface it was sitting on.",
+          "normalized": "That key is carrying the speed of the surface it was sitting on.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: That",
+            "Review spoken form of identifier: key",
+            "Review spoken form of identifier: is",
+            "Review spoken form of identifier: carrying",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: speed",
+            "Review spoken form of identifier: of",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: surface",
+            "Review spoken form of identifier: it",
+            "Review spoken form of identifier: was",
+            "Review spoken form of identifier: sitting",
+            "Review spoken form of identifier: on."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "That key is carrying the speed of the surface it was sitting on.",
+          "expected": "That key is carrying the speed of the surface it was sitting on.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B003",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: clear, pace: medium, emphasis: equator, four hundred sixty-five meters per second",
+      "candidates": 2,
+      "seed": null,
+      "preparation": {
+        "text_original": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+        "text_normalized": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+        "text_spoken": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+        "text_expected": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+        "normalization": {
+          "original": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+          "normalized": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Near",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: equator",
+            "Review spoken form of identifier: that",
+            "Review spoken form of identifier: motion",
+            "Review spoken form of identifier: is",
+            "Review spoken form of identifier: roughly",
+            "Review spoken form of identifier: four",
+            "Review spoken form of identifier: hundred",
+            "Review spoken form of identifier: sixty-five",
+            "Review spoken form of identifier: meters",
+            "Review spoken form of identifier: per",
+            "Review spoken form of identifier: second."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+          "expected": "Near the equator, that motion is roughly four hundred sixty-five meters per second.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B004",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Stop the surface, and the air above it still has the old vector.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: ominous, pace: medium, emphasis: air, old vector",
+      "candidates": 2,
+      "seed": null,
+      "preparation": {
+        "text_original": "Stop the surface, and the air above it still has the old vector.",
+        "text_normalized": "Stop the surface, and the air above it still has the old vector.",
+        "text_spoken": "Stop the surface, and the air above it still has the old vector.",
+        "text_expected": "Stop the surface, and the air above it still has the old vector.",
+        "normalization": {
+          "original": "Stop the surface, and the air above it still has the old vector.",
+          "normalized": "Stop the surface, and the air above it still has the old vector.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Stop",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: surface",
+            "Review spoken form of identifier: and",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: air",
+            "Review spoken form of identifier: above",
+            "Review spoken form of identifier: it",
+            "Review spoken form of identifier: still",
+            "Review spoken form of identifier: has",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: old",
+            "Review spoken form of identifier: vector."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Stop the surface, and the air above it still has the old vector.",
+          "expected": "Stop the surface, and the air above it still has the old vector.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B005",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "The ocean keeps its motion too, so the coastline loses its seam.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: grave, pace: medium-slow, emphasis: ocean, loses its seam",
+      "candidates": 2,
+      "seed": null,
+      "preparation": {
+        "text_original": "The ocean keeps its motion too, so the coastline loses its seam.",
+        "text_normalized": "The ocean keeps its motion too, so the coastline loses its seam.",
+        "text_spoken": "The ocean keeps its motion too, so the coastline loses its seam.",
+        "text_expected": "The ocean keeps its motion too, so the coastline loses its seam.",
+        "normalization": {
+          "original": "The ocean keeps its motion too, so the coastline loses its seam.",
+          "normalized": "The ocean keeps its motion too, so the coastline loses its seam.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: The",
+            "Review spoken form of identifier: ocean",
+            "Review spoken form of identifier: keeps",
+            "Review spoken form of identifier: its",
+            "Review spoken form of identifier: motion",
+            "Review spoken form of identifier: too",
+            "Review spoken form of identifier: so",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: coastline",
+            "Review spoken form of identifier: loses",
+            "Review spoken form of identifier: its",
+            "Review spoken form of identifier: seam."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "The ocean keeps its motion too, so the coastline loses its seam.",
+          "expected": "The ocean keeps its motion too, so the coastline loses its seam.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B006",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "When the ground restarts, Earth is no longer one shared frame.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: calm authority, pace: medium-slow, emphasis: restarts, shared frame",
+      "candidates": 3,
+      "seed": null,
+      "preparation": {
+        "text_original": "When the ground restarts, Earth is no longer one shared frame.",
+        "text_normalized": "When the ground restarts, Earth is no longer one shared frame.",
+        "text_spoken": "When the ground restarts, Earth is no longer one shared frame.",
+        "text_expected": "When the ground restarts, Earth is no longer one shared frame.",
+        "normalization": {
+          "original": "When the ground restarts, Earth is no longer one shared frame.",
+          "normalized": "When the ground restarts, Earth is no longer one shared frame.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: When",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: ground",
+            "Review spoken form of identifier: restarts",
+            "Review spoken form of identifier: Earth",
+            "Review spoken form of identifier: is",
+            "Review spoken form of identifier: no",
+            "Review spoken form of identifier: longer",
+            "Review spoken form of identifier: one",
+            "Review spoken form of identifier: shared",
+            "Review spoken form of identifier: frame."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "When the ground restarts, Earth is no longer one shared frame.",
+          "expected": "When the ground restarts, Earth is no longer one shared frame.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B007",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "Gravity still points down. The dangerous motion is sideways.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: clear correction, pace: medium, emphasis: down, sideways",
+      "candidates": 2,
+      "seed": null,
+      "preparation": {
+        "text_original": "Gravity still points down. The dangerous motion is sideways.",
+        "text_normalized": "Gravity still points down. The dangerous motion is sideways.",
+        "text_spoken": "Gravity still points down. The dangerous motion is sideways.",
+        "text_expected": "Gravity still points down. The dangerous motion is sideways.",
+        "normalization": {
+          "original": "Gravity still points down. The dangerous motion is sideways.",
+          "normalized": "Gravity still points down. The dangerous motion is sideways.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: Gravity",
+            "Review spoken form of identifier: still",
+            "Review spoken form of identifier: points",
+            "Review spoken form of identifier: down.",
+            "Review spoken form of identifier: The",
+            "Review spoken form of identifier: dangerous",
+            "Review spoken form of identifier: motion",
+            "Review spoken form of identifier: is",
+            "Review spoken form of identifier: sideways."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "Gravity still points down. The dangerous motion is sideways.",
+          "expected": "Gravity still points down. The dangerous motion is sideways.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B008",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "The disaster is everything else refusing to stop with the ground.",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: restrained cinematic, pace: medium-slow, emphasis: disaster, refusing to stop",
+      "candidates": 3,
+      "seed": null,
+      "preparation": {
+        "text_original": "The disaster is everything else refusing to stop with the ground.",
+        "text_normalized": "The disaster is everything else refusing to stop with the ground.",
+        "text_spoken": "The disaster is everything else refusing to stop with the ground.",
+        "text_expected": "The disaster is everything else refusing to stop with the ground.",
+        "normalization": {
+          "original": "The disaster is everything else refusing to stop with the ground.",
+          "normalized": "The disaster is everything else refusing to stop with the ground.",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: The",
+            "Review spoken form of identifier: disaster",
+            "Review spoken form of identifier: is",
+            "Review spoken form of identifier: everything",
+            "Review spoken form of identifier: else",
+            "Review spoken form of identifier: refusing",
+            "Review spoken form of identifier: to",
+            "Review spoken form of identifier: stop",
+            "Review spoken form of identifier: with",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: ground."
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "The disaster is everything else refusing to stop with the ground.",
+          "expected": "The disaster is everything else refusing to stop with the ground.",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    },
+    {
+      "id": "B009",
+      "character_id": "science_female_main",
+      "style": "neutral",
+      "text": "If the ground restarts first, which layer would you trust?",
+      "language": "en-US",
+      "mode": "controllable",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: inviting question, pace: slow, emphasis: restarts first, which layer",
+      "candidates": 3,
+      "seed": null,
+      "preparation": {
+        "text_original": "If the ground restarts first, which layer would you trust?",
+        "text_normalized": "If the ground restarts first, which layer would you trust?",
+        "text_spoken": "If the ground restarts first, which layer would you trust?",
+        "text_expected": "If the ground restarts first, which layer would you trust?",
+        "normalization": {
+          "original": "If the ground restarts first, which layer would you trust?",
+          "normalized": "If the ground restarts first, which layer would you trust?",
+          "profile": "narration",
+          "version": "1",
+          "warnings": [
+            "Review spoken form of identifier: If",
+            "Review spoken form of identifier: the",
+            "Review spoken form of identifier: ground",
+            "Review spoken form of identifier: restarts",
+            "Review spoken form of identifier: first",
+            "Review spoken form of identifier: which",
+            "Review spoken form of identifier: layer",
+            "Review spoken form of identifier: would",
+            "Review spoken form of identifier: you",
+            "Review spoken form of identifier: trust"
+          ],
+          "changed": false
+        },
+        "pronunciation": {
+          "text": "If the ground restarts first, which layer would you trust?",
+          "expected": "If the ground restarts first, which layer would you trust?",
+          "applied": [],
+          "warnings": [],
+          "sha256": "4676e781439abce0306eb556804fd2e305a6a574ed2871b098f05044ac35be7d"
+        }
+      }
+    }
+  ]
+}

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import runpy
 import shutil
 import subprocess
@@ -20,6 +21,21 @@ from ..manifest import load_manifest
 from ..media.hashing import sha256_file
 from ..paths import StudioPaths, project_root
 from .manifest import MODEL_REPO, VOICE_PROVIDER, load_voice_manifest, script_hash, write_voice_manifest
+
+
+SEMANTIC_EMOTION_ROUTES = {
+    "curiosity": "gentle",
+    "danger": "angry",
+    "systemic dread": "angry",
+    "awe": "gentle",
+    "inevitability": "sad",
+    "inviting question": "gentle",
+    "clear correction": "neutral",
+    "understanding": "neutral",
+    "recognition": "neutral",
+    "scale": "gentle",
+    "payoff": "neutral",
+}
 
 
 def _project_path() -> Path:
@@ -61,7 +77,23 @@ def _emotion_catalog(project: Path) -> tuple[dict[str, str], dict[str, str]]:
 def route_emotion(value: str | None) -> str:
     routes, _ = _emotion_catalog(_project_path())
     raw = str(value or "neutral").strip()
-    return routes.get(raw, routes.get(raw.lower(), "neutral"))
+    normalized = re.sub(r"\s+", " ", raw.casefold())
+    direct = routes.get(raw) or routes.get(normalized)
+    if direct:
+        return direct
+    candidates = [normalized]
+    if " to " in normalized:
+        candidates.extend(reversed([item.strip() for item in normalized.split(" to ")]))
+    candidates.extend(
+        alias
+        for alias in sorted(SEMANTIC_EMOTION_ROUTES, key=len, reverse=True)
+        if alias in normalized
+    )
+    for candidate in candidates:
+        mapped = SEMANTIC_EMOTION_ROUTES.get(candidate)
+        if mapped and mapped in routes.values():
+            return mapped
+    return routes.get("neutral", "neutral")
 
 
 def emotion_instruction(value: str | None) -> str:
@@ -262,6 +294,7 @@ def _source_payload(root: Path, episode_id: str) -> dict[str, Any]:
             {
                 "id": str(beat["id"]),
                 "character_id": narrator,
+                "language": manifest.get("language"),
                 "style": controls.get("style", "neutral"),
                 "mode": controls.get("mode", "controllable"),
                 "emotion": controls.get("emotion", "neutral"),

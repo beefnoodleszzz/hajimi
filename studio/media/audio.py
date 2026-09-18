@@ -15,8 +15,34 @@ NUMBER_TOKENS = {"465", "1000", "one", "second", "meters", "meter"}
 NUMBER_PHRASE = ("four", "hundred", "sixty", "five")
 
 
+def _is_cjk(character: str) -> bool:
+    codepoint = ord(character)
+    return (
+        0x3400 <= codepoint <= 0x4DBF
+        or 0x4E00 <= codepoint <= 0x9FFF
+        or 0xF900 <= codepoint <= 0xFAFF
+    )
+
+
 def normalize_words(text: str) -> list[str]:
-    return re.findall(r"[a-z0-9]+", text.lower())
+    tokens: list[str] = []
+    latin_buffer: list[str] = []
+
+    def flush() -> None:
+        if latin_buffer:
+            tokens.append("".join(latin_buffer))
+            latin_buffer.clear()
+
+    for character in text.casefold():
+        if _is_cjk(character):
+            flush()
+            tokens.append(character)
+        elif character.isalnum():
+            latin_buffer.append(character)
+        else:
+            flush()
+    flush()
+    return tokens
 
 
 def _canonical_words(text: str) -> list[str]:
@@ -55,7 +81,17 @@ def transcript_diff(expected: str, actual: str) -> dict[str, Any]:
     }
 
 
-def audio_qc(path: str | Path, expected_transcript: str | None = None) -> dict[str, Any]:
+def _language_code(value: str | None) -> str | None:
+    if not value:
+        return None
+    return str(value).strip().casefold().replace("_", "-").split("-", 1)[0] or None
+
+
+def audio_qc(
+    path: str | Path,
+    expected_transcript: str | None = None,
+    expected_language: str | None = None,
+) -> dict[str, Any]:
     probe = probe_media(path)
     audio_metadata = probe.get("audio") if isinstance(probe.get("audio"), dict) else {}
     has_audio = any(stream.get("codec_type") == "audio" for stream in probe.get("streams", [])) or bool(
@@ -70,13 +106,34 @@ def audio_qc(path: str | Path, expected_transcript: str | None = None) -> dict[s
         model = WhisperModel("small", compute_type="int8")
         segments, info = model.transcribe(str(path), vad_filter=True)
         actual = " ".join(segment.text.strip() for segment in segments)
-        result["asr"] = {"status": "PASS", "language": info.language, "text": actual}
+        detected_language = _language_code(getattr(info, "language", None))
+        expected_code = _language_code(expected_language)
+        language_match = (
+            None
+            if not expected_code or not detected_language
+            else detected_language == expected_code
+        )
+        result["asr"] = {
+            "status": "PASS" if language_match is not False else "REVIEW",
+            "language": detected_language,
+            "expected_language": expected_code,
+            "language_match": language_match,
+            "text": actual,
+        }
         if expected_transcript:
             result["asr"]["diff"] = transcript_diff(expected_transcript, actual)
     except ImportError:
-        result["asr"] = {"status": "unavailable", "reason": "faster-whisper is optional"}
+        result["asr"] = {
+            "status": "unavailable",
+            "expected_language": _language_code(expected_language),
+            "reason": "faster-whisper is optional",
+        }
     except Exception as exc:
-        result["asr"] = {"status": "error", "reason": exc.__class__.__name__}
+        result["asr"] = {
+            "status": "error",
+            "expected_language": _language_code(expected_language),
+            "reason": exc.__class__.__name__,
+        }
     return result
 
 

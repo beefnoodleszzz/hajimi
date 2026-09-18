@@ -5,7 +5,7 @@ from pathlib import Path
 from studio.config import dump_yaml, load_yaml
 from studio.creative import discover_ideas, generate_creative_package, run_tournament, validate_creative_package
 from studio.voice.manifest import VOICE_PROVIDER, production_voice_check, script_hash, write_voice_manifest
-from studio.voice.voxcpm2 import _source_payload, review_voice, select_voice
+from studio.voice.voxcpm2 import _source_payload, review_voice, route_emotion, select_voice
 
 
 def _manifest(episode_id: str) -> dict:
@@ -95,6 +95,21 @@ def test_voice_source_carries_per_beat_controls_and_candidates(tmp_path: Path) -
     source = _source_payload(tmp_path, episode_id)
 
     assert [(line["id"], line["mode"], line["instruct"], line["candidates"]) for line in source["lines"]] == [("B001", "controllable", "urgent", 3), ("B002", "controllable", "calm", 1)]
+
+
+def test_voice_director_maps_real_english_intents_to_voxcpm2_routes(monkeypatch, tmp_path: Path) -> None:
+    project = tmp_path / "voxcpm2"
+    (project / "src").mkdir(parents=True)
+    (project / "src" / "emotions.py").write_text(
+        "ROUTES = {'neutral': 'neutral', 'gentle': 'gentle', 'angry': 'angry', 'sad': 'sad'}\n"
+        "INSTRUCTIONS = {'neutral': 'neutral', 'gentle': 'gentle', 'angry': 'angry', 'sad': 'sad'}\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("VOXCPM_PROJECT", str(project))
+
+    assert route_emotion("curiosity to danger") == "angry"
+    assert route_emotion("systemic dread") == "angry"
+    assert route_emotion("awe") == "gentle"
 
 
 def test_voice_review_selects_candidates_per_beat(tmp_path: Path) -> None:

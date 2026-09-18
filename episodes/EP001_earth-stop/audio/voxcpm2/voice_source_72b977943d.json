@@ -1,0 +1,109 @@
+{
+  "project": "hajimi_EP001_earth-stop_voxcpm2",
+  "candidates": 2,
+  "inference_timesteps": 30,
+  "cfg_value": 2.0,
+  "profile": "production",
+  "normalization_profile": "narration",
+  "lines": [
+    {
+      "id": "B001",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "angry",
+      "instruct": "压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: controlled, pace: medium-fast, emphasis: ground, motion",
+      "candidates": 3,
+      "text": "The ground can stop without taking your motion with it."
+    },
+    {
+      "id": "B002",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "gentle",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: precise, pace: medium, emphasis: carrying, speed",
+      "candidates": 2,
+      "text": "That key is carrying the speed of the surface it was sitting on."
+    },
+    {
+      "id": "B003",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "gentle",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: clear, pace: medium, emphasis: equator, four hundred sixty-five meters per second",
+      "candidates": 2,
+      "text": "Near the equator, that motion is roughly four hundred sixty-five meters per second."
+    },
+    {
+      "id": "B004",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "angry",
+      "instruct": "压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: ominous, pace: medium, emphasis: air, old vector",
+      "candidates": 2,
+      "text": "Stop the surface, and the air above it still has the old vector."
+    },
+    {
+      "id": "B005",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "angry",
+      "instruct": "压住怒气，咬字稍有力度，节奏有变化，不要持续喊叫; energy: grave, pace: medium-slow, emphasis: ocean, loses its seam",
+      "candidates": 2,
+      "text": "The ocean keeps its motion too, so the coastline loses its seam."
+    },
+    {
+      "id": "B006",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "gentle",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: calm authority, pace: medium-slow, emphasis: restarts, shared frame",
+      "candidates": 3,
+      "text": "When the ground restarts, Earth is no longer one shared frame."
+    },
+    {
+      "id": "B007",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: clear correction, pace: medium, emphasis: down, sideways",
+      "candidates": 2,
+      "text": "Gravity still points down. The dangerous motion is sideways."
+    },
+    {
+      "id": "B008",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "neutral",
+      "instruct": "自然生活化对白，语气克制，停连随语义变化，不要播音腔，不要机械匀速; energy: restrained cinematic, pace: medium-slow, emphasis: disaster, refusing to stop",
+      "candidates": 3,
+      "text": "The disaster is everything else refusing to stop with the ground."
+    },
+    {
+      "id": "B009",
+      "character_id": "science_female_main",
+      "language": "en-US",
+      "style": "neutral",
+      "mode": "controllable",
+      "emotion": "gentle",
+      "instruct": "轻声安慰，语速稍慢，呼吸自然，句尾放松，不要刻意煽情; energy: inviting question, pace: slow, emphasis: restarts first, which layer",
+      "candidates": 3,
+      "text": "If the ground restarts first, which layer would you trust?"
+    }
+  ]
+}
