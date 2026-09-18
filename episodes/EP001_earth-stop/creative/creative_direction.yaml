@@ -1,0 +1,51 @@
+schema_version: creative-direction-v2
+core_question: If the ground stops for one second, what keeps moving?
+core_answer: The body, air, and ocean retain eastward motion; the danger is a broken
+  shared reference frame.
+one_sentence_promise: A familiar road freezes in the first second, then one eastward
+  vector expands until Earth stops being one aligned system.
+viewer_emotion_curve:
+- curiosity
+- danger
+- scale
+- awe
+- payoff
+opening:
+  first_frame: road-level late-afternoon road with a red receipt in motion
+  first_second_action: road and horizon lock while the receipt continues right
+  first_line: The road freezes—your momentum doesn't.
+narrative_engine:
+  central_visual_motif: one eastward vector branching through land, air, ocean, and
+    body
+  escalation_pattern: personal object → body → measured distance → atmosphere → ocean
+    → system cross-section
+  transformation_pattern: ordinary motion becomes a broken reference frame
+visual_peaks:
+- time: 0.0
+  idea: road locks before explanation
+- time: 7.0
+  idea: 465m becomes a physical ruler
+- time: 21.0
+  idea: land restarts while air and ocean lag
+- time: 31.0
+  idea: gravity/down vector separates from sideways danger
+hero_shot:
+  concept: A clean land/air/ocean cross-section caught at the instant the surface
+    restarts.
+  why_memorable: 'One still explains the entire causal argument: land is locked, upper
+    layers visibly offset, and the 465m vector is measurable.'
+  production_method: blender_ai_hybrid with Fusion measurement overlays
+ending:
+  payoff: The disaster is the mismatch between layers, not a cartoon planet explosion.
+  loop_or_comment_hook: One second. 465 meters. Which layer moves first?
+reject:
+  generic_angles:
+  - planet explodes
+  - people fly into space
+  - generic city destruction montage
+  boring_explanations:
+  - paragraph narration over scenic Earth footage
+  - number-only infographic without an action
+  visual_cliches:
+  - shaking camera as a substitute for physics
+  - fireball as the only consequence

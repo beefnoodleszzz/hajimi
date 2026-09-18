@@ -1,0 +1,320 @@
+schema_version: idea-analysis-v1
+episode_id: EP001_earth-stop
+topic: What If Earth Stopped Spinning for One Second?
+selection_policy:
+  must_be:
+  - interesting
+  - visualizable
+  - escalatable
+  - generatable
+  priority: first-second anomaly that reads without subtitles
+  note: Discovery candidates are inputs to tournament reasoning, not approved ideas.
+ideas:
+- id: human_inertia
+  title_working: You Keep Moving
+  premise: The surface stops while a person keeps the eastward velocity of the rotating
+    Earth.
+  viewer_question: If the road freezes, what carries you forward?
+  surprising_fact: Stopping the ground does not erase momentum.
+  emotional_driver: personal danger
+  hook_potential:
+    first_second_event: A road locks mid-motion while a red receipt crosses the frame.
+    first_visual: A road locks mid-motion while a red receipt crosses the frame.
+    contradiction: Stopping the ground does not erase momentum.
+    curiosity_gap: If the road freezes, what carries you forward?
+  visual_potential:
+    opening_visual: A road locks mid-motion while a red receipt crosses the frame.
+    escalation_visual_1: body-scale rightward displacement
+    escalation_visual_2: 465 m measured against the street
+    hero_visual: a person, road, and vector separated in one clean frame
+    ending_visual: the same road returns with the receipt displaced
+  story_potential:
+    setup: The surface stops while a person keeps the eastward velocity of the rotating
+      Earth.
+    escalation: body-scale rightward displacement → 465 m measured against the street
+    payoff: a person, road, and vector separated in one clean frame
+    loop: the same road returns with the receipt displaced
+  production_fit: &id001
+    blender: exact vectors, layered offsets, and measurable scale
+    ai_video: controlled human or atmospheric motion only
+    ai_image: hero plate or impossible opening texture
+    fusion: labels, vectors, and compositing
+    footage: not preferred; would need licensed material
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Most versions start at planet scale; this starts with a familiar
+      object that betrays the event.
+    our_distinctive_angle: A road locks mid-motion while a red receipt crosses the
+      frame. grows into a person, road, and vector separated in one clean frame instead
+      of becoming a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: body animation and road continuity
+    generation_difficulty: high
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum
+- id: atmosphere_weapon
+  title_working: The Sky Becomes a Blade
+  premise: The atmosphere retains its eastward motion when the ground stops.
+  viewer_question: Why does the sky become dangerous if the ground is the thing that
+    stopped?
+  surprising_fact: The air is a moving layer, not a painted background.
+  emotional_driver: invisible force becomes threat
+  hook_potential:
+    first_second_event: A cloud band shears away from a locked city slab.
+    first_visual: A cloud band shears away from a locked city slab.
+    contradiction: The air is a moving layer, not a painted background.
+    curiosity_gap: Why does the sky become dangerous if the ground is the thing that
+      stopped?
+  visual_potential:
+    opening_visual: A cloud band shears away from a locked city slab.
+    escalation_visual_1: cloud layer separates from land
+    escalation_visual_2: air becomes a horizontal flow field
+    hero_visual: a clean land/air cutaway with the moving atmosphere visibly offset
+    ending_visual: the flow line returns to the receipt
+  story_potential:
+    setup: The atmosphere retains its eastward motion when the ground stops.
+    escalation: cloud layer separates from land → air becomes a horizontal flow field
+    payoff: a clean land/air cutaway with the moving atmosphere visibly offset
+    loop: the flow line returns to the receipt
+  production_fit: *id001
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Treats the atmosphere as a protagonist rather than a scenic
+      background.
+    our_distinctive_angle: A cloud band shears away from a locked city slab. grows
+      into a clean land/air cutaway with the moving atmosphere visibly offset instead
+      of becoming a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: avoid implying a literal solid blade
+    generation_difficulty: high
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum
+- id: ocean_mismatch
+  title_working: The Ocean Does Not Stop
+  premise: Land, air, and ocean no longer share the same horizontal state.
+  viewer_question: Which layer keeps moving when the pavement restarts?
+  surprising_fact: The ocean is part of the original motion budget.
+  emotional_driver: systemic dread
+  hook_potential:
+    first_second_event: A coastline freezes while a thin ocean sheet slides east.
+    first_visual: A coastline freezes while a thin ocean sheet slides east.
+    contradiction: The ocean is part of the original motion budget.
+    curiosity_gap: Which layer keeps moving when the pavement restarts?
+  visual_potential:
+    opening_visual: A coastline freezes while a thin ocean sheet slides east.
+    escalation_visual_1: water surface detaches from coast
+    escalation_visual_2: land/air/water become three offset bands
+    hero_visual: three horizontal layers with the ocean visibly out of register
+    ending_visual: the receipt lands on the same road at a new position
+  story_potential:
+    setup: Land, air, and ocean no longer share the same horizontal state.
+    escalation: water surface detaches from coast → land/air/water become three offset
+      bands
+    payoff: three horizontal layers with the ocean visibly out of register
+    loop: the receipt lands on the same road at a new position
+  production_fit: *id001
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Uses the ocean as the irreversible reveal instead of a generic
+      destruction montage.
+    our_distinctive_angle: A coastline freezes while a thin ocean sheet slides east.
+      grows into three horizontal layers with the ocean visibly out of register instead
+      of becoming a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: ocean motion must stay abstract and readable
+    generation_difficulty: high
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum
+- id: displacement_465m
+  title_working: One Second Is 465 Metres
+  premise: A single second turns rotational speed into a visible distance relative
+    to the ground.
+  viewer_question: How far can one second move you?
+  surprising_fact: The number is a distance, not just a speed statistic.
+  emotional_driver: scale shock
+  hook_potential:
+    first_second_event: A one-second ruler snaps across a road map.
+    first_visual: A one-second ruler snaps across a road map.
+    contradiction: The number is a distance, not just a speed statistic.
+    curiosity_gap: How far can one second move you?
+  visual_potential:
+    opening_visual: A one-second ruler snaps across a road map.
+    escalation_visual_1: human scale to city blocks
+    escalation_visual_2: measured displacement crosses the frame
+    hero_visual: a red origin and endpoint separated by a physical 465 m ruler
+    ending_visual: the ruler collapses back into a receipt-sized mark
+  story_potential:
+    setup: A single second turns rotational speed into a visible distance relative
+      to the ground.
+    escalation: human scale to city blocks → measured displacement crosses the frame
+    payoff: a red origin and endpoint separated by a physical 465 m ruler
+    loop: the ruler collapses back into a receipt-sized mark
+  production_fit: *id001
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Makes the number the action rather than a caption.
+    our_distinctive_angle: A one-second ruler snaps across a road map. grows into
+      a red origin and endpoint separated by a physical 465 m ruler instead of becoming
+      a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: numbers must remain legible without dominating the story
+    generation_difficulty: high
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum
+- id: city_scale_destruction
+  title_working: The City Slides First
+  premise: A city-scale slice reveals the mismatch as infrastructure, air, and water
+    decouple.
+  viewer_question: What breaks when an entire city loses its shared reference frame?
+  surprising_fact: The disaster is a coordination failure between layers.
+  emotional_driver: scale dread
+  hook_potential:
+    first_second_event: Road grids freeze while the skyline and air layer keep sliding.
+    first_visual: Road grids freeze while the skyline and air layer keep sliding.
+    contradiction: The disaster is a coordination failure between layers.
+    curiosity_gap: What breaks when an entire city loses its shared reference frame?
+  visual_potential:
+    opening_visual: Road grids freeze while the skyline and air layer keep sliding.
+    escalation_visual_1: street grid to skyline
+    escalation_visual_2: city slab against atmosphere and coast
+    hero_visual: a vertical city cutaway with one locked plane and two moving planes
+    ending_visual: the grid resets but one red object remains displaced
+  story_potential:
+    setup: A city-scale slice reveals the mismatch as infrastructure, air, and water
+      decouple.
+    escalation: street grid to skyline → city slab against atmosphere and coast
+    payoff: a vertical city cutaway with one locked plane and two moving planes
+    loop: the grid resets but one red object remains displaced
+  production_fit: *id001
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Turns a planet thought experiment into a legible urban machine.
+    our_distinctive_angle: Road grids freeze while the skyline and air layer keep
+      sliding. grows into a vertical city cutaway with one locked plane and two moving
+      planes instead of becoming a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: city detail can bury the causal relationship
+    generation_difficulty: high
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum
+- id: personal_pov
+  title_working: Your Camera Does Not Agree
+  premise: A first-person view makes the viewer's own reference frame fail.
+  viewer_question: Would your eyes see the stop before your body feels the mismatch?
+  surprising_fact: The camera can remain stable while the world moves through it.
+  emotional_driver: embodied disorientation
+  hook_potential:
+    first_second_event: A phone-level POV freezes its horizon while a receipt streaks
+      past.
+    first_visual: A phone-level POV freezes its horizon while a receipt streaks past.
+    contradiction: The camera can remain stable while the world moves through it.
+    curiosity_gap: Would your eyes see the stop before your body feels the mismatch?
+  visual_potential:
+    opening_visual: A phone-level POV freezes its horizon while a receipt streaks
+      past.
+    escalation_visual_1: handheld reference frame
+    escalation_visual_2: the horizon separates from the moving air
+    hero_visual: a POV frame whose stable road and sliding layers disagree
+    ending_visual: the opening POV reappears with a silent displacement
+  story_potential:
+    setup: A first-person view makes the viewer's own reference frame fail.
+    escalation: handheld reference frame → the horizon separates from the moving air
+    payoff: a POV frame whose stable road and sliding layers disagree
+    loop: the opening POV reappears with a silent displacement
+  production_fit: *id001
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Makes the audience occupy the reference frame instead of watching
+      a diagram.
+    our_distinctive_angle: A phone-level POV freezes its horizon while a receipt streaks
+      past. grows into a POV frame whose stable road and sliding layers disagree instead
+      of becoming a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: POV artifacts could reduce scientific clarity
+    generation_difficulty: medium
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum
+- id: system_layer_mismatch
+  title_working: Earth Stops Being One System
+  premise: The land stops first, but the coupled layers retain different motion.
+  viewer_question: What does 'Earth stopped' actually mean when Earth is several moving
+    systems?
+  surprising_fact: The word Earth hides land, air, water, and bodies with different
+    responses.
+  emotional_driver: awe through structure
+  hook_potential:
+    first_second_event: A single horizontal line fractures into land, air, and ocean.
+    first_visual: A single horizontal line fractures into land, air, and ocean.
+    contradiction: The word Earth hides land, air, water, and bodies with different
+      responses.
+    curiosity_gap: What does 'Earth stopped' actually mean when Earth is several moving
+      systems?
+  visual_potential:
+    opening_visual: A single horizontal line fractures into land, air, and ocean.
+    escalation_visual_1: one vector branches into three layers
+    escalation_visual_2: layers restart at different times
+    hero_visual: a still-readable system cross-section where land is locked and upper
+      layers lag right
+    ending_visual: three layers collapse into one unresolved question
+  story_potential:
+    setup: The land stops first, but the coupled layers retain different motion.
+    escalation: one vector branches into three layers → layers restart at different
+      times
+    payoff: a still-readable system cross-section where land is locked and upper layers
+      lag right
+    loop: three layers collapse into one unresolved question
+  production_fit: *id001
+  novelty:
+    common_existing_angle: Earth stops and everything breaks immediately.
+    alternative_angle: Reframes the what-if as a failure of shared reference, not
+      a single explosion.
+    our_distinctive_angle: A single horizontal line fractures into land, air, and
+      ocean. grows into a still-readable system cross-section where land is locked
+      and upper layers lag right instead of becoming a paragraph of exposition.
+  risk:
+    factual_uncertainty: The one-second stop is a thought experiment; label the simplification.
+    visual_complexity: requires disciplined graphic hierarchy
+    generation_difficulty: high
+  evidence:
+    source_direction: NASA Earth rotation / NOAA atmosphere and ocean reference material
+    reference_topics:
+    - angular velocity
+    - inertia
+    - atmospheric coupling
+    - ocean momentum

@@ -19,6 +19,7 @@ from .manifest import assert_valid_manifest, write_manifest
 from .media.probe import executable
 from .media.hashing import sha256_file
 from .media.probe import probe_media
+from .voice.manifest import production_voice_check
 
 
 def _portable_path(root: Path, value: str | Path) -> str:
@@ -139,6 +140,9 @@ def register_resolve_master(episode_root: str | Path, manifest: dict[str, Any], 
     episode_root = Path(episode_root)
     assert_valid_manifest(manifest, episode_root / "episode.yaml")
     _require_production_gate(episode_root)
+    voice_check = production_voice_check(episode_root)
+    if not voice_check["pass"]:
+        raise RuntimeError(f"Production master requires local VoxCPM2 voice: {voice_check['reason']}")
     source_path = Path(source).expanduser().resolve()
     if not source_path.exists():
         raise FileNotFoundError(f"Resolve master not found: {source_path}")

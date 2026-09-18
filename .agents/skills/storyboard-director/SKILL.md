@@ -9,6 +9,10 @@ triggers: storyboard, shot list, composition, lens, continuity
 Make every beat filmable and explain what information, emotion, or rhythm the
 shot contributes.
 
+Organize the board into HERO, STORY, and CONNECTOR shots. HERO shots deserve
+the strongest composition and generation budget; STORY shots carry factual or
+causal information; CONNECTOR shots preserve momentum and continuity.
+
 # Inputs
 
 Locked beat script, creative brief, brand language, and production capabilities.
@@ -24,11 +28,14 @@ Versioned storyboard YAML with one record per stable shot ID.
 3. Select Blender/Fusion/AI/footage with a risk note.
 4. Preserve continuity anchors across shots.
 5. Delete any shot whose removal has no cost.
+6. Give every shot a stable ID, visual role, information payload, and a
+   measurable change from the previous shot.
 
 # Quality Gate
 
 Hero shot reads as a still, direction is consistent, and every shot has an
-expected duration and production method.
+expected duration and production method. No shot may be a narration-only
+placeholder.
 
 # Failure Conditions
 

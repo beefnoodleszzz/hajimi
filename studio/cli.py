@@ -11,6 +11,7 @@ from typing import Any
 from .analytics.schema import initialize_record
 from .blender_stack import BlenderStackError, run_blender_command
 from .config import write_json
+from .creative import generate_creative_package
 from .db import StateStore
 from .manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, new_manifest, write_manifest
 from .master import register_resolve_master
@@ -23,6 +24,9 @@ from .publish.youtube import publish_status as youtube_status
 from .publish.youtube import record_checks, record_upload_readback
 from .qc.engine import record_human_playback, record_shot_review, run_episode_qc, run_master_qc, run_shot_qc
 from .resolve.sync import record_resolve_readback, resolve_doctor, sync_episode
+from .voice.director import build_voice_plan
+from .voice.voxcpm2 import doctor as voice_doctor
+from .voice.voxcpm2 import render_voice, voice_status
 
 
 def _paths(root_arg: str | None) -> StudioPaths:
@@ -53,7 +57,7 @@ def _cmd_new(args: argparse.Namespace, paths: StudioPaths) -> int:
         raise FileExistsError(f"Episode already exists: {manifest_path}")
     manifest = new_manifest(args.episode_id)
     write_manifest(manifest, manifest_path)
-    for name in ("research", "script", "storyboard", "animatic", "shots", "edit", "audio", "qc", "master", "publish"):
+    for name in ("research", "creative", "script", "storyboard", "animatic", "production", "shots", "edit", "audio", "qc", "master", "publish"):
         (episode_root / name).mkdir(parents=True, exist_ok=True)
     _print({"created": str(manifest_path.resolve())}, args.json)
     return 0
@@ -67,6 +71,7 @@ def _cmd_status(args: argparse.Namespace, paths: StudioPaths) -> int:
     gate_path = episode_root / "animatic" / "gate.json"
     master_report = episode_root / "qc" / "master_report.json"
     gate = json.loads(gate_path.read_text(encoding="utf-8")) if gate_path.exists() else {}
+    voice = voice_status(paths.root, args.episode_id)
     director_review = gate.get("director_review", {})
     director_status = director_review.get("status", "NOT_RUN") if isinstance(director_review, dict) else str(director_review)
     master_value = "NOT_RUN"
@@ -90,6 +95,7 @@ def _cmd_status(args: argparse.Namespace, paths: StudioPaths) -> int:
         "automation_gate": gate.get("automation_gate", "NOT_RUN"),
         "director_review": director_status,
         "production_gate": gate.get("production_gate", "NOT_RUN"),
+        "production_voice": voice.get("status", "NOT_INITIALIZED"),
         "master_qc": master_value,
         "database": str(paths.state_db.resolve()),
     }
@@ -130,6 +136,27 @@ def _cmd_animatic_review(args: argparse.Namespace, paths: StudioPaths) -> int:
     )
     _print(result, args.json)
     return 0 if result.get("production_gate") == "PASS" else 1
+
+
+def _cmd_creative(args: argparse.Namespace, paths: StudioPaths) -> int:
+    result = generate_creative_package(paths.root, args.episode_id, force=args.force)
+    _print(result, args.json)
+    return 0 if result.get("status") == "PASS" else 1
+
+
+def _cmd_voice(args: argparse.Namespace, paths: StudioPaths) -> int:
+    if args.voice_command == "doctor":
+        result = voice_doctor(paths.root, getattr(args, "episode_id", None), narrator=getattr(args, "narrator", None))
+        _print(result, args.json)
+        return 0 if result.get("status") in {"READY", "PARTIAL"} else 1
+    if args.voice_command == "plan":
+        result = build_voice_plan(paths.root, args.episode_id)
+    elif args.voice_command == "render":
+        result = render_voice(paths.root, args.episode_id)
+    else:
+        result = voice_status(paths.root, args.episode_id)
+    _print(result, args.json)
+    return 0 if result.get("status") in {"READY", "PLANNED", "SELECTED"} else 1
 
 
 def _cmd_qc(args: argparse.Namespace, paths: StudioPaths) -> int:
@@ -268,6 +295,24 @@ def build_parser() -> argparse.ArgumentParser:
     animatic_review.add_argument("--notes")
     animatic_review.add_argument("--json", action="store_true")
 
+    creative = sub.add_parser("creative", help="build content-first creative artifacts")
+    creative_sub = creative.add_subparsers(dest="creative_command", required=True)
+    creative_package = creative_sub.add_parser("package")
+    creative_package.add_argument("episode_id")
+    creative_package.add_argument("--force", action="store_true")
+    creative_package.add_argument("--json", action="store_true")
+
+    voice = sub.add_parser("voice", help="plan and render production voice")
+    voice_sub = voice.add_subparsers(dest="voice_command", required=True)
+    voice_doctor_parser = voice_sub.add_parser("doctor")
+    voice_doctor_parser.add_argument("episode_id", nargs="?")
+    voice_doctor_parser.add_argument("--narrator")
+    voice_doctor_parser.add_argument("--json", action="store_true")
+    for name in ("plan", "render", "status"):
+        command = voice_sub.add_parser(name)
+        command.add_argument("episode_id")
+        command.add_argument("--json", action="store_true")
+
     qc = sub.add_parser("qc")
     qc_sub = qc.add_subparsers(dest="qc_command", required=True)
     shot = qc_sub.add_parser("shot")
@@ -388,6 +433,10 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_animatic(args, paths)
         if args.command == "animatic-review":
             return _cmd_animatic_review(args, paths)
+        if args.command == "creative":
+            return _cmd_creative(args, paths)
+        if args.command == "voice":
+            return _cmd_voice(args, paths)
         if args.command == "qc":
             return _cmd_qc(args, paths)
         if args.command == "master":

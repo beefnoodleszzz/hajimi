@@ -9,6 +9,10 @@ triggers: script, beat sheet, voiceover, shorts rewrite
 Write a filmable beat sequence where each sentence has one punch and each
 visual changes the audience's mental model.
 
+Write visual-first: every beat needs a concrete visual action, the information
+that action reveals, and a reason the audience must keep watching. Voiceover
+supports the image; it must not be used to excuse a static plate.
+
 # Inputs
 
 Fact pack, creative brief, duration, and channel typography rules.
@@ -25,11 +29,14 @@ visual, sound, and purpose per beat.
 3. Escalate from personal to system scale.
 4. Correct the most likely misconception.
 5. Earn a loop or comment question.
+6. Label each beat's visual role and tie it to the storyboard's HERO, STORY, or
+   CONNECTOR hierarchy.
 
 # Quality Gate
 
 Mute-readable beats, 1–3 second visual change plan, 34–38 second target for
-EP001, and every claim links back to research.
+EP001, and every claim links back to research. Each beat exposes a
+`visual_action` and an `information_change` that can be checked without audio.
 
 # Failure Conditions
 

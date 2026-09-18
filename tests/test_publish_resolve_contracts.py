@@ -10,6 +10,7 @@ from studio.media.hashing import sha256_file
 from studio.manifest import manifest_input_hash
 from studio.publish.youtube import build_publish_plan, publish_doctor, record_upload_readback
 from studio.resolve.sync import record_resolve_readback, resolve_doctor, validate_resolve_readback
+from studio.voice.manifest import VOICE_PROVIDER, write_voice_manifest
 
 
 def _manifest() -> dict:
@@ -23,7 +24,7 @@ def _manifest() -> dict:
         "master": {"width": 1080, "height": 1920, "fps": 30, "sample_rate": 48000},
         "creative": {"promise": "Contract test", "hero_shot": "S001", "target_duration_sec": 2},
         "script": {"version": 1, "path": "script/script.md", "locked": False},
-        "audio": {"narrator": "test", "target_lufs": -14, "true_peak_max_db": -1},
+        "audio": {"narrator": "science_female_main", "voice_policy": "production_voxcpm2_local", "production_voice_provider": VOICE_PROVIDER, "target_lufs": -14, "true_peak_max_db": -1},
         "publish": {
             "title": "Contract title",
             "description": "Contract description",
@@ -52,6 +53,7 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     (episode_root / "master").mkdir()
     (episode_root / "animatic").mkdir()
     (episode_root / "script").mkdir()
+    (episode_root / "audio" / "voxcpm2" / "run_0001").mkdir(parents=True)
     shot_media = episode_root / "shots" / "S001" / "production" / "shot.mp4"
     shot_media.parent.mkdir(parents=True)
     shot_media.write_bytes(b"shot-contract-media")
@@ -85,6 +87,20 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     )
     manifest = _manifest()
     dump_yaml(manifest, episode_root / "episode.yaml")
+    write_voice_manifest(
+        episode_root,
+        {
+            "schema_version": "voice-manifest-v1",
+            "provider": VOICE_PROVIDER,
+            "narrator": "science_female_main",
+            "production_voice": {
+                "provider": VOICE_PROVIDER,
+                "status": "READY",
+                "temporary": False,
+                "path": str(episode_root / "audio" / "voxcpm2" / "run_0001"),
+            },
+        },
+    )
     master = episode_root / "master" / "EP999_contract_master_final.mp4"
     master.write_bytes(b"master-contract-media")
     write_json(

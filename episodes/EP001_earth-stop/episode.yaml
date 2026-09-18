@@ -22,6 +22,12 @@ creative:
   target_duration_sec: 38
   time_to_anomaly_sec: 0.38
   loop_strategy: Return to the same road with the red receipt displaced.
+  core_question: If the ground stops for one second, what keeps moving?
+  hook_type: human_inertia
+  hero_shot_type: system_layer_mismatch
+  visual_motif: one eastward vector branching through land, air, ocean, and body
+  content_pattern: personal_anomaly_to_system_layer_mismatch
+  creative_package: creative/
 visual_events:
 - time: 0.0
   type: state_change
@@ -105,6 +111,11 @@ audio:
   - music
   - ambience
   - narrative_sfx
+  voice_mode: ultimate
+  voice_policy: production_voxcpm2_local
+  production_voice_provider: voxcpm2_local
+  reference_voice: science_female_main/neutral
+  selected_candidate: candidate_02
 publish:
   title: The Ground Stops. You Don't.
   description: What would happen if Earth's rotation stopped for exactly one second?

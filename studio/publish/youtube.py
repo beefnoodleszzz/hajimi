@@ -18,6 +18,7 @@ from ..db import StateStore
 from ..manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, write_manifest
 from ..media.hashing import sha256_file
 from ..provenance import validate_episode_provenance
+from ..voice.manifest import production_voice_check
 from ..resolve.sync import validate_resolve_readback
 
 YOUTUBE_SCHEMA_VERSION = "youtube-publish-v2"
@@ -240,6 +241,7 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
     master_path = _active_master(root, episode_root, manifest)
     master_report = _master_report(episode_root)
     animatic_gate = _animatic_gate(episode_root)
+    production_voice = production_voice_check(episode_root)
     resolve_readback_pass = _resolve_readback_passes(root, episode_root, manifest, master_path)
     master_sha256 = sha256_file(master_path) if master_path else None
     title = youtube.get("title") or manifest_publish.get("title")
@@ -263,6 +265,7 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
         "master_qc": _master_qc_passes(master_report, manifest, master_sha256),
         "human_playback_recorded": _human_review_passed(master_report),
         "master_approval_hash_bound": _master_approval_passes(master_report, manifest, master_sha256),
+        "production_voice_voxcpm2": production_voice["pass"],
         "master_exists": bool(master_path),
         "master_hash_recorded": bool(master_sha256),
         "master_hash_matches_qc": bool(master_report and master_sha256 and master_report.get("master_sha256") == master_sha256),
@@ -284,6 +287,7 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
             "animatic_gate": animatic_gate.get("decision") if animatic_gate else "NOT_RUN",
         },
         "master": {"path": _portable_path(root, master_path) if master_path else None, "sha256": master_sha256},
+        "production_voice": production_voice,
         "metadata": {
             "title": title,
             "description": description,

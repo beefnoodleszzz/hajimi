@@ -1,0 +1,250 @@
+schema_version: angle-tournament-v1
+episode_id: EP001_earth-stop
+method: pairwise comparative reasoning with composited angle variants
+dimensions:
+- first-second hook
+- visual clarity
+- visual novelty
+- escalation
+- emotional impact
+- story simplicity
+- scientific defensibility
+- AI generation fit
+- Blender fit
+- hero-shot potential
+- loop potential
+comparisons:
+- match:
+  - human_inertia
+  - atmosphere_weapon
+  winner: human_inertia
+  loser: atmosphere_weapon
+  reason: human_inertia wins this matchup on instant personal readability; atmosphere_weapon
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - human_inertia
+  - ocean_mismatch
+  winner: human_inertia
+  loser: ocean_mismatch
+  reason: human_inertia wins this matchup on instant personal readability; ocean_mismatch
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - human_inertia
+  - displacement_465m
+  winner: human_inertia
+  loser: displacement_465m
+  reason: human_inertia wins this matchup on instant personal readability; displacement_465m
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - human_inertia
+  - city_scale_destruction
+  winner: human_inertia
+  loser: city_scale_destruction
+  reason: human_inertia wins this matchup on instant personal readability; city_scale_destruction
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - human_inertia
+  - personal_pov
+  winner: human_inertia
+  loser: personal_pov
+  reason: human_inertia wins this matchup on instant personal readability; personal_pov
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - human_inertia
+  - system_layer_mismatch
+  winner: system_layer_mismatch
+  loser: human_inertia
+  reason: system_layer_mismatch wins this matchup on clean explanatory hero frame;
+    human_inertia remains useful as an escalation or texture, not as the spine.
+- match:
+  - atmosphere_weapon
+  - ocean_mismatch
+  winner: ocean_mismatch
+  loser: atmosphere_weapon
+  reason: ocean_mismatch wins this matchup on irreversible system escalation; atmosphere_weapon
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - atmosphere_weapon
+  - displacement_465m
+  winner: atmosphere_weapon
+  loser: displacement_465m
+  reason: atmosphere_weapon wins this matchup on invisible force made visible; displacement_465m
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - atmosphere_weapon
+  - city_scale_destruction
+  winner: atmosphere_weapon
+  loser: city_scale_destruction
+  reason: atmosphere_weapon wins this matchup on invisible force made visible; city_scale_destruction
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - atmosphere_weapon
+  - personal_pov
+  winner: atmosphere_weapon
+  loser: personal_pov
+  reason: atmosphere_weapon wins this matchup on invisible force made visible; personal_pov
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - atmosphere_weapon
+  - system_layer_mismatch
+  winner: system_layer_mismatch
+  loser: atmosphere_weapon
+  reason: system_layer_mismatch wins this matchup on clean explanatory hero frame;
+    atmosphere_weapon remains useful as an escalation or texture, not as the spine.
+- match:
+  - ocean_mismatch
+  - displacement_465m
+  winner: ocean_mismatch
+  loser: displacement_465m
+  reason: ocean_mismatch wins this matchup on irreversible system escalation; displacement_465m
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - ocean_mismatch
+  - city_scale_destruction
+  winner: ocean_mismatch
+  loser: city_scale_destruction
+  reason: ocean_mismatch wins this matchup on irreversible system escalation; city_scale_destruction
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - ocean_mismatch
+  - personal_pov
+  winner: ocean_mismatch
+  loser: personal_pov
+  reason: ocean_mismatch wins this matchup on irreversible system escalation; personal_pov
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - ocean_mismatch
+  - system_layer_mismatch
+  winner: system_layer_mismatch
+  loser: ocean_mismatch
+  reason: system_layer_mismatch wins this matchup on clean explanatory hero frame;
+    ocean_mismatch remains useful as an escalation or texture, not as the spine.
+- match:
+  - displacement_465m
+  - city_scale_destruction
+  winner: displacement_465m
+  loser: city_scale_destruction
+  reason: displacement_465m wins this matchup on measurable scale; city_scale_destruction
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - displacement_465m
+  - personal_pov
+  winner: displacement_465m
+  loser: personal_pov
+  reason: displacement_465m wins this matchup on measurable scale; personal_pov remains
+    useful as an escalation or texture, not as the spine.
+- match:
+  - displacement_465m
+  - system_layer_mismatch
+  winner: system_layer_mismatch
+  loser: displacement_465m
+  reason: system_layer_mismatch wins this matchup on clean explanatory hero frame;
+    displacement_465m remains useful as an escalation or texture, not as the spine.
+- match:
+  - city_scale_destruction
+  - personal_pov
+  winner: city_scale_destruction
+  loser: personal_pov
+  reason: city_scale_destruction wins this matchup on urban consequence; personal_pov
+    remains useful as an escalation or texture, not as the spine.
+- match:
+  - city_scale_destruction
+  - system_layer_mismatch
+  winner: system_layer_mismatch
+  loser: city_scale_destruction
+  reason: system_layer_mismatch wins this matchup on clean explanatory hero frame;
+    city_scale_destruction remains useful as an escalation or texture, not as the
+    spine.
+- match:
+  - personal_pov
+  - system_layer_mismatch
+  winner: system_layer_mismatch
+  loser: personal_pov
+  reason: system_layer_mismatch wins this matchup on clean explanatory hero frame;
+    personal_pov remains useful as an escalation or texture, not as the spine.
+shortlist:
+- id: system_layer_mismatch
+  pairwise_wins: 6
+- id: human_inertia
+  pairwise_wins: 5
+- id: ocean_mismatch
+  pairwise_wins: 4
+- id: atmosphere_weapon
+  pairwise_wins: 3
+- id: displacement_465m
+  pairwise_wins: 2
+- id: city_scale_destruction
+  pairwise_wins: 1
+- id: personal_pov
+  pairwise_wins: 0
+angle_variants:
+- id: V01
+  hook: human_inertia
+  motif: red receipt
+  escalation: 465m displacement
+  ending: same road, changed object position
+  rationale: best mute-readable opening
+- id: V02
+  hook: personal_pov
+  motif: stable horizon
+  escalation: air layer shears
+  ending: POV returns with missing reference
+  rationale: strongest embodiment, higher generation risk
+- id: V03
+  hook: human_inertia
+  motif: body vector
+  escalation: city blocks
+  ending: receipt callback
+  rationale: simple story with measurable scale
+- id: V04
+  hook: system_layer_mismatch
+  motif: three horizontal bands
+  escalation: land → air → ocean
+  ending: layers collapse to a question
+  rationale: cleanest hero composition
+- id: V05
+  hook: displacement_465m
+  motif: one-second ruler
+  escalation: city-scale distance
+  ending: ruler becomes receipt mark
+  rationale: number becomes an action
+- id: V06
+  hook: ocean_mismatch
+  motif: coastline seam
+  escalation: land/air/water offsets
+  ending: water line returns
+  rationale: best systemic dread
+- id: V07
+  hook: atmosphere_weapon
+  motif: moving cloud band
+  escalation: air becomes a vector field
+  ending: cloud trace becomes receipt path
+  rationale: makes invisible motion legible
+- id: V08
+  hook: city_scale_destruction
+  motif: locked street grid
+  escalation: skyline and coast decouple
+  ending: one red object remains
+  rationale: high consequence but detail-heavy
+- id: V09
+  hook: system_layer_mismatch
+  motif: single vector branching
+  escalation: three layer restart
+  ending: one unresolved layer
+  rationale: strong explanatory loop
+- id: V10
+  hook: human_inertia
+  motif: receipt in foreground
+  escalation: body → city → system
+  ending: receipt proves the loop
+  rationale: most production-balanced
+selected_candidate:
+  hook: human_inertia
+  visual_motif: system_layer_mismatch
+  escalation:
+  - displacement_465m
+  - atmosphere_weapon
+  - ocean_mismatch
+  ending: human_inertia
+  why: Use the receipt/person for immediate comprehension, then earn the three-layer
+    mismatch as the memorable still.

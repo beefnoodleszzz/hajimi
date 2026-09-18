@@ -1,0 +1,124 @@
+schema_version: voice-direction-v1
+narrator: science_female_main
+provider: voxcpm2_local
+mode: ultimate
+global:
+  character:
+  - intelligent
+  - cinematic
+  - confident
+  - restrained
+  - mature English female narrator
+  forbidden:
+  - whisper
+  - ASMR delivery
+  - seductive
+  - sleepy
+  - overacted
+  - radio-commercial
+  note: Preserve identity from the authorized friend reference; style control must
+    not erase identity.
+beats:
+- id: B001
+  text: The road freezes—your momentum doesn't.
+  energy: controlled
+  pace: medium-fast
+  emphasis:
+  - road freezes
+  - momentum
+  pause_before_ms: 120
+  pause_after_ms: 80
+  emotional_intent: curiosity → danger
+- id: B002
+  text: At the equator, your body is already moving east at roughly 465 meters per
+    second.
+  energy: urgent
+  pace: medium
+  emphasis:
+  - equator
+  - 465 meters per second
+  pause_before_ms: 80
+  pause_after_ms: 80
+  emotional_intent: danger → scale
+- id: B003
+  text: Stop the surface, and that eastward speed has nowhere to go.
+  energy: precise
+  pace: medium
+  emphasis:
+  - eastward speed
+  - nowhere to go
+  pause_before_ms: 80
+  pause_after_ms: 80
+  emotional_intent: scale → tension
+- id: B004
+  text: In one second, you slide about 465 meters past the surface.
+  energy: astonished
+  pace: medium-slow
+  emphasis:
+  - one second
+  - 465 meters
+  pause_before_ms: 100
+  pause_after_ms: 100
+  emotional_intent: tension → awe
+- id: B005
+  text: The air keeps the same vector, so the sky is no longer aligned with the land.
+  energy: ominous
+  pace: medium
+  emphasis:
+  - air
+  - aligned
+  pause_before_ms: 80
+  pause_after_ms: 80
+  emotional_intent: awe → systemic dread
+- id: B006
+  text: The ocean keeps moving too; pavement and water no longer share a frame.
+  energy: grave
+  pace: medium
+  emphasis:
+  - ocean
+  - pavement
+  - water
+  pause_before_ms: 90
+  pause_after_ms: 90
+  emotional_intent: systemic dread → inevitability
+- id: B007
+  text: When land restarts, Earth is no longer one aligned system.
+  energy: calm authority
+  pace: medium-slow
+  emphasis:
+  - land restarts
+  - aligned system
+  pause_before_ms: 120
+  pause_after_ms: 100
+  emotional_intent: inevitability → awe
+- id: B008
+  text: Gravity still points down. The dangerous motion is sideways.
+  energy: clear correction
+  pace: medium
+  emphasis:
+  - gravity
+  - sideways
+  pause_before_ms: 90
+  pause_after_ms: 100
+  emotional_intent: awe → understanding
+- id: B009
+  text: The disaster is everything else refusing to stop with the ground.
+  energy: restrained cinematic
+  pace: medium-slow
+  emphasis:
+  - disaster
+  - stop with the ground
+  pause_before_ms: 110
+  pause_after_ms: 100
+  emotional_intent: understanding → payoff
+- id: B010
+  text: One second. 465 meters. Which layer moves first?
+  energy: inviting question
+  pace: slow with final lift
+  emphasis:
+  - one second
+  - 465 meters
+  - which layer
+  pause_before_ms: 100
+  pause_after_ms: 160
+  emotional_intent: payoff → curiosity

@@ -9,12 +9,15 @@ long-form videos for `The World You Never Knew`.
 
 Optimization order:
 
-1. audience retention
-2. visual storytelling quality
-3. factual correctness
-4. sound and editing quality
-5. repeatability
-6. automation speed
+1. topic quality
+2. creative angle
+3. visual storytelling
+4. factual correctness
+5. generation quality
+6. voice performance
+7. editing / sound
+8. repeatability
+9. automation speed
 
 Never optimize production speed by sacrificing the first four.
 
@@ -32,6 +35,11 @@ Never optimize production speed by sacrificing the first four.
 - Always run deterministic QC first and reuse results for unchanged hashes.
 - Every expensive action must be incremental and reproducible.
 - Never publish without final-master-qc PASS.
+- Production narration MUST use the local VoxCPM2 voice workstation.
+- The default main female voice is `science_female_main`, using the authorized
+  local reference and VoxCPM2 Ultimate mode. Do not silently switch to Qwen,
+  cloud TTS, macOS `say`, browser TTS, or another speaker.
+- Temporary animatic voice is `TEMP_ONLY` and `NOT_FOR_MASTER`.
 
 ## Required Workflow
 
@@ -113,13 +121,22 @@ Use project skills under `.agents/skills/`:
 - master QC → `final-master-qc`
 - YouTube upload → `youtube-publisher`
 - analytics → `analytics-reviewer`
+- idea discovery → `idea-discovery`
+- idea competition → `idea-tournament`
+- visual direction → `visual-concept-director`
+- generation planning → `generation-director`
+- voice direction → `voice-director`
+- voice synthesis → local VoxCPM2 adapter (`voxcpm2_local`)
 
 Do not silently combine unrelated roles.
 
 ## Beads
 
-Use `bd` for all durable task tracking. Every production blocker must be
-represented as a bead. Do not use markdown TODO files as the canonical tracker.
+Use `bd` for durable task tracking when available. Beads is advisory and must
+never block user-authorized `git status`, `git add`, `git commit`, or `git push`.
+If Beads is unavailable, locked, or reports an embedded-mode limitation,
+record the warning and continue the requested work. Do not modify Git hooks to
+make Beads authoritative.
 
 ## Destructive Operations
 

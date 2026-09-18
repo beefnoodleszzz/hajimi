@@ -1,0 +1,150 @@
+schema_version: visual-first-beat-script-v2
+episode_id: EP001_earth-stop
+duration_sec: 38
+beats:
+- id: B001
+  time_start: 0.0
+  time_end: 1.2
+  purpose: hook
+  narration: The road freezes—your momentum doesn't.
+  visual_action: road locks while receipt keeps crossing right
+  visual_information: the event is visible before the explanation
+  camera_event: snap from moving road to locked horizon
+  sound_event: vacuum drop + hard impact
+  emotional_change: curiosity → danger
+  duration: 1.2
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B002
+  time_start: 1.2
+  time_end: 4.0
+  purpose: personal_scale
+  narration: At the equator, your body is already moving east at roughly 465 meters
+    per second.
+  visual_action: silhouette and receipt continue right over fixed markings
+  visual_information: the viewer owns the velocity
+  camera_event: rear three-quarter match move
+  sound_event: body whoosh + paper tick
+  emotional_change: danger → scale
+  duration: 2.8
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B003
+  time_start: 4.0
+  time_end: 7.0
+  purpose: mechanism
+  narration: Stop the surface, and that eastward speed has nowhere to go.
+  visual_action: one cyan vector branches from the body into the road
+  visual_information: inertia is horizontal, not a launch into space
+  camera_event: vector grows from body to frame edge
+  sound_event: tonal rise
+  emotional_change: scale → tension
+  duration: 3.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B004
+  time_start: 7.0
+  time_end: 11.0
+  purpose: measurement
+  narration: In one second, you slide about 465 meters past the surface.
+  visual_action: a ruler draws across a city grid from origin to endpoint
+  visual_information: the number becomes physical distance
+  camera_event: controlled top-down travel along ruler
+  sound_event: distance sweep + click
+  emotional_change: tension → awe
+  duration: 4.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B005
+  time_start: 11.0
+  time_end: 16.0
+  purpose: atmosphere
+  narration: The air keeps the same vector, so the sky is no longer aligned with the
+    land.
+  visual_action: cloud band slides right over a locked city slab
+  visual_information: air is a moving layer
+  camera_event: pull back to expose the cutaway
+  sound_event: air rush
+  emotional_change: awe → systemic dread
+  duration: 5.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B006
+  time_start: 16.0
+  time_end: 21.0
+  purpose: ocean
+  narration: The ocean keeps moving too; pavement and water no longer share a frame.
+  visual_action: water sheet joins the moving upper layer
+  visual_information: the mismatch is not only atmospheric
+  camera_event: crane from coast to layered cross-section
+  sound_event: low water surge
+  emotional_change: systemic dread → inevitability
+  duration: 5.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B007
+  time_start: 21.0
+  time_end: 27.0
+  purpose: hero
+  narration: When land restarts, Earth is no longer one aligned system.
+  visual_action: land snaps left while air and ocean visibly lag right
+  visual_information: one still contains the causal argument
+  camera_event: orthographic restart with measured offsets
+  sound_event: restart hit + layered lag
+  emotional_change: inevitability → awe
+  duration: 6.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B008
+  time_start: 27.0
+  time_end: 31.0
+  purpose: correction
+  narration: Gravity still points down. The dangerous motion is sideways.
+  visual_action: down arrow stays while right arrow grows
+  visual_information: correct the fly-into-space misconception
+  camera_event: arrows draw into negative space
+  sound_event: gravity thump + silence gap
+  emotional_change: awe → understanding
+  duration: 4.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B009
+  time_start: 31.0
+  time_end: 35.0
+  purpose: payoff
+  narration: The disaster is everything else refusing to stop with the ground.
+  visual_action: offset layers compress into a thesis without replaying the hero
+  visual_information: name the true mechanism
+  camera_event: phrase resolves from ghosted layers
+  sound_event: restrained sub drop
+  emotional_change: understanding → payoff
+  duration: 4.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+- id: B010
+  time_start: 35.0
+  time_end: 38.0
+  purpose: loop
+  narration: One second. 465 meters. Which layer moves first?
+  visual_action: return to road; receipt rests far to the right
+  visual_information: the callback proves the distance and opens a comment question
+  camera_event: match opening frame, dust settles
+  sound_event: dust tail + loop cue
+  emotional_change: payoff → curiosity
+  duration: 3.0
+  evidence_ref:
+  - research/fact_pack.md
+  - research/topic_brief.md
+rules:
+  one_sentence_one_punch: true
+  every_narration_has_visual_reason: true
+  temporary_voice_only: true
