@@ -66,3 +66,34 @@ def test_production_voice_check_rejects_temporary_and_stale_voice(tmp_path: Path
     stale = production_voice_check(episode_root)
     assert stale["pass"] is False
     assert "voice_script_hash_stale" in stale["reason"]
+
+
+def test_production_voice_check_rejects_other_provider(tmp_path: Path) -> None:
+    episode_root = tmp_path / "episodes" / "EP001_earth-stop"
+    output = episode_root / "audio" / "other" / "run_0001"
+    output.mkdir(parents=True)
+    write_voice_manifest(
+        episode_root,
+        {
+            "provider": "qwen_tts",
+            "script_hash": None,
+            "production_voice": {"provider": "qwen_tts", "status": "READY", "temporary": False, "path": str(output)},
+        },
+    )
+
+    blocked = production_voice_check(episode_root)
+
+    assert blocked["pass"] is False
+    assert "provider_must_be_voxcpm2_local" in blocked["reason"]
+    assert "production_voice_provider_must_be_voxcpm2_local" in blocked["reason"]
+
+
+def test_voxcpm2_unavailable_is_blocked_without_fallback(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setenv("VOXCPM_PROJECT", str(tmp_path / "missing-voxcpm2"))
+    from studio.voice.voxcpm2 import doctor
+
+    result = doctor(tmp_path, "EP001_earth-stop")
+
+    assert result["status"] == "BLOCKED"
+    assert result["reason"] == "BLOCKED_VOXCPM2"
+    assert result["fallback"] is None
