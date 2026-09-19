@@ -14,27 +14,30 @@ uv sync
 uv sync --extra media-qc
 # Analytics export (DuckDB + Parquet)
 uv sync --extra analytics
-uv run hajimi status EP001_cloud-weight
-uv run hajimi animatic EP001_cloud-weight
-uv run hajimi qc episode EP001_cloud-weight
-uv run hajimi master EP001_cloud-weight --input episodes/EP001_cloud-weight/master/EP001_cloud-weight_master_final.mp4
-uv run hajimi qc master EP001_cloud-weight
+EPISODE_ID=EP099_your-episode
+uv run hajimi status "$EPISODE_ID"
+uv run hajimi animatic "$EPISODE_ID"
+uv run hajimi qc episode "$EPISODE_ID"
+uv run hajimi master "$EPISODE_ID" --input "episodes/$EPISODE_ID/master/final.mp4"
+uv run hajimi qc master "$EPISODE_ID"
 uv run hajimi h3 doctor
-uv run hajimi h3 prepare EP001_cloud-weight
-uv run hajimi roughcut build EP001_cloud-weight
+uv run hajimi h3 prepare "$EPISODE_ID"
+uv run hajimi roughcut build "$EPISODE_ID"
 ```
 
-The repository contains a reproducible EP001 storyboard animatic. It is a
-deliberate pre-production gate: deterministic cards and temporary sound stems
-prove the story rhythm before costly AI shot generation or Resolve finishing.
+Create an episode manifest, storyboard, and shot contracts before running this
+workflow. The animatic is a deliberate pre-production gate: deterministic cards
+and temporary sound stems prove the story rhythm before costly AI shot
+generation or Resolve finishing.
 
 Animatic approval is split into three machine-readable states:
 `automation_gate`, `director_review`, and `production_gate`. Run the automation
 gate first, then approve the exact unchanged asset with:
 
 ```bash
-uv run hajimi animatic EP001_cloud-weight --force
-uv run hajimi animatic review EP001_cloud-weight --approve --reviewer director
+EPISODE_ID=EP099_your-episode
+uv run hajimi animatic "$EPISODE_ID" --force
+uv run hajimi animatic review "$EPISODE_ID" --approve --reviewer director
 ```
 
 H3 candidates are locally inspected and selected; selection records `qc_pending`
@@ -45,7 +48,7 @@ episode-relative.
 
 Resolve and YouTube checks are capability/readiness contracts, not hidden
 automation. Use `uv run hajimi resolve doctor` and
-`uv run hajimi publish doctor EP001_cloud-weight`; an external visible runtime is
+`uv run hajimi publish doctor "$EPISODE_ID"`; an external visible runtime is
 required before any mutation or upload. YouTube defaults to a private upload.
 
 Ordinary GitHub Core CI runs the Python contracts and compile checks only. Real

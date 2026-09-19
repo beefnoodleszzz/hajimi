@@ -69,7 +69,7 @@ def test_animatic_target_changes_when_media_changes(tmp_path: Path) -> None:
 
 
 def test_animatic_cards_are_loaded_from_current_episode_storyboard(tmp_path: Path) -> None:
-    episode_root = tmp_path / "episodes" / "EP001_cloud-weight"
+    episode_root = tmp_path / "episodes" / "EP099_storyboard_fixture"
     storyboard_root = episode_root / "storyboard"
     storyboard_root.mkdir(parents=True)
     dump_yaml(

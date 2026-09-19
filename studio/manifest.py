@@ -68,7 +68,7 @@ def validate_manifest(manifest: dict[str, Any], path: str | Path | None = None) 
     errors: list[str] = []
     episode_id = manifest.get("episode_id")
     if not isinstance(episode_id, str) or not EPISODE_RE.fullmatch(episode_id):
-        errors.append("episode_id must match e.g. EP001_cloud-weight")
+        errors.append("episode_id must match the EP###_topic-slug format")
     if path and Path(path).parent.name != episode_id:
         errors.append("manifest parent directory must equal episode_id")
     status = manifest.get("status")

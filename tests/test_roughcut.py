@@ -55,7 +55,7 @@ def test_build_roughcut_from_approved_h3_clip_and_local_audio(monkeypatch: pytes
         "music": "audio/production/music.wav",
         "subtitles": "script/captions_v01.srt",
         "music_gain_db": -18,
-        "overlays": [{"text": "551 TONS", "start_sec": 0.1, "end_sec": 0.8, "font_size": 24}],
+        "overlays": [{"text": "TEST LABEL", "start_sec": 0.1, "end_sec": 0.8, "font_size": 24}],
         "sfx": [],
     }, episode / "edit" / "roughcut.yaml")
     dump_yaml({

@@ -66,11 +66,11 @@ ComfyUI checks; do not change the instance GPU or billing state to force a pass.
 
 ```bash
 uv run hajimi h3 doctor --json
-uv run hajimi h3 prepare EP001_cloud-weight --shot S001 --json
-uv run hajimi h3 submit EP001_cloud-weight --shot S001 --json
-uv run hajimi h3 status EP001_cloud-weight --shot S001 --json
-uv run hajimi h3 pull EP001_cloud-weight --shot S001 --json
-uv run hajimi h3 select EP001_cloud-weight --shot S001 --candidate 1 --reviewer '<reviewer>' --json
+uv run hajimi h3 prepare EP099_your-episode --shot S001 --json
+uv run hajimi h3 submit EP099_your-episode --shot S001 --json
+uv run hajimi h3 status EP099_your-episode --shot S001 --json
+uv run hajimi h3 pull EP099_your-episode --shot S001 --json
+uv run hajimi h3 select EP099_your-episode --shot S001 --candidate 1 --reviewer '<reviewer>' --json
 ```
 
 `prepare` packages a manifest-approved shot, `submit` starts remote generation

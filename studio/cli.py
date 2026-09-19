@@ -460,8 +460,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_argv = list(argv) if argv is not None else sys.argv[1:]
-    # Keep the concise documented form ``hajimi animatic review EP001`` while
-    # retaining the original ``hajimi animatic EP001`` invocation.
+    # Keep the concise documented form ``hajimi animatic review EP099_example``
+    # while retaining the original ``hajimi animatic EP099_example`` invocation.
     try:
         animatic_index = raw_argv.index("animatic")
     except ValueError:
