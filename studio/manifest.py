@@ -35,7 +35,23 @@ EPISODE_STATUSES = {
     "complete",
     "blocked",
 }
-METHODS = {"blender", "ai_video", "ai_image", "fusion", "footage", "animatic_card"}
+METHODS = {
+    "ai_image",
+    "ai_i2v",
+    "ai_video",
+    "ai_multiframe",
+    "ai_extend",
+    "ai_repair",
+    "fusion",
+    "footage",
+    "hybrid_ai",
+    # Pre-production cards are not production methods, but remain valid while
+    # an episode is still in the animatic gate.
+    "animatic_card",
+}
+AI_IMAGE_METHODS = {"ai_image"}
+AI_VIDEO_METHODS = {"ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair"}
+AI_METHODS = AI_IMAGE_METHODS | AI_VIDEO_METHODS | {"hybrid_ai"}
 SUPPORTED_SHORT_ASPECT_RATIO = "9:16"
 PRODUCTION_PHASES = {"production", "qc_pending", "master_qc", "uploaded_private", "checks_pending", "complete"}
 
@@ -253,7 +269,7 @@ def validate_shot_manifest(
     expected_episode_id: str | None = None,
     expected_shot_id: str | None = None,
 ) -> list[str]:
-    """Validate the per-shot production contract used by Blender/Resolve."""
+    """Validate the per-shot contract used by AI generation, Fusion, and Resolve."""
 
     errors: list[str] = []
     if not isinstance(shot, dict):
@@ -277,13 +293,8 @@ def validate_shot_manifest(
     if not isinstance(shot.get("intent"), str) or not shot.get("intent"):
         errors.append("intent is required")
     renderer = shot.get("renderer")
-    if shot.get("method") == "blender":
-        if str(renderer).lower() not in {"eevee", "cycles"}:
-            errors.append("renderer must be eevee or cycles for Blender shots")
-        if str(renderer).lower() == "cycles" and not isinstance(shot.get("reason"), str):
-            errors.append("cycles renderer requires a reason")
-    elif renderer is not None and str(renderer).lower() not in {"eevee", "cycles"}:
-        errors.append("renderer must be eevee or cycles when provided")
+    if renderer is not None:
+        errors.append("renderer is not supported; use method-specific generation contracts")
     camera = shot.get("camera")
     if not isinstance(camera, dict):
         errors.append("camera must be a mapping")
@@ -300,6 +311,54 @@ def validate_shot_manifest(
         errors.append("output must be a non-empty mapping")
     elif not any(isinstance(value, str) and value.strip() for value in output.values()):
         errors.append("output must contain at least one path")
+    output = output if isinstance(output, dict) else {}
+    method = shot.get("method")
+    if method != "animatic_card":
+        contract = shot.get("shot_contract")
+        if not isinstance(contract, dict):
+            errors.append("shot_contract must be a mapping")
+        else:
+            required_contract = {
+                "shot_id", "role", "narrative_purpose", "visual_goal", "subject",
+                "environment", "composition", "first_frame", "end_frame",
+                "subject_motion", "environmental_motion", "camera_motion", "lighting",
+                "palette", "continuity", "forbidden",
+            }
+            missing = sorted(required_contract - set(contract))
+            if missing:
+                errors.append(f"shot_contract missing {missing}")
+            if contract.get("shot_id") != shot_id:
+                errors.append("shot_contract.shot_id must match id")
+            if contract.get("role") != shot.get("role"):
+                errors.append("shot_contract.role must match role")
+        reference_pack = shot.get("reference_pack")
+        if not isinstance(reference_pack, (dict, list)):
+            errors.append("reference_pack must be a mapping or list")
+    if method in AI_IMAGE_METHODS or method == "hybrid_ai":
+        plan = shot.get("image_candidate_plan")
+        if not isinstance(plan, dict):
+            errors.append("image_candidate_plan is required for image-producing shots")
+        elif not isinstance(plan.get("candidates"), int) or plan["candidates"] < 1:
+            errors.append("image_candidate_plan.candidates must be positive")
+    if method in AI_VIDEO_METHODS or method == "hybrid_ai":
+        motion = shot.get("motion_plan")
+        if not isinstance(motion, dict):
+            errors.append("motion_plan is required for video-producing shots")
+        elif method == "ai_i2v" and not (motion.get("source_keyframe") or output.get("selected_keyframe")):
+            errors.append("ai_i2v requires a source keyframe")
+        elif method == "ai_multiframe":
+            keyframes = motion.get("keyframes")
+            segments = motion.get("segments")
+            if not isinstance(keyframes, list) or len(keyframes) < 2:
+                errors.append("ai_multiframe requires at least two motion_plan.keyframes")
+            expected_segments = len(keyframes) - 1 if isinstance(keyframes, list) and len(keyframes) >= 2 else None
+            if expected_segments is None or not isinstance(segments, list) or len(segments) != expected_segments:
+                errors.append("ai_multiframe requires one motion_plan segment between adjacent keyframes")
+        for key in ("video_dir", "download_target"):
+            if not isinstance(output.get(key), str) or not output[key].strip():
+                errors.append(f"output.{key} is required for video-producing shots")
+        if not isinstance(shot.get("video_candidate_plan"), dict):
+            errors.append("video_candidate_plan is required for video-producing shots")
     return errors
 
 

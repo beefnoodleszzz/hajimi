@@ -22,7 +22,7 @@ class AnalyticsTests(unittest.TestCase):
             "audio": {"events": [{"time": 0.4}, {"time": 8.0}]},
             "shots": [
                 {"id": "S001", "role": "hook_ground_locks", "method": "fusion", "duration_target": 1.0},
-                {"id": "S002", "role": "hero_restart_mismatch", "method": "blender", "duration_target": 2.0},
+                {"id": "S002", "role": "hero_restart_mismatch", "method": "ai_i2v", "duration_target": 2.0},
             ],
         }
 

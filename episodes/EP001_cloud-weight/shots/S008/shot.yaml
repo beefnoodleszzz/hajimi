@@ -1,16 +1,45 @@
 id: S008
 episode: EP001_cloud-weight
-version: 1
+version: 2
 role: CONNECTOR
-method: fusion
-intent: Return to the opening silhouette with the heavy-but-floating contradiction resolved.
-camera:
-  name: CAM_Main
-  rig: CameraRoot/Dolly/PanTilt/Shake/Target
-  lens_mm: 24
+method: hybrid_ai
+intent: Return to the opening identity and resolve the heavy-but-floating contradiction.
+camera: {height: low frontal, lens_feel: matched to S001, movement: reverse micro-push}
 frames: {start: 901, end: 1065, fps: 30}
-output:
-  provenance: provenance.json
-  scene: blender/generated/artifacts/EP001_S008/scene.blend
-  sequence: blender/generated/artifacts/EP001_S008/preview/P1
-  render_manifest: blender/generated/artifacts/EP001_S008/render_manifest.json
+shot_contract:
+  shot_id: S008
+  role: CONNECTOR
+  narrative_purpose: Pay off the paradox and create a replayable loop.
+  visual_goal: "S001 returns with a new meaning: heavy, not falling."
+  subject: same cloud silhouette hovering above the same scale
+  environment: same navy measurement stage with softened rain residue
+  composition: match S001 framing with a clear lower-third Fusion title area
+  camera_height: low frontal
+  lens_feel: matched to S001
+  first_frame: match frame from S001 with cloud above scale
+  end_frame: droplet rises into cloud and composition is loopable
+  subject_motion: subtle hover and one droplet returning upward
+  environmental_motion: gentle haze and scale settling
+  camera_motion: reverse micro-push
+  lighting: matched cool rim and warm measurement bounce
+  palette: deep navy, cloud white, wet cyan, warm amber
+  atmosphere: calm, satisfying, continuous identity
+  continuity: {previous_shot: S007, next_shot: S001, screen_direction: screen-right, identity: exact S001 cloud/scale relationship, recurring_elements: scale pan}
+  forbidden: [new unrelated location, static end card, generated text, broken S001 match]
+reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: shots/S001/images/selected_keyframe.png, subject_ref: shots/S001/images/selected_keyframe.png, previous_final_frame: shots/S007/video/selected.mp4}
+image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S008/images, rounds: variation_from_S001}
+motion_plan:
+  source_keyframe: shots/S008/images/selected_keyframe.png
+  generation_mode: image_to_video
+  duration_target: 5.5
+  subject_motion: cloud hovers and one droplet rises back into it
+  environmental_motion: haze drifts, scale settles
+  camera_motion: reverse micro-push matched to S001
+  motion_intensity: restrained
+  start_state: S001 match frame
+  middle_state: final contrast is readable in empty title area
+  end_state: cloud returns to loopable opening silhouette
+  preserve: S001 identity, camera, lighting, scale geometry, screen direction
+  avoid: new location, unrelated cloud, camera angle drift
+video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: loop continuity and payoff motion}
+output: {provenance: provenance.json, image_dir: shots/S008/images, selected_keyframe: shots/S008/images/selected_keyframe.png, video_dir: shots/S008/video, download_target: shots/S008/video, active_media: shots/S008/video/selected.mp4, fusion_graphics: shots/S008/fusion/ending_text.setting}

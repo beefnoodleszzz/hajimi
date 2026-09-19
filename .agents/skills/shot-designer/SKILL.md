@@ -1,56 +1,33 @@
 ---
 name: shot-designer
-description: Choose the appropriate production method and write constraints for each shot.
+description: Choose an AI-first production method and write Shot Contracts.
 triggers: shot design, production method, shot brief, negative constraints
 ---
 
 # Objective
 
-Select the cheapest method that preserves the shot's intent and physics.
+Design the cinematic AI visual first, then preserve factual clarity through
+composition, continuity, and Fusion overlays. Scientific accuracy is not a
+requirement to run an engineering simulation.
 
-Translate the approved board into a generation plan and a shot contract:
-method, candidate count, reference inputs, negative constraints, acceptance
-criteria, and regeneration policy. The contract must preserve the shot's
-visual role and information payload.
+# Required workflow
 
-# Inputs
+1. Translate the approved board into one Shot Contract: intent, subject,
+   environment, composition, camera, first/end frame, motion, lighting,
+   continuity, and forbidden constraints.
+2. Default to Codex image_gen keyframe first, then Google Flow I2V.
+3. Use multi-keyframe generation for distinct states; split complex changes.
+4. Defer exact text, numbers, arrows, vectors, and labels to Fusion.
+5. Record backend/model/reference fields; never invent an unavailable seed.
+6. Bind outputs to the active shot ID, version, input hashes, and local artifact paths.
 
-Approved storyboard, animatic gate, asset availability, and manifest.
+# Failure conditions
 
-# Outputs
-
-Shot-local `shot.yaml` with method, intent, constraints, risks, and output paths.
-
-# Required Workflow
-
-1. Ask whether motion, scale, or camera must be exact.
-2. Prefer Blender/Fusion for deterministic science.
-3. Use licensed footage for real-world evidence.
-4. Reserve AI video for controlled impossible or atmospheric visuals.
-5. Record prompt/reference/model/seed fields for AI candidates.
-6. Allocate production-quality generation only after the animatic gate; keep
-   candidate exploration cheap and reproducible.
-7. Bind outputs to the active shot ID, version, and input hashes.
-
-# Quality Gate
-
-No shot is sent to AI solely because it is visually attractive; method matches
-the information risk.
-
-# Failure Conditions
-
-AI is used for exact vectors, text, or physics; no negative constraint; no hash.
-The generation plan is missing a tier, candidate count, acceptance criterion,
-or retry boundary.
-
-# Tools
-
-Manifest, Blender/Fusion handoffs, asset registry, Beads.
-
-# Forbidden Patterns
-
-Do not approve a shot or edit the timeline.
+AI is used for exact vectors/text; a negative constraint or local artifact path
+is missing; or candidate counts, acceptance criteria, or retry boundaries are
+undefined.
 
 # Handoff
 
-Pass shot briefs to `blender-production`, `ai-visual-producer`, or `resolve-editor`.
+Pass the Shot Contract to `ai-visual-producer`, `ai-video-director`, or
+`resolve-editor`.

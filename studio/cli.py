@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any
 
 from .analytics.schema import initialize_record
-from .blender_stack import BlenderStackError, run_blender_command
 from .config import write_json
 from .creative import generate_creative_package, load_creative_context, save_creative_artifact, validate_creative_package
 from .db import StateStore
@@ -267,23 +266,6 @@ def _cmd_analytics(args: argparse.Namespace, paths: StudioPaths) -> int:
     return 0
 
 
-def _cmd_blender(args: argparse.Namespace, paths: StudioPaths) -> int:
-    result = run_blender_command(
-        paths.root,
-        args.blender_command,
-        getattr(args, "target", None),
-        getattr(args, "shot_id", None),
-        profile=getattr(args, "profile", None),
-        force=getattr(args, "force", False),
-        start=getattr(args, "start", None),
-        end=getattr(args, "end", None),
-        resume=not getattr(args, "no_resume", False),
-        deep=getattr(args, "deep", False),
-    )
-    _print(result, args.json)
-    return 0 if result.get("decision", result.get("status")) not in {"FAIL", "BLOCKED_NO_SEQUENCE", "BLOCKED_PREFLIGHT"} else 1
-
-
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hajimi", description="Hajimi V2 studio pipeline")
     parser.add_argument("--root", help="project root override")
@@ -419,26 +401,6 @@ def build_parser() -> argparse.ArgumentParser:
     analytics_init.add_argument("episode_id")
     analytics_init.add_argument("--json", action="store_true")
 
-    blender = sub.add_parser("blender", help="project-local headless Blender stack")
-    blender_sub = blender.add_subparsers(dest="blender_command", required=True)
-    for name in ("doctor", "bootstrap", "benchmark", "configure_gpu", "configure_assets", "configure_render"):
-        command = blender_sub.add_parser(name)
-        command.add_argument("--json", action="store_true")
-    for name in ("build", "preview", "render", "qc"):
-        command = blender_sub.add_parser(name)
-        command.add_argument("target", help="an episode key such as EP001")
-        command.add_argument("shot_id", nargs="?", help="episode shot id, e.g. S005")
-        if name in {"preview", "render", "qc"}:
-            command.add_argument("--profile", choices=("P0", "P1", "P2", "P3", "hero_exr", "final_cycles"))
-        if name in {"build", "preview", "render"}:
-            command.add_argument("--force", action="store_true")
-        if name in {"preview", "render"}:
-            command.add_argument("--start", type=int)
-            command.add_argument("--end", type=int)
-            command.add_argument("--no-resume", action="store_true")
-        if name == "qc":
-            command.add_argument("--deep", action="store_true", help="decode and validate every frame")
-        command.add_argument("--json", action="store_true")
     return parser
 
 
@@ -485,9 +447,7 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_publish(args, paths)
         if args.command == "analytics":
             return _cmd_analytics(args, paths)
-        if args.command == "blender":
-            return _cmd_blender(args, paths)
-    except (BlenderStackError, FileNotFoundError, FileExistsError, PermissionError, RuntimeError, ValueError) as exc:
+    except (FileNotFoundError, FileExistsError, PermissionError, RuntimeError, ValueError) as exc:
         print(f"hajimi: {exc}", file=sys.stderr)
         return 2
     return 2

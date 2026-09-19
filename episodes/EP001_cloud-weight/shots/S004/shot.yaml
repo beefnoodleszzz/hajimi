@@ -1,17 +1,45 @@
 id: S004
 episode: EP001_cloud-weight
-version: 1
+version: 2
 role: STORY
-method: blender
-renderer: eevee
-intent: Make the density relationship between dry air and cloudy air visible.
-camera:
-  name: CAM_Main
-  rig: CameraRoot/Dolly/PanTilt/Shake/Target
-  lens_mm: 24
+method: hybrid_ai
+intent: Make the cloudy-air versus dry-air density relationship legible without implying gravity disappears.
+camera: {height: eye-level, lens_feel: clean documentary perspective, movement: gentle scale shift}
 frames: {start: 259, end: 378, fps: 30}
-output:
-  provenance: provenance.json
-  scene: blender/generated/artifacts/EP001_S004/scene.blend
-  sequence: blender/generated/artifacts/EP001_S004/preview/P1
-  render_manifest: blender/generated/artifacts/EP001_S004/render_manifest.json
+shot_contract:
+  shot_id: S004
+  role: STORY
+  narrative_purpose: Introduce the density turn that explains buoyancy.
+  visual_goal: Two atmospheric columns visibly separate by relative density and motion.
+  subject: paired dry-air and cloudy-air columns with suspended moisture
+  environment: abstract atmospheric chamber with soft horizon
+  composition: vertical split, dry air left and cloudy air right, lower-third graphics-safe area
+  camera_height: eye-level
+  lens_feel: clean documentary perspective
+  first_frame: two columns at equal baseline
+  end_frame: cloudy column lifts relative to dry column
+  subject_motion: cloudy-air column rises gently
+  environmental_motion: moisture drifts inside right column
+  camera_motion: gentle scale shift
+  lighting: cool even light with warmer lift on cloudy side
+  palette: navy, pale cyan, cloud white, amber accents
+  atmosphere: clear causal diagram rendered as cinematic space
+  continuity: {previous_shot: S003, next_shot: S005, screen_direction: screen-right, identity: same moisture palette, recurring_elements: vertical flow}
+  forbidden: [gravity disappearing, unsupported molecule count, generated labels, detached arrows]
+reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: storyboard/storyboard_v01.yaml, subject_ref: shots/S003/images/selected_keyframe.png, previous_final_frame: shots/S003/video/selected.mp4}
+image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S004/images, rounds: single_then_targeted_variation_if_needed}
+motion_plan:
+  source_keyframe: shots/S004/images/selected_keyframe.png
+  generation_mode: image_to_video
+  duration_target: 4.0
+  subject_motion: cloudy column lifts by a small visible amount
+  environmental_motion: droplets and haze move upward inside the column
+  camera_motion: gentle scale shift
+  motion_intensity: low
+  start_state: matched column baselines
+  middle_state: right column begins to rise
+  end_state: stable offset for Fusion labels and arrows
+  preserve: split composition, left/right identity, clean graphics area
+  avoid: generated text, spinning infographic, arbitrary wind direction
+video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: causal clarity and stable split}
+output: {provenance: provenance.json, image_dir: shots/S004/images, selected_keyframe: shots/S004/images/selected_keyframe.png, video_dir: shots/S004/video, download_target: shots/S004/video, active_media: shots/S004/video/selected.mp4, fusion_graphics: shots/S004/fusion/density_overlay.setting}

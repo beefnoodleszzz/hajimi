@@ -1,7 +1,7 @@
 pattern_id: physics_mismatch
 name: Layer mismatch diagram
 purpose: Show a deterministic relationship between land, air, water, and an inertial object.
-production_method: blender_or_fusion
+production_methods: [ai_image, ai_i2v, ai_video, fusion, hybrid_ai]
 required_labels:
   - ground
   - air

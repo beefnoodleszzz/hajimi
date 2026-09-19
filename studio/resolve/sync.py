@@ -98,37 +98,9 @@ def _resolve_path(root: Path, episode_root: Path, value: str | Path) -> Path:
     path = Path(value).expanduser()
     if path.is_absolute():
         return path
-    if str(path).startswith("episodes/") or str(path).startswith("blender/"):
+    if str(path).startswith("episodes/"):
         return root / path
     return episode_root / path
-
-
-def _sequence_manifest(root: Path, episode_id: str, shot_id: str) -> dict[str, Any] | None:
-    candidates = [
-        root / "blender" / "generated" / "artifacts" / f"{episode_id.split('_', 1)[0]}_{shot_id}" / "render_manifest.json",
-    ]
-    for path in candidates:
-        if not path.exists():
-            continue
-        manifest = _load_json(path)
-        sequence_dir = _resolve_path(root, path.parent, str(manifest.get("sequence_dir", "")))
-        if not sequence_dir.exists():
-            sequence_dir = path.parent / str(manifest.get("sequence_dir", ""))
-        files = sorted(sequence_dir.glob("*.png")) if sequence_dir.exists() else []
-        return {
-            "kind": "image_sequence",
-            "manifest": str(path.resolve()),
-            "manifest_sha256": sha256_file(path),
-            "sequence_dir": str(sequence_dir.resolve()),
-            "filename_pattern": manifest.get("filename_pattern"),
-            "start": manifest.get("start"),
-            "end": manifest.get("end"),
-            "fps": manifest.get("fps"),
-            "alpha": manifest.get("alpha"),
-            "files": len(files),
-            "qc_decision": manifest.get("qc_decision"),
-        }
-    return None
 
 
 def _shot_media(root: Path, episode_root: Path, episode_id: str, shot: dict[str, Any]) -> dict[str, Any]:
@@ -147,10 +119,7 @@ def _shot_media(root: Path, episode_root: Path, episode_id: str, shot: dict[str,
         files = [path for path in shot_dir.rglob("*") if path.is_file() and path.suffix.lower() in VIDEO_EXTENSIONS]
         files.sort(key=lambda path: ("production" not in path.parts, "trimmed" not in path.name, str(path)))
         videos.extend(files)
-    sequence = _sequence_manifest(root, episode_id, shot_id)
     active = videos[0] if videos else None
-    if active is None and sequence and not explicit_media:
-        active = Path(sequence["sequence_dir"])
     return {
         "active": str(active.resolve()) if active else None,
         "active_kind": (
@@ -158,8 +127,6 @@ def _shot_media(root: Path, episode_root: Path, episode_id: str, shot: dict[str,
             if active and active.suffix.lower() in VIDEO_EXTENSIONS
             else "image"
             if active and active.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}
-            else "image_sequence"
-            if active and sequence
             else None
         ),
         "videos": [
@@ -170,7 +137,7 @@ def _shot_media(root: Path, episode_root: Path, episode_id: str, shot: dict[str,
             }
             for path in videos
         ],
-        "image_sequence": sequence,
+        "image_sequence": None,
     }
 
 

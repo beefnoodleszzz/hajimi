@@ -29,7 +29,7 @@ Never optimize production speed by sacrificing the first four.
 - No production-quality shot is generated before the animatic passes.
 - FFmpeg is mechanical media infrastructure, not the creative editor.
 - DaVinci Resolve is the primary picture and sound editor.
-- Deterministic scientific motion prefers Blender/Fusion.
+- Deterministic graphics and exact annotations prefer Fusion; cinematic motion prefers AI image/video.
 - AI video must pass shot QC before entering the timeline.
 - Never QC every frame with an LLM/VLM.
 - Always run deterministic QC first and reuse results for unchanged hashes.
@@ -94,11 +94,13 @@ results in SQLite.
 
 ## Tool Responsibilities
 
-- Blender: deterministic 3D, simulations, controlled cameras.
-- AI image/video: hero visuals, impossible imagery, controlled plates.
-- Resolve: editing, pacing, Fusion, Fairlight, delivery.
+- Codex image_gen: AI image concepts, references, keyframes, variations, and shot first/end frames.
+- ego-browser + Google Flow: AI image-to-video and native AI video generation; download every result locally.
+- Fusion: exact text, numbers, arrows, vectors, tracked graphics, masks, and compositing.
+- Resolve: editing, pacing, color, Fusion, Fairlight, and delivery.
 - FFmpeg: proxy, extraction, analysis, encode, deterministic QC.
-- ego-browser: logged-in website interaction and YouTube Studio publishing.
+- ego-browser: logged-in Google Flow and YouTube Studio interaction.
+- VoxCPM2: all production narration.
 - Beads: durable task tracking and production blockers.
 
 ## Agent Skill Routing
@@ -106,15 +108,15 @@ results in SQLite.
 Use project skills under `.agents/skills/`:
 
 - creative direction → `creative-director`
+- end-to-end video orchestration → installed `creative-video-orchestrator`
 - reference analysis → `reference-deconstructor`
 - factual research → `research-editor`
 - script beats → `short-script-editor`
 - storyboard → `storyboard-director`
 - animatic → `animatic-director`
 - shot method → `shot-designer`
-- Blender environment/bootstrap → `blender-bootstrap`
-- Blender shot production, preview, render QC → `blender-production`
-- AI generation → `ai-visual-producer`
+- AI image generation → `ai-visual-producer`
+- Google Flow video generation → `ai-video-director` through `ego-browser`
 - edit → `resolve-editor`
 - sound → `sound-designer`
 - shot QC → `fast-media-qc`

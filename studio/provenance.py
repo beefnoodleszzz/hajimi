@@ -23,7 +23,7 @@ def _resolve_evidence_path(root: Path, episode_root: Path, shot_root: Path, valu
         root / path,
     ]
     text = str(path)
-    if text.startswith("episodes/") or text.startswith("blender/"):
+    if text.startswith("episodes/"):
         candidates.insert(0, root / path)
     for candidate in candidates:
         if candidate.is_file():
@@ -83,7 +83,7 @@ def validate_shot_provenance(
         elif value.get("source_sha256") and sha256_file(source_path) != value.get("source_sha256"):
             errors.append("source_sha256")
 
-    if shot.get("method") in {"ai_video", "ai_image"}:
+    if shot.get("method") in {"ai_image", "ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair", "hybrid_ai"}:
         generation_record = value
         continuity_source = value.get("continuity_source")
         if isinstance(continuity_source, str):
@@ -94,9 +94,26 @@ def validate_shot_provenance(
                     generation_record = {**source_record, **value}
             except (OSError, json.JSONDecodeError):
                 errors.append("continuity_source")
-        for field in ("model_provider", "model_version", "generation_mode", "seed"):
-            if field not in generation_record:
-                errors.append(field)
+        backend = generation_record.get("backend")
+        if shot.get("method") == "ai_image" or generation_record.get("media_type") == "image":
+            if backend != "codex_image_gen":
+                errors.append("backend must be codex_image_gen")
+            if not generation_record.get("model_family"):
+                errors.append("model_family")
+        else:
+            if backend != "google_flow_browser":
+                errors.append("backend must be google_flow_browser")
+            if not generation_record.get("generation_mode"):
+                errors.append("generation_mode")
+            downloaded_file = generation_record.get("downloaded_file")
+            if not isinstance(downloaded_file, str) or not downloaded_file:
+                errors.append("downloaded_file")
+            else:
+                downloaded_path = _resolve_evidence_path(root, episode_root, shot_root, downloaded_file)
+                if not downloaded_path.is_file():
+                    errors.append("downloaded_file_missing")
+                elif generation_record.get("output_asset") not in {downloaded_file, str(downloaded_path)}:
+                    errors.append("output_asset_must_match_downloaded_file")
         if "prompt" not in generation_record and "prompt_summary" not in generation_record:
             errors.append("prompt")
         if "references" not in generation_record:

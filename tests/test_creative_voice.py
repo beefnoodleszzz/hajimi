@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from studio.config import dump_yaml, load_yaml
-from studio.creative import discover_ideas, generate_creative_package, run_tournament, validate_creative_package
+from studio.creative import discover_ideas, generate_creative_package, run_tournament, validate_creative_package, validate_generation_plan
 from studio.voice.manifest import VOICE_PROVIDER, production_voice_check, script_hash, write_voice_manifest
 from studio.voice.voxcpm2 import _source_payload, review_voice, route_emotion, select_voice
 
@@ -36,7 +36,7 @@ def _agent_outputs() -> dict[str, dict]:
         "hook_potential": {"first_second_event": "The result appears before the cause.", "first_visual": "A split-time object", "contradiction": "Cause and effect are reversed", "curiosity_gap": "What is lagging?"},
         "visual_potential": {"opening_visual": "Split-time object", "escalation_visuals": ["layers drift apart"], "hero_visual": "All layers separated", "ending_visual": "layers reunite"},
         "story_potential": {"setup": "show the anomaly", "escalation": "reveal hidden layers", "payoff": "explain the delay", "loop": "return to opening"},
-        "production_fit": {"blender": "possible", "ai_video": "possible", "ai_image": "possible", "fusion": "possible", "footage": "unlikely"},
+        "production_fit": {"ai_i2v": "possible", "ai_video": "possible", "ai_image": "possible", "fusion": "possible", "footage": "unlikely"},
         "novelty": {"common_existing_angle": "generic explanation", "alternative_angle": "time-layer reveal", "distinctive_angle": "visible causal lag"},
         "risk": {"factual": "needs research", "visual": "continuity", "generation": "layer drift"},
         "evidence": {"source_refs": [], "reference_patterns": []},
@@ -50,9 +50,9 @@ def _agent_outputs() -> dict[str, dict]:
             "selected_direction": {"hook_from": "m1", "visual_motif_from": "m1", "escalation_from": "m1", "payoff_from": "dynamic_candidate", "ending_from": "m1", "rationale": "Composite direction keeps the immediate anomaly and clear explanation."},
         },
         "creative_direction.yaml": {"core_question": "Why is the result delayed?", "one_sentence_promise": "You will see the hidden delay before you learn its cause.", "opening": "Show the result arriving first.", "narrative_engine": "anomaly to layered explanation", "visual_peaks": ["layer separation"], "hero_shot": "S001", "ending": "return to the first image with new meaning", "reject": ["generic lecture"]},
-        "visual_concept.yaml": {"visual_language": {"motif": "misaligned time layers"}, "hero_frames": ["S001"], "shots": [{"shot_id": "S001", "tier": "HERO", "visual_goal": "make causal lag visible", "composition": "centered split frame", "focal_subject": "layered object", "camera": "slow push", "action": "layers separate", "transition": "match back to opening", "method_candidates": ["blender", "ai_video"]}], "rejections": ["talking head"]},
+        "visual_concept.yaml": {"visual_language": {"motif": "misaligned time layers"}, "hero_frames": ["S001"], "shots": [{"shot_id": "S001", "tier": "HERO", "visual_goal": "make causal lag visible", "composition": "centered split frame", "focal_subject": "layered object", "camera": "slow push", "action": "layers separate", "transition": "match back to opening", "method_candidates": ["ai_image", "ai_i2v"]}], "rejections": ["talking head"]},
         "beat_script.yaml": {"schema_version": "beat-script-v2", "duration_sec": 5, "beats": [{"id": "B001", "purpose": "hook", "narration": "The result arrives before the cause.", "visual_action": "result appears", "visual_information": "cause is absent", "camera_event": "snap push", "sound_event": "short impact", "emotional_change": "surprise", "duration_target": 5}]},
-        "generation_plan.yaml": {"schema_version": "generation-plan-v2", "shots": [{"shot_id": "S001", "tier": "HERO", "method": "hybrid", "candidates": 3, "shot_contract": {"must_show": ["separated layers"], "forbidden": ["unmotivated text overlay"]}}]},
+        "generation_plan.yaml": {"schema_version": "generation-plan-v3", "shots": [{"shot_id": "S001", "tier": "HERO", "method": "hybrid_ai", "image_candidates": 1, "video_candidates": 2, "fusion_graphics": [], "forbidden": ["unmotivated text overlay"]}]},
     }
 
 
@@ -83,6 +83,14 @@ def test_missing_agent_outputs_blocks_instead_of_inventing_answer(tmp_path: Path
     assert not (episode_root / "creative" / "idea_analysis.yaml").exists()
     assert discover_ideas({"episode": {"id": episode_id}})["status"] == "AGENT_INPUT_REQUIRED"
     assert run_tournament({"candidates": []})["status"] == "AGENT_INPUT_REQUIRED"
+
+
+def test_generation_plan_candidate_requirements_follow_method() -> None:
+    base = {"shot_id": "S001", "tier": "STORY", "fusion_graphics": [], "forbidden": ["fake text"]}
+    fusion = {**base, "method": "fusion"}
+    t2v = {**base, "method": "ai_video", "video_candidates": 1}
+    i2v = {**base, "method": "ai_i2v", "image_candidates": 1, "video_candidates": 1}
+    assert validate_generation_plan({"shots": [fusion, t2v, i2v]}) == []
 
 
 def test_voice_source_carries_per_beat_controls_and_candidates(tmp_path: Path) -> None:

@@ -21,7 +21,7 @@ def test_master_cli_requires_a_real_resolve_export(tmp_path: Path) -> None:
         "script": {"path": "script.md"},
         "audio": {"narrator": "test", "target_lufs": -14, "true_peak_max_db": -1},
         "publish": {"title": "test", "description": "test", "ai_disclosure": True, "visibility": "private"},
-        "shots": [{"id": "S001", "role": "hook", "duration_target": 1, "method": "blender", "status": "qc_pending"}],
+        "shots": [{"id": "S001", "role": "hook", "duration_target": 1, "method": "ai_image", "status": "qc_pending"}],
     }
     dump_yaml(manifest, episode_root / "episode.yaml")
 

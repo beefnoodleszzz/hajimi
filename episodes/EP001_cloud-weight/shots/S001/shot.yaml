@@ -1,17 +1,45 @@
 id: S001
 episode: EP001_cloud-weight
-version: 1
+version: 2
 role: HERO
-method: blender
-renderer: eevee
+method: hybrid_ai
 intent: Make the cloud's physical weight readable in the first beat.
-camera:
-  name: CAM_Main
-  rig: CameraRoot/Dolly/PanTilt/Shake/Target
-  lens_mm: 24
+camera: {height: low frontal, lens_feel: wide natural perspective, movement: tiny push-in}
 frames: {start: 1, end: 42, fps: 30}
-output:
-  provenance: provenance.json
-  scene: blender/generated/artifacts/EP001_S001/scene.blend
-  sequence: blender/generated/artifacts/EP001_S001/preview/P1
-  render_manifest: blender/generated/artifacts/EP001_S001/render_manifest.json
+shot_contract:
+  shot_id: S001
+  role: HERO
+  narrative_purpose: Establish the impossible contradiction before explanation.
+  visual_goal: A cloud visibly settles onto a giant industrial scale.
+  subject: soft-edged cumulus cloud with stable screen-right identity and a heavy lower shadow
+  environment: dark navy industrial measurement stage with open sky above
+  composition: cloud centered over a wide scale pan, empty negative space for Fusion readout
+  camera_height: low frontal
+  lens_feel: wide natural perspective
+  first_frame: cloud hovering just above the scale pan
+  end_frame: cloud settled, scale reacting, clear area for 551 TONS overlay
+  subject_motion: subtle settling and weight transfer only
+  environmental_motion: restrained haze and scale vibration
+  camera_motion: tiny push-in
+  lighting: cool rim light with warm amber measurement bounce
+  palette: deep navy, cloud white, wet cyan, warm amber
+  atmosphere: premium photoreal/stylized realism with layered depth
+  continuity: {previous_shot: null, next_shot: S002, screen_direction: screen-right, identity: same soft-edged cumulus, recurring_elements: scale pan}
+  forbidden: [generated text, generic stock cloud, exaggerated impact, fake universal precision]
+reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: storyboard/storyboard_v01.yaml, subject_ref: creative/visual_concept.yaml, previous_final_frame: null}
+image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S001/images, rounds: single_then_targeted_variation_if_needed}
+motion_plan:
+  source_keyframe: shots/S001/images/selected_keyframe.png
+  generation_mode: image_to_video
+  duration_target: 1.4
+  subject_motion: cloud settles onto pan by a few centimeters
+  environmental_motion: scale pan flexes subtly, haze drifts
+  camera_motion: tiny push-in
+  motion_intensity: restrained
+  start_state: hovering cloud, scale unloaded
+  middle_state: cloud contacts pan, pan begins to dip
+  end_state: cloud settled, no morphing
+  preserve: cloud silhouette, scale geometry, lighting direction, empty text-safe space
+  avoid: new objects, readable generated labels, cloud deformation, camera wobble
+video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: settling readability and continuity}
+output: {provenance: provenance.json, image_dir: shots/S001/images, selected_keyframe: shots/S001/images/selected_keyframe.png, video_dir: shots/S001/video, download_target: shots/S001/video, active_media: shots/S001/video/selected.mp4}

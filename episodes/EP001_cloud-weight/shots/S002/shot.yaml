@@ -1,16 +1,45 @@
 id: S002
 episode: EP001_cloud-weight
-version: 1
+version: 2
 role: STORY
-method: fusion
-intent: Anchor the 551-ton number to a defined one-cubic-kilometre estimate.
-camera:
-  name: CAM_Main
-  rig: CameraRoot/Dolly/PanTilt/Shake/Target
-  lens_mm: 24
+method: hybrid_ai
+intent: Anchor the estimate to one cubic kilometre and defer exact graphics to Fusion.
+camera: {height: eye-level, lens_feel: clean perspective, movement: gentle orbit}
 frames: {start: 43, end: 138, fps: 30}
-output:
-  provenance: provenance.json
-  scene: blender/generated/artifacts/EP001_S002/scene.blend
-  sequence: blender/generated/artifacts/EP001_S002/preview/P1
-  render_manifest: blender/generated/artifacts/EP001_S002/render_manifest.json
+shot_contract:
+  shot_id: S002
+  role: STORY
+  narrative_purpose: Define what the 551-ton estimate refers to.
+  visual_goal: A cloud expands inside a one-kilometre measurement volume.
+  subject: same cumulus cloud expanding into a translucent cubic volume
+  environment: deep navy atmospheric void with faint volumetric grid
+  composition: cloud occupies the cube center with clear margins for labels
+  camera_height: eye-level
+  lens_feel: clean perspective
+  first_frame: cloud silhouette inherited from S001
+  end_frame: full cube encloses cloud and leaves graphics-safe negative space
+  subject_motion: slow volumetric expansion
+  environmental_motion: faint atmospheric drift
+  camera_motion: gentle orbit around cube
+  lighting: cyan volume edge with warm amber measurement accents
+  palette: deep navy, cloud white, cyan, warm amber
+  atmosphere: precise but cinematic, not engineering UI
+  continuity: {previous_shot: S001, next_shot: S003, screen_direction: screen-right, identity: same cumulus, recurring_elements: cloud silhouette}
+  forbidden: [generated labels, arithmetic without units, fake precision beyond research]
+reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: storyboard/storyboard_v01.yaml, subject_ref: shots/S001/images/selected_keyframe.png, previous_final_frame: shots/S001/video/selected.mp4}
+image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S002/images, rounds: single_then_targeted_variation_if_needed}
+motion_plan:
+  source_keyframe: shots/S002/images/selected_keyframe.png
+  generation_mode: image_to_video
+  duration_target: 3.2
+  subject_motion: cloud expands into a stable cube volume
+  environmental_motion: very slow atmospheric parallax
+  camera_motion: restrained orbit
+  motion_intensity: low
+  start_state: cloud silhouette from S001
+  middle_state: cube edges begin to appear as light, without text
+  end_state: cube holds for Fusion measurement graphics
+  preserve: cloud identity, screen-right anchor, negative space
+  avoid: AI-generated cube labels, geometry wobble, unrelated scene change
+video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: volume readability and continuity}
+output: {provenance: provenance.json, image_dir: shots/S002/images, selected_keyframe: shots/S002/images/selected_keyframe.png, video_dir: shots/S002/video, download_target: shots/S002/video, active_media: shots/S002/video/selected.mp4, fusion_graphics: shots/S002/fusion/measurement_overlay.setting}

@@ -6,42 +6,28 @@ triggers: AI image, AI video, prompt, visual candidate, generation
 
 # Objective
 
-Generate controlled candidates that serve an approved shot intent and preserve
-continuity anchors.
+Produce traceable AI candidates after the animatic gate. The current image
+backend is Codex `image_gen` using GPT-Image 2 / 2.5. The current video backend
+is Google Flow operated through `ego-browser`.
 
-# Inputs
+# Required workflow
 
-Passed animatic, shot brief, reference assets, model configuration, and brand language.
+1. Read the Shot Contract and reference pack before writing a prompt.
+2. Compile image prompts around identity, composition, camera, lighting,
+   materials, depth, aspect ratio, continuity anchors, and forbidden constraints.
+3. Generate exactly one image candidate per shot by default. Inspect it and
+   continue; request a targeted variation only when the candidate fails
+   composition, continuity, or motion-potential review.
+4. Register every local Codex result under `shots/Sxxx/images/` with JSON
+   provenance. Never invent a seed when the runtime does not expose one.
+5. Let the director select `selected_keyframe.png`; selection is not QC approval.
+6. Send the selected keyframe and motion plan to `ai-video-director` for Flow.
 
-# Outputs
-
-Candidate media plus JSON recording model, prompt, references, seed, date, and
-source hash.
-
-# Required Workflow
-
-1. Read shot constraints before writing a prompt.
-2. Keep text, vectors, exact measurements, and physics out of generated plates.
-3. Generate candidates only after the animatic gate passes.
-4. Run deterministic and continuity QC on every candidate.
-5. Let the director select; do not self-approve by novelty.
-
-# Quality Gate
+# Quality gate
 
 Candidate metadata is complete, direction/identity are stable, and Fast QC is
-PASS or explicitly REVIEW with a director decision.
-
-# Failure Conditions
-
-Missing seed/model/reference, model-generated text, or unexplained continuity drift.
-
-# Tools
-
-Configured model providers, local hash/QC tools, asset registry.
-
-# Forbidden Patterns
-
-Do not send un-QC'd media to Resolve or silently reuse legacy V1 assets.
+PASS or explicitly REVIEW with a director decision. Exact numbers, labels,
+arrows, vectors, and scientific annotations belong in Fusion.
 
 # Handoff
 

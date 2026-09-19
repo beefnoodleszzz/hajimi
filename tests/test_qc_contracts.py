@@ -34,7 +34,7 @@ def test_episode_qc_does_not_pass_when_a_manifest_shot_has_no_media(tmp_path: Pa
         "script": {"path": "script.md"},
         "audio": {"narrator": "test", "target_lufs": -14, "true_peak_max_db": -1},
         "publish": {"title": "test", "description": "test", "ai_disclosure": True, "visibility": "private"},
-        "shots": [{"id": "S001", "role": "test", "duration_target": 1, "method": "blender", "status": "qc_pending"}],
+        "shots": [{"id": "S001", "role": "test", "duration_target": 1, "method": "fusion", "status": "qc_pending"}],
     }
     dump_yaml(manifest, episode_root / "episode.yaml")
 

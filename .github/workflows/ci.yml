@@ -18,9 +18,3 @@ jobs:
         run: uv run pytest
       - name: Compile studio package
         run: uv run python -m compileall studio
-
-  blender-integration:
-    if: ${{ false }}
-    runs-on: [self-hosted, macOS, blender]
-    steps:
-      - run: echo "Optional self-hosted Blender integration is not part of ordinary Core CI."

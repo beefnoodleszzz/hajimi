@@ -2,9 +2,6 @@ render:
   editor: DaVinci Resolve 21.1
   compositor: Fusion
   audio: Fairlight
-  blender:
-    preview_scale: 0.25
-    renderer: eevee
   delivery:
     codec: h264
     pixel_format: yuv420p

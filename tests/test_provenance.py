@@ -22,10 +22,10 @@ def test_shot_provenance_validates_output_hash_and_ai_fields(tmp_path: Path) -> 
                 "shot_id": "S001",
                 "candidate_id": "S001-candidate-001",
                 "media_type": "video",
-                "model_provider": "Google Flow",
-                "model_version": "Omni",
+                "backend": "google_flow_browser",
+                "browser_tool": "ego-browser",
                 "generation_mode": "image_to_video",
-                "seed": None,
+                "downloaded_file": "episodes/EP001_contract/shots/S001/production.mp4",
                 "prompt": "controlled motion",
                 "references": [],
                 "output_asset": "episodes/EP001_contract/shots/S001/production.mp4",
@@ -36,7 +36,7 @@ def test_shot_provenance_validates_output_hash_and_ai_fields(tmp_path: Path) -> 
         ),
         encoding="utf-8",
     )
-    shot = {"id": "S001", "method": "ai_video", "output": {"provenance": "provenance.json"}}
+    shot = {"id": "S001", "method": "ai_i2v", "output": {"provenance": "provenance.json"}}
 
     result = validate_shot_provenance(tmp_path, "EP001_contract", shot)
 
@@ -63,7 +63,7 @@ def test_shot_provenance_rejects_changed_output(tmp_path: Path) -> None:
         ),
         encoding="utf-8",
     )
-    shot = {"id": "S001", "method": "blender", "output": {"provenance": "provenance.json"}}
+    shot = {"id": "S001", "method": "ai_i2v", "output": {"provenance": "provenance.json"}}
 
     result = validate_shot_provenance(tmp_path, "EP001_contract", shot)
 

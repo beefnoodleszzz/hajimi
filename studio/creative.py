@@ -36,14 +36,18 @@ AGENT_STAGES = (
 )
 SHOT_TIERS = {"HERO", "STORY", "CONNECTOR"}
 GENERATION_METHODS = {
-    "blender",
-    "ai_video",
     "ai_image",
+    "ai_i2v",
+    "ai_video",
+    "ai_multiframe",
+    "ai_extend",
+    "ai_repair",
     "fusion",
     "footage",
-    "hybrid",
-    "blender_ai_hybrid",
+    "hybrid_ai",
 }
+IMAGE_REQUIRED_METHODS = {"ai_image", "ai_i2v", "ai_multiframe", "hybrid_ai"}
+VIDEO_REQUIRED_METHODS = {"ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair", "hybrid_ai"}
 
 
 class CreativeAgentInputRequired(RuntimeError):
@@ -132,7 +136,14 @@ def load_creative_context(root: str | Path, episode_id: str) -> dict[str, Any]:
             "hero_required": True,
             "mute_read_required": True,
         },
-        "available_tools": ["blender", "ai_video", "ai_image", "fusion", "footage", "resolve"],
+        "available_tools": [
+            "codex_image_gen",
+            "google_flow_browser",
+            "ego-browser",
+            "fusion",
+            "resolve",
+            "voxcpm2_local",
+        ],
         "historical_patterns": load_creative_history(root, channel=channel),
         "current_manifest": manifest,
         "provenance": {
@@ -338,10 +349,21 @@ def validate_generation_plan(value: Mapping[str, Any]) -> list[str]:
             errors.append(f"generation_plan.shots[{index}] invalid tier")
         if shot.get("method") not in GENERATION_METHODS:
             errors.append(f"generation_plan.shots[{index}] invalid method")
-        if not isinstance(shot.get("candidates"), int) or shot["candidates"] < 1:
-            errors.append(f"generation_plan.shots[{index}].candidates must be positive")
-        if not isinstance(shot.get("shot_contract"), dict) or not shot["shot_contract"].get("forbidden"):
-            errors.append(f"generation_plan.shots[{index}] missing shot contract constraints")
+        method = shot.get("method")
+        image_candidates = shot.get("image_candidates", 0)
+        video_candidates = shot.get("video_candidates", 0)
+        if type(image_candidates) is not int or image_candidates < 0:
+            errors.append(f"generation_plan.shots[{index}].image_candidates must be a non-negative integer")
+        elif (method in IMAGE_REQUIRED_METHODS or (method == "ai_video" and shot.get("keyframe_first") is True)) and image_candidates < 1:
+            errors.append(f"generation_plan.shots[{index}].image_candidates must be positive for this image-first route")
+        if type(video_candidates) is not int or video_candidates < 0:
+            errors.append(f"generation_plan.shots[{index}].video_candidates must be a non-negative integer")
+        elif method in VIDEO_REQUIRED_METHODS and video_candidates < 1:
+            errors.append(f"generation_plan.shots[{index}].video_candidates must be positive for {method}")
+        if not isinstance(shot.get("fusion_graphics"), list):
+            errors.append(f"generation_plan.shots[{index}].fusion_graphics must be a list")
+        if not isinstance(shot.get("forbidden"), list) or not shot["forbidden"]:
+            errors.append(f"generation_plan.shots[{index}] missing forbidden constraints")
     return errors
 
 

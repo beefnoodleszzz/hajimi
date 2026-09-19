@@ -1,4 +1,0 @@
-name: 35mm_action
-focal_length_mm: 35
-grammar: mechanism_or_action
-description: Controlled lateral movement and readable causal action.

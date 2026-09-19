@@ -1,28 +1,71 @@
 {
-  "schema_version": "hajimi-shot-provenance-v1",
+  "schema_version": "hajimi-shot-provenance-v3",
   "episode_id": "EP001_cloud-weight",
   "shot_id": "S007",
-  "candidate_id": "S007_blender_p1",
-  "media_type": "image_sequence",
-  "output_asset": "blender/generated/artifacts/EP001_S007/render_manifest.json",
-  "output_sha256": "935c1750f9989be4ce8e53ad765c502bb462a44c617316c400efe93d4fe5a0e4",
-  "sequence_dir": "./blender/generated/artifacts/EP001_S007/preview/P1",
-  "filename_pattern": "frame_%04d.png",
-  "frame_range": [
-    721,
-    900
+  "candidate_id": "S007_selected_video",
+  "media_type": "video",
+  "method": "ai_multiframe",
+  "status": "approved",
+  "backend": "google_flow_browser",
+  "browser_tool": "ego-browser",
+  "generation_mode": "multi_keyframe_video",
+  "source_asset": "shots/S007/images/KF1.png",
+  "source_sha256": "16ff064055f6b4aa6f5f749ee979d18b7f883676eab3a4d555b5c236cb4c115e",
+  "prompt": "Animate KF1 to KF2 to KF3 as one threshold beat: preserve the same focal droplet identity while it is suspended, grows against a weakening updraft, then descends below the cloud base and leaves a clear narrow rain streak. Preserve the cloud-base lighting, blue atmospheric background, downward screen direction, and measured camera push. Avoid identity swaps, morphing, gray-background cutaways, extra focal droplets, labels, arrows, numbers, HUD graphics, and reverse gravity.",
+  "references": [
+    "shot.yaml reference_pack",
+    "shots/S007/images/KF1.png",
+    "shots/S007/images/KF2.png",
+    "shots/S007/images/KF3.png",
+    "shots/S006/video/selected.mp4"
   ],
-  "fps": 30,
-  "source_asset": "blender/generated/artifacts/EP001_S007/scene.blend",
-  "source_sha256": "4c733a8e8a312e96fef212e2539eaff491c6d817ba00feee204f7ded220f4379",
-  "qc": {
-    "fast_qc": "PASS",
-    "blender_preview_qc": "PASS",
-    "report": "blender/generated/artifacts/EP001_S007/qc_report.json",
-    "note": "Deterministic Blender render metadata is hash-bound; representative-frame QC passed; final playback review remains required."
+  "keyframes": [
+    "shots/S007/images/KF1.png",
+    "shots/S007/images/KF2.png",
+    "shots/S007/images/KF3.png"
+  ],
+  "segments": [
+    {
+      "source": "shots/S007/images/KF1.png",
+      "target": "shots/S007/images/KF2.png",
+      "downloaded_file": "shots/S007/video/segment_A.mp4",
+      "sha256": "d61495cacc8d72e5df1abea2d956f072357bae97e9e8de9ebf5f1bb8473a0c09"
+    },
+    {
+      "source": "shots/S007/images/KF2.png",
+      "target": "shots/S007/images/KF3.png",
+      "downloaded_file": "shots/S007/video/segment_B_repair2.mp4",
+      "sha256": "09002ab289405cdbc96dbf00f0fdcf92dfcbbf8abcfbcb6ee8a43225268c11ef"
+    }
+  ],
+  "downloaded_file": "shots/S007/video/selected.mp4",
+  "output_asset": "shots/S007/video/selected.mp4",
+  "output_sha256": "a59cf518f449d169ecd22fb10299d8c04bc0211d6cedee3aa6e14a15a065d733",
+  "page_visible_parameters": {
+    "resolution": "720p",
+    "aspect_ratio": "9:16",
+    "segment_duration_sec": 8.0,
+    "fps": 24,
+    "model": "unknown"
   },
+  "qc": {
+    "fast_qc": "REVIEW",
+    "director_review": "PASS",
+    "reviewer": "director",
+    "review_note": "The regenerated KF2-to-KF3 segment keeps the droplet and cloud background continuous and makes the downward threshold plus rain streak readable. Fast QC review is caused by near-duplicate samples at the segment join, with no decode, black, freeze, or structural failure.",
+    "report": "qc/shot_EP001_cloud-weight_S007_a59cf518f449.json",
+    "contact_sheet": "qc/contact_sheets/shot_EP001_cloud-weight_S007_a59cf518f449.jpg",
+    "reviewed_at": "2026-09-18T19:59:03.034065+00:00"
+  },
+  "fusion_deferred": "Exact rain-threshold annotation and any explanatory arrows remain for Fusion at shots/S007/fusion/threshold_overlay.setting.",
   "license": {
-    "status": "project-authored",
-    "source": "procedural Blender scene generated in project workspace"
-  }
+    "status": "pending_master",
+    "source": "Google Flow results downloaded through the authenticated ego-browser session"
+  },
+  "director_review": {
+    "status": "approved",
+    "note": "Second KF2-to-KF3 repair preserves the cloud-base composition and makes the droplet's downward motion and trailing rain streak clearly readable.",
+    "reviewed_at": "2026-09-18T19:58:21+00:00"
+  },
+  "created_at": "2026-09-18T19:35:00+00:00"
 }

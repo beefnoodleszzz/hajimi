@@ -1,26 +1,33 @@
 ---
 name: generation-director
-description: Route shots to Blender, AI, Fusion, footage, or hybrid production with candidate budgets.
+description: Route shots across Codex image_gen, Google Flow, Fusion, footage, and hybrid production.
 triggers: generation plan, shot routing, candidate competition, regeneration strategy
 ---
 
 # Objective
 
-Choose the production method that protects the shot's information and physics,
-then concentrate candidate budget on the shots worth iterating.
+Choose the thinnest real route that protects story, continuity, and information
+payload, then concentrate candidate budget on shots worth iterating.
 
-# Default Policy
+# Current responsibilities
 
-Blender handles exact science and scale; Fusion handles vectors and graphics;
-AI image/video handles cinematic or organic material; Resolve handles rhythm
-and finishing. Prefer hybrid shots where each tool has a clear responsibility.
+Codex image_gen handles concepts, references, keyframes, and variations.
+Google Flow via `ego-browser` handles I2V, native T2V, multi-keyframe, variation,
+extension, and repair. Fusion owns exact numbers, labels, arrows, vectors,
+masks, and tracked graphics. Resolve owns the final edit, color, Fairlight,
+and delivery. `hybrid_ai` combines those responsibilities.
 
-Default candidate budgets are configurable: CONNECTOR 1–2, STORY 2–4, HERO
-4–8. Evaluate usefulness, continuity, camera match, motion quality, and
-artifact severity—not only beauty.
+# Routing questions
 
-# Regeneration
+- Does this shot need a generated keyframe first?
+- Is I2V better than text-to-video?
+- Does it need multiple state keyframes?
+- What exact information must be deferred to Fusion?
+- Which continuity references must be passed to Flow?
 
-Try crop, retime, mask, cleanup, frame replacement, or color before full
-regeneration. Regenerate the whole shot only when composition, subject,
-identity, or camera logic is wrong.
+Generate exactly one image candidate per shot in the first pass, regardless of
+shot tier. After director inspection, request only a targeted variation when
+the selected frame misses a contract requirement. Choose Flow motion candidates
+incrementally after inspecting the keyframe; never launch a mechanical batch.
+Use trim, retime, mask, cleanup, or extension before full regeneration. Never
+approve a Flow candidate without a local downloaded file and provenance sidecar.

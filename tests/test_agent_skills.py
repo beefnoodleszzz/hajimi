@@ -29,7 +29,6 @@ def test_all_project_skill_frontmatter_is_valid_and_unique() -> None:
     assert len(names) == len(set(names))
 
 
-def test_blender_roles_have_one_environment_and_one_production_owner() -> None:
-    assert not (SKILLS / "blender-shot").exists()
-    assert (SKILLS / "blender-bootstrap" / "SKILL.md").exists()
-    assert (SKILLS / "blender-production" / "SKILL.md").exists()
+def test_ai_generation_roles_are_present() -> None:
+    assert (SKILLS / "ai-visual-producer" / "SKILL.md").exists()
+    assert (SKILLS / "ai-video-director" / "SKILL.md").exists()

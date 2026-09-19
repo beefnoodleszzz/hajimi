@@ -1,8 +1,6 @@
 # Python and local environments
 .venv/
 *.egg-info/
-*.blend1
-*.blend2
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -20,11 +18,6 @@ episodes/*/animatic/render_work/
 episodes/*/qc/metrics/
 episodes/*/qc/suspicious/
 episodes/*/master/render_work/
-blender/generated/runtime/
-blender/benchmarks/renders/
-blender/generated/artifacts/*/preview/
-blender/generated/artifacts/*/render/
-blender/generated/artifacts/*/cache/
 episodes/*/qc/
 episodes/*/master/*.mp4
 episodes/*/audio/*.wav
@@ -41,21 +34,11 @@ analytics/*.duckdb
 analytics/*.parquet
 analytics/export_status.json
 analytics/records.jsonl
-# Blender/runtime probes are machine evidence, never repository source of truth.
 config/generated/*
 !config/generated/.gitkeep
 episodes/*/edit/*.drp
 *.aiff
 
-# Local Blender installation and generated binary artifacts
-blender/extensions/
-blender/scripts/addons/
-blender/installers/
-blender/config/*.blend
-blender/benchmarks/*.blend*
-blender/templates/*.blend*
-blender/generated/
-blender/assets/*.blend1
 .amv/project-state.json
 studio/studio.sqlite3
 

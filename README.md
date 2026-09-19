@@ -1,9 +1,10 @@
 # Hajimi V2
 
-Hajimi is a small, AI-driven visual storytelling studio for `The World You
-Never Knew`. The active system is organized around an episode manifest,
-deterministic scientific visuals, DaVinci Resolve integration boundaries, and a
-five-tier Fast QC funnel.
+Hajimi is a small, AI-first visual storytelling studio for `The World You
+Never Knew`. The active system is organized around an episode manifest, a
+Shot Contract, Codex image candidates, Google Flow browser video candidates,
+DaVinci Resolve/Fusion handoffs, local VoxCPM2 narration, and a five-tier Fast
+QC funnel.
 
 ## Quick start
 
@@ -13,36 +14,12 @@ uv sync
 uv sync --extra media-qc
 # Analytics export (DuckDB + Parquet)
 uv sync --extra analytics
-uv run hajimi status EP001_earth-stop
-uv run hajimi animatic EP001_earth-stop
-uv run hajimi qc episode EP001_earth-stop
-uv run hajimi master EP001_earth-stop --input episodes/EP001_earth-stop/master/EP001_earth-stop_master_final.mp4
-uv run hajimi qc master EP001_earth-stop
+uv run hajimi status EP001_cloud-weight
+uv run hajimi animatic EP001_cloud-weight
+uv run hajimi qc episode EP001_cloud-weight
+uv run hajimi master EP001_cloud-weight --input episodes/EP001_cloud-weight/master/EP001_cloud-weight_master_final.mp4
+uv run hajimi qc master EP001_cloud-weight
 ```
-
-Blender stack verification and the deterministic validation shot:
-
-```bash
-uv run hajimi blender doctor
-uv run hajimi blender bootstrap
-uv run hajimi blender configure_gpu
-uv run hajimi blender configure_assets
-uv run hajimi blender configure_render
-uv run hajimi blender benchmark
-uv run hajimi blender build EP001_TEST_01 --force
-uv run hajimi blender preview EP001_TEST_01 --profile P1
-uv run hajimi blender render EP001_TEST_01 --profile P3
-uv run hajimi blender qc EP001_TEST_01 --profile P3
-uv run hajimi blender qc EP001_TEST_01 --profile P3 --deep
-```
-
-Blender final output is a PNG image sequence plus a Resolve handoff manifest;
-Blender does not author the final MP4. The production baseline is Blender
-`5.2.2 LTS`, installed at `/Applications/Blender.app` and exposed through the
-`blender` command. The project-local stack has validated Poliigon `1.16.3`,
-engon `1.10.0`, and the official FLIP Fluids `1.8.8` Demo. Photographer 5,
-Geo-Scatter `5.6.4`, and Physical Atmosphere² remain correctly marked
-`BLOCKED_LICENSE_PACKAGE` until their licensed ZIP packages are supplied.
 
 The repository contains a reproducible EP001 storyboard animatic. It is a
 deliberate pre-production gate: deterministic cards and temporary sound stems
@@ -53,24 +30,22 @@ Animatic approval is split into three machine-readable states:
 gate first, then approve the exact unchanged asset with:
 
 ```bash
-uv run hajimi animatic EP001_earth-stop --force
-uv run hajimi animatic review EP001_earth-stop --approve --reviewer director
+uv run hajimi animatic EP001_cloud-weight --force
+uv run hajimi animatic review EP001_cloud-weight --approve --reviewer director
 ```
 
-Blender QC defaults to `FAST`: sequence continuity plus representative frame
-decode. Use `--deep` only when full-sequence integrity is explicitly required.
-Generated Blender/runtime evidence under `config/generated/` is local machine
-evidence and is not the repository source of truth; portable asset indexes use
-repo-relative paths or `${HAJIMI_ASSETS}`.
+AI candidates must pass deterministic and representative-frame QC before they
+enter Resolve. Generated assets and provenance under each episode's `shots/`
+directory are the artifact source of truth; paths are repo-relative.
 
 Resolve and YouTube checks are capability/readiness contracts, not hidden
 automation. Use `uv run hajimi resolve doctor` and
-`uv run hajimi publish doctor EP001_earth-stop`; an external visible runtime is
+`uv run hajimi publish doctor EP001_cloud-weight`; an external visible runtime is
 required before any mutation or upload. YouTube defaults to a private upload.
 
-Ordinary GitHub Core CI runs the Python contracts and compile checks only. A
-real Blender integration check belongs on an explicitly configured local or
-self-hosted macOS runner and is not required for ordinary CI.
+Ordinary GitHub Core CI runs the Python contracts and compile checks only. Real
+browser-generation and Resolve checks require their visible local sessions and
+are not required for ordinary CI.
 
 ## Architecture
 
@@ -78,7 +53,11 @@ self-hosted macOS runner and is not required for ordinary CI.
 episode.yaml
   → research / creative brief / beats / storyboard
   → animatic gate
-  → shot production (Blender | AI | Fusion | footage)
+  → shot contract / reference pack / route decision
+  → one Codex image_gen keyframe when the shot benefits from image-first control
+  → or native text-to-video / multi-keyframe / variation in Google Flow via ego-browser
+  → local image and video candidates with provenance
+  → shot QC
   → Fast QC (metadata → proxy → scenes → 3 frames → CV → contact sheet)
   → Resolve edit / Fusion / Fairlight
   → master QC
@@ -96,3 +75,9 @@ FFmpeg is used for mechanical media operations and deterministic QC. Resolve
 remains the creative editor and sound mixer. The YouTube adapter only prepares
 and records a safe private preflight unless an explicitly authorized browser
 session performs the upload.
+
+Current generation boundaries are intentionally thin: `studio/generation/image.py`
+prepares Codex image jobs and registers local image artifacts;
+`studio/generation/video.py` prepares Google Flow browser jobs, registers local
+downloads, and refuses approval without a local file. Neither module calls a
+provider API or invents an SDK.

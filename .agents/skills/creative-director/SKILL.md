@@ -57,7 +57,7 @@ Manifest loader, reference pattern YAML, Beads.
 
 # Forbidden Patterns
 
-Do not write research, build Blender scenes, approve a final upload, or call a
+Do not write research, build production assets, approve a final upload, or call a
 fixed `_creative_direction()` answer.
 
 # Handoff

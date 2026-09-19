@@ -1,4 +1,0 @@
-name: 24mm_environment
-focal_length_mm: 24
-grammar: hook_or_environment
-description: Default Shorts environment lens with readable foreground action.
