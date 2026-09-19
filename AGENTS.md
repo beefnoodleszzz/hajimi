@@ -27,8 +27,8 @@ Never optimize production speed by sacrificing the first four.
 - `episodes/<episode>/episode.yaml` is the single source of truth.
 - Every shot has one stable shot ID and one active version in the manifest.
 - No production-quality shot is generated before the animatic passes.
-- FFmpeg is mechanical media infrastructure, not the creative editor.
-- DaVinci Resolve is the primary picture and sound editor.
+- FFmpeg builds the complete local rough cut from approved H3 shots and local audio assets.
+- DaVinci Resolve is optional premium finishing for advanced pacing, Fusion, color, and Fairlight.
 - Deterministic graphics and exact annotations prefer Fusion; cinematic motion prefers AI image/video.
 - AI video must pass shot QC before entering the timeline.
 - Never QC every frame with an LLM/VLM.
@@ -95,11 +95,11 @@ results in SQLite.
 ## Tool Responsibilities
 
 - Codex image_gen: AI image concepts, references, keyframes, variations, and shot first/end frames.
-- ego-browser + Google Flow: AI image-to-video and native AI video generation; download every result locally.
+- AutoDL ComfyUI + MiniMax H3: remote video and native environmental audio rendering only.
 - Fusion: exact text, numbers, arrows, vectors, tracked graphics, masks, and compositing.
-- Resolve: editing, pacing, color, Fusion, Fairlight, and delivery.
-- FFmpeg: proxy, extraction, analysis, encode, deterministic QC.
-- ego-browser: logged-in Google Flow and YouTube Studio interaction.
+- FFmpeg: local rough-cut assembly, audio mix, subtitle burn-in, proxy, extraction, analysis, encode, and deterministic QC.
+- Resolve: optional premium edit, color, Fusion, Fairlight, and delivery polish.
+- ego-browser: logged-in YouTube Studio or other publishing/website operations; never video generation.
 - VoxCPM2: all production narration.
 - Beads: durable task tracking and production blockers.
 
@@ -116,8 +116,9 @@ Use project skills under `.agents/skills/`:
 - animatic → `animatic-director`
 - shot method → `shot-designer`
 - AI image generation → `ai-visual-producer`
-- Google Flow video generation → `ai-video-director` through `ego-browser`
-- edit → `resolve-editor`
+- H3 video generation → `h3-video-director` through local SSH transport
+- automatic local edit → installed `video-editing` skill, applied to Hajimi's `roughcut` workflow
+- optional premium edit → `resolve-editor`
 - sound → `sound-designer`
 - shot QC → `fast-media-qc`
 - master QC → `final-master-qc`

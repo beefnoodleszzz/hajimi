@@ -1,0 +1,14 @@
+schema_version: hajimi-remote-h3-v1
+transport: ssh
+remote:
+  host_env: HAJIMI_H3_HOST
+  user_env: HAJIMI_H3_USER
+  port_env: HAJIMI_H3_SSH_PORT
+  command_env: AUTODL_COMMAND
+  root: /root/autodl-tmp/hajimi-h3-runtime
+comfyui:
+  endpoint: http://127.0.0.1:8188
+backend:
+  type: minimax_h3
+worker_entrypoint: worker.py
+worker_python: /root/miniconda3/bin/python

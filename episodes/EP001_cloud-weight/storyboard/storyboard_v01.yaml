@@ -32,7 +32,7 @@ shots:
     time_end: 8.6
     duration_target: 4.0
     information_payload: The mass is liquid droplets distributed through the volume.
-    method: ai_i2v
+    method: h3_i2v
     risk: droplet field must read as water, not decorative particles
     animatic_card: {kicker: '4.6 — 8.6 / MATERIAL', title: TINY DROPLETS, sub: LIQUID WATER, NOT A SOLID BLOCK, kind: droplets, accent: '#52d7ff', visual_labels: [DROPLETS, CLOUD VOLUME]}
   - id: S004
@@ -52,7 +52,7 @@ shots:
     time_end: 17.6
     duration_target: 5.0
     information_payload: Upward motion carries droplets inside the cloud.
-    method: ai_i2v
+    method: h3_i2v
     risk: arrows and droplets need one coherent vertical flow
     animatic_card: {kicker: '12.6 — 17.6 / UPDRAFT', title: RISING AIR, sub: DROPLETS RIDE THE FLOW, kind: updraft, accent: '#7cdcf4', visual_labels: [UPDRAFT, CARRYING WATER]}
   - id: S006
@@ -72,7 +72,7 @@ shots:
     time_end: 30.0
     duration_target: 6.0
     information_payload: Rain begins when droplets outgrow the carrying updraft.
-    method: ai_multiframe
+    method: h3_fl2v
     risk: the threshold must be a visible event, not a narration-only claim
     animatic_card: {kicker: '24.0 — 30.0 / THRESHOLD', title: WHEN DROPS WIN, sub: THE UPDRAFT CAN NO LONGER CARRY THEM, kind: droplets, accent: '#ffb35c', visual_labels: [GROWING DROP, RAIN]}
   - id: S008

@@ -22,7 +22,7 @@ ANALYTICS_TEMPLATE: dict[str, Any] = {
     "metadata": {"title": None, "language": "en-US", "duration_sec": None},
     "creative": {"hook_type": "immediate_consequence", "hero_shot_type": "physics_mismatch", "time_to_anomaly": 0.38},
     "timeline_metrics": {"avg_shot_duration": None, "shot_count": None, "visual_peak_count": None, "audio_peak_count": None},
-    "production_metrics": {"ai_image_seconds": 0.0, "ai_i2v_seconds": 0.0, "ai_video_seconds": 0.0, "ai_multiframe_seconds": 0.0, "ai_extend_seconds": 0.0, "ai_repair_seconds": 0.0, "hybrid_ai_seconds": 0.0, "fusion_seconds": 0.0, "footage_seconds": 0.0, "static_plate_seconds": 0.0, "qc_fail_count": 0, "regen_count": 0, "production_mix": {}},
+    "production_metrics": {"ai_image_seconds": 0.0, "h3_i2v_seconds": 0.0, "h3_fl2v_seconds": 0.0, "h3_ref2v_seconds": 0.0, "hybrid_ai_seconds": 0.0, "fusion_seconds": 0.0, "footage_seconds": 0.0, "static_plate_seconds": 0.0, "qc_fail_count": 0, "regen_count": 0, "production_mix": {}},
     "retention": {"views": None, "avd_sec": None, "apv": None, "retention_drop_1": None, "retention_drop_2": None, "comments": None, "likes": None, "shares": None, "subs": None},
     "learnings": [],
 }
@@ -39,7 +39,7 @@ def _record_from_manifest(root: Path, episode_id: str, manifest: dict[str, Any])
     shots = [shot for shot in manifest.get("shots", []) if isinstance(shot, dict)]
     durations = [float(shot.get("duration_target", 0) or 0) for shot in shots]
     total_duration = sum(durations)
-    methods = {method: f"{method}_seconds" for method in ("ai_image", "ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair", "hybrid_ai", "fusion", "footage")}
+    methods = {method: f"{method}_seconds" for method in ("ai_image", "h3_i2v", "h3_fl2v", "h3_ref2v", "hybrid_ai", "fusion", "footage")}
     methods["animatic_card"] = "static_plate_seconds"
     method_seconds: dict[str, float] = {}
     for shot, duration in zip(shots, durations):
@@ -143,11 +143,9 @@ def _write_optional_exports(root: Path, episode_id: str, record: dict[str, Any])
                 hook_type VARCHAR,
                 hero_shot_type VARCHAR,
                 ai_image_seconds DOUBLE,
-                ai_i2v_seconds DOUBLE,
-                ai_video_seconds DOUBLE,
-                ai_multiframe_seconds DOUBLE,
-                ai_extend_seconds DOUBLE,
-                ai_repair_seconds DOUBLE,
+                h3_i2v_seconds DOUBLE,
+                h3_fl2v_seconds DOUBLE,
+                h3_ref2v_seconds DOUBLE,
                 hybrid_ai_seconds DOUBLE,
                 static_plate_seconds DOUBLE,
                 fusion_seconds DOUBLE,
@@ -166,11 +164,9 @@ def _write_optional_exports(root: Path, episode_id: str, record: dict[str, Any])
             "hook_type": "VARCHAR",
             "hero_shot_type": "VARCHAR",
             "ai_image_seconds": "DOUBLE",
-            "ai_i2v_seconds": "DOUBLE",
-            "ai_video_seconds": "DOUBLE",
-            "ai_multiframe_seconds": "DOUBLE",
-            "ai_extend_seconds": "DOUBLE",
-            "ai_repair_seconds": "DOUBLE",
+            "h3_i2v_seconds": "DOUBLE",
+            "h3_fl2v_seconds": "DOUBLE",
+            "h3_ref2v_seconds": "DOUBLE",
             "hybrid_ai_seconds": "DOUBLE",
             "static_plate_seconds": "DOUBLE",
             "fusion_seconds": "DOUBLE",
@@ -189,11 +185,11 @@ def _write_optional_exports(root: Path, episode_id: str, record: dict[str, Any])
             """INSERT OR REPLACE INTO video_records (
                 episode_id, updated_at, title, language, duration_sec,
                 shot_count, avg_shot_duration, hook_type, hero_shot_type,
-                ai_image_seconds, ai_i2v_seconds, ai_video_seconds,
-                ai_multiframe_seconds, ai_extend_seconds, ai_repair_seconds,
+                ai_image_seconds, h3_i2v_seconds, h3_fl2v_seconds,
+                h3_ref2v_seconds,
                 hybrid_ai_seconds, static_plate_seconds, fusion_seconds,
                 footage_seconds, qc_fail_count, payload_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             [
                 row["episode_id"],
                 row["updated_at"],
@@ -205,11 +201,9 @@ def _write_optional_exports(root: Path, episode_id: str, record: dict[str, Any])
                 creative.get("hook_type"),
                 creative.get("hero_shot_type"),
                 production.get("ai_image_seconds", 0.0),
-                production.get("ai_i2v_seconds", 0.0),
-                production.get("ai_video_seconds", 0.0),
-                production.get("ai_multiframe_seconds", 0.0),
-                production.get("ai_extend_seconds", 0.0),
-                production.get("ai_repair_seconds", 0.0),
+                production.get("h3_i2v_seconds", 0.0),
+                production.get("h3_fl2v_seconds", 0.0),
+                production.get("h3_ref2v_seconds", 0.0),
                 production.get("hybrid_ai_seconds", 0.0),
                 production.get("static_plate_seconds", 0.0),
                 production.get("fusion_seconds", 0.0),

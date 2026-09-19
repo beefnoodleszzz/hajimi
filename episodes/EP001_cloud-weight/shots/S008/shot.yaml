@@ -26,11 +26,11 @@ shot_contract:
   atmosphere: calm, satisfying, continuous identity
   continuity: {previous_shot: S007, next_shot: S001, screen_direction: screen-right, identity: exact S001 cloud/scale relationship, recurring_elements: scale pan}
   forbidden: [new unrelated location, static end card, generated text, broken S001 match]
-reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: shots/S001/images/selected_keyframe.png, subject_ref: shots/S001/images/selected_keyframe.png, previous_final_frame: shots/S007/video/selected.mp4}
+reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: shots/S001/images/selected_keyframe.png, subject_ref: shots/S001/images/selected_keyframe.png, previous_final_frame: null}
 image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S008/images, rounds: variation_from_S001}
 motion_plan:
   source_keyframe: shots/S008/images/selected_keyframe.png
-  generation_mode: image_to_video
+  generation_mode: i2va
   duration_target: 5.5
   subject_motion: cloud hovers and one droplet rises back into it
   environmental_motion: haze drifts, scale settles
@@ -41,5 +41,5 @@ motion_plan:
   end_state: cloud returns to loopable opening silhouette
   preserve: S001 identity, camera, lighting, scale geometry, screen direction
   avoid: new location, unrelated cloud, camera angle drift
-video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: loop continuity and payoff motion}
+video_candidate_plan: {backend: comfyui_minimax_h3, candidates: 2, selection: loop continuity and payoff motion}
 output: {provenance: provenance.json, image_dir: shots/S008/images, selected_keyframe: shots/S008/images/selected_keyframe.png, video_dir: shots/S008/video, download_target: shots/S008/video, active_media: shots/S008/video/selected.mp4, fusion_graphics: shots/S008/fusion/ending_text.setting}

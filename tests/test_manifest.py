@@ -20,7 +20,7 @@ class ManifestTests(unittest.TestCase):
         path = ROOT / "episodes" / "EP001_cloud-weight" / "episode.yaml"
         manifest = load_manifest(path)
         methods = {shot["method"] for shot in manifest["shots"]}
-        self.assertTrue({"hybrid_ai", "ai_i2v", "ai_multiframe"}.issubset(methods))
+        self.assertTrue({"hybrid_ai", "h3_i2v", "h3_fl2v"}.issubset(methods))
         self.assertNotIn("blender", methods)
 
     def test_short_manifest_requires_string_portrait_aspect_ratio(self):
@@ -42,15 +42,15 @@ class ManifestTests(unittest.TestCase):
             self.assertEqual(shot["id"], shot_id)
         self.assertEqual(
             load_shot_manifest(ROOT / "episodes" / episode / "shots" / "S007" / "shot.yaml")["method"],
-            "ai_multiframe",
+            "h3_fl2v",
         )
 
-    def test_ai_video_shot_requires_contract_and_download_target(self):
+    def test_h3_video_shot_requires_contract_and_motion_plan(self):
         shot = {
             "id": "S001",
             "version": 1,
             "role": "hero",
-            "method": "ai_i2v",
+            "method": "h3_i2v",
             "intent": "test",
             "camera": {"lens_mm": 35},
             "output": {"provenance": "provenance.json"},

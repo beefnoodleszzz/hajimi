@@ -26,11 +26,11 @@ shot_contract:
   atmosphere: clear causal diagram rendered as cinematic space
   continuity: {previous_shot: S003, next_shot: S005, screen_direction: screen-right, identity: same moisture palette, recurring_elements: vertical flow}
   forbidden: [gravity disappearing, unsupported molecule count, generated labels, detached arrows]
-reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: storyboard/storyboard_v01.yaml, subject_ref: shots/S003/images/selected_keyframe.png, previous_final_frame: shots/S003/video/selected.mp4}
+reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: storyboard/storyboard_v01.yaml, subject_ref: shots/S003/images/selected_keyframe.png, previous_final_frame: null}
 image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S004/images, rounds: single_then_targeted_variation_if_needed}
 motion_plan:
   source_keyframe: shots/S004/images/selected_keyframe.png
-  generation_mode: image_to_video
+  generation_mode: i2va
   duration_target: 4.0
   subject_motion: cloudy column lifts by a small visible amount
   environmental_motion: droplets and haze move upward inside the column
@@ -41,5 +41,5 @@ motion_plan:
   end_state: stable offset for Fusion labels and arrows
   preserve: split composition, left/right identity, clean graphics area
   avoid: generated text, spinning infographic, arbitrary wind direction
-video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: causal clarity and stable split}
+video_candidate_plan: {backend: comfyui_minimax_h3, candidates: 2, selection: causal clarity and stable split}
 output: {provenance: provenance.json, image_dir: shots/S004/images, selected_keyframe: shots/S004/images/selected_keyframe.png, video_dir: shots/S004/video, download_target: shots/S004/video, active_media: shots/S004/video/selected.mp4, fusion_graphics: shots/S004/fusion/density_overlay.setting}

@@ -17,14 +17,13 @@ def test_shot_provenance_validates_output_hash_and_ai_fields(tmp_path: Path) -> 
     sidecar.write_text(
         json.dumps(
             {
-                "schema_version": "ai-visual-provenance-v1",
+                "schema_version": "hajimi-shot-provenance-v4",
                 "episode_id": "EP001_contract",
                 "shot_id": "S001",
                 "candidate_id": "S001-candidate-001",
                 "media_type": "video",
-                "backend": "google_flow_browser",
-                "browser_tool": "ego-browser",
-                "generation_mode": "image_to_video",
+                "backend": "comfyui_minimax_h3",
+                "generation_mode": "i2va",
                 "downloaded_file": "episodes/EP001_contract/shots/S001/production.mp4",
                 "prompt": "controlled motion",
                 "references": [],
@@ -36,7 +35,7 @@ def test_shot_provenance_validates_output_hash_and_ai_fields(tmp_path: Path) -> 
         ),
         encoding="utf-8",
     )
-    shot = {"id": "S001", "method": "ai_i2v", "output": {"provenance": "provenance.json"}}
+    shot = {"id": "S001", "method": "h3_i2v", "output": {"provenance": "provenance.json"}}
 
     result = validate_shot_provenance(tmp_path, "EP001_contract", shot)
 
@@ -63,7 +62,7 @@ def test_shot_provenance_rejects_changed_output(tmp_path: Path) -> None:
         ),
         encoding="utf-8",
     )
-    shot = {"id": "S001", "method": "ai_i2v", "output": {"provenance": "provenance.json"}}
+    shot = {"id": "S001", "method": "h3_i2v", "output": {"provenance": "provenance.json"}}
 
     result = validate_shot_provenance(tmp_path, "EP001_contract", shot)
 

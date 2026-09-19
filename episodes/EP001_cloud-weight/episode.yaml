@@ -9,6 +9,7 @@ master:
   height: 1920
   fps: 30
   sample_rate: 48000
+  source: null
 creative:
   topic: cloud weight and buoyancy
   promise: A cloud can contain hundreds of tons of water and still float because the
@@ -39,61 +40,67 @@ shots:
 - id: S001
   role: HERO
   method: hybrid_ai
-  status: approved
-  active_media: shots/S001/video/selected.mp4
+  status: storyboard
+  active_media: null
   time_start: 0.0
   time_end: 1.4
   duration_target: 1.4
+  remote_status: REMOTE_READY
+  remote_job: remote_jobs/EP001_cloud-weight_S001_r01/job.json
 - id: S002
   role: STORY
   method: hybrid_ai
-  status: approved
-  active_media: shots/S002/video/selected.mp4
+  status: storyboard
+  active_media: null
   time_start: 1.4
   time_end: 4.6
   duration_target: 3.2
+  remote_status: NOT_READY
 - id: S003
   role: STORY
-  method: ai_i2v
-  status: approved
-  active_media: shots/S003/video/selected.mp4
+  method: h3_i2v
+  status: storyboard
+  active_media: null
   time_start: 4.6
   time_end: 8.6
   duration_target: 4.0
+  remote_status: NOT_READY
 - id: S004
   role: STORY
   method: hybrid_ai
-  status: approved
-  active_media: shots/S004/video/selected.mp4
+  status: storyboard
+  active_media: null
   time_start: 8.6
   time_end: 12.6
   duration_target: 4.0
+  remote_status: NOT_READY
 - id: S005
   role: STORY
-  method: ai_i2v
-  status: approved
-  active_media: shots/S005/video/selected.mp4
+  method: h3_i2v
+  status: storyboard
+  active_media: null
   time_start: 12.6
   time_end: 17.6
   duration_target: 5.0
+  remote_status: NOT_READY
 - id: S006
   role: HERO
   method: hybrid_ai
-  status: approved
-  active_media: shots/S006/video/selected.mp4
+  status: storyboard
+  active_media: null
   time_start: 17.6
   time_end: 24.0
   duration_target: 6.4
   long_hold_justification:
     intentional: true
-    reason: >-
-      The hero cutaway needs a readable hold while droplets, airflow, and the
+    reason: The hero cutaway needs a readable hold while droplets, airflow, and the
       cloud layer are introduced; production motion is planned for the approved shot.
+  remote_status: NOT_READY
 - id: S007
   role: STORY
-  method: ai_multiframe
-  status: approved
-  active_media: shots/S007/video/selected.mp4
+  method: h3_fl2v
+  status: storyboard
+  active_media: null
   time_start: 24.0
   time_end: 30.0
   duration_target: 6.0
@@ -101,14 +108,16 @@ shots:
     intentional: true
     reason: The threshold beat needs enough time to read droplet growth before the
       first rain breakthrough; production motion is planned for the approved shot.
+  remote_status: NOT_READY
 - id: S008
   role: CONNECTOR
   method: hybrid_ai
-  status: approved
-  active_media: shots/S008/video/selected.mp4
+  status: storyboard
+  active_media: null
   time_start: 30.0
   time_end: 35.5
   duration_target: 5.5
+  remote_status: NOT_READY
 visual_events:
 - time: 0.0
   type: impact

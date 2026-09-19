@@ -23,6 +23,8 @@ from .publish.youtube import publish_status as youtube_status
 from .publish.youtube import record_checks, record_upload_readback
 from .qc.engine import record_human_playback, record_shot_review, run_episode_qc, run_master_qc, run_shot_qc
 from .resolve.sync import record_resolve_readback, resolve_doctor, sync_episode
+from .remote.h3 import h3_doctor, prepare_episode as prepare_h3_episode, pull_episode_result, remote_status as h3_remote_status, select_candidate as select_h3_candidate, submit_episode as submit_h3_episode
+from .roughcut import build_roughcut
 from .voice.director import build_voice_plan
 from .voice.voxcpm2 import doctor as voice_doctor
 from .voice.voxcpm2 import assemble_voice, list_available_voices, render_voice, review_voice, voice_status
@@ -221,6 +223,36 @@ def _cmd_master(args: argparse.Namespace, paths: StudioPaths) -> int:
     return 0
 
 
+def _cmd_h3(args: argparse.Namespace, paths: StudioPaths) -> int:
+    if args.h3_command == "doctor":
+        result = h3_doctor(paths.root)
+        _print(result, args.json)
+        return 0 if result.get("status") == "PASS" else 1
+    if args.h3_command == "prepare":
+        result = {"jobs": [str(path.relative_to(paths.episode(args.episode_id))) for path in prepare_h3_episode(paths.root, args.episode_id, args.shot)]}
+    elif args.h3_command == "submit":
+        result = {"submitted": submit_h3_episode(paths.root, args.episode_id, args.shot)}
+    elif args.h3_command == "status":
+        result = h3_remote_status(paths.root, args.episode_id, args.shot)
+    elif args.h3_command == "pull":
+        if not args.shot:
+            raise ValueError("h3 pull requires --shot S001")
+        result = {"result_directory": str(pull_episode_result(paths.root, args.episode_id, args.shot))}
+    else:
+        if not args.shot:
+            raise ValueError("h3 select requires --shot S001")
+        selected = select_h3_candidate(paths.root, args.episode_id, args.shot, args.candidate, args.reviewer)
+        result = {"selected": str(selected.relative_to(paths.episode(args.episode_id))), "reviewer": args.reviewer}
+    _print(result, args.json)
+    return 0
+
+
+def _cmd_roughcut(args: argparse.Namespace, paths: StudioPaths) -> int:
+    output = build_roughcut(paths.episode(args.episode_id))
+    _print({"roughcut": str(output.relative_to(paths.episode(args.episode_id)))}, args.json)
+    return 0
+
+
 def _cmd_resolve_sync(args: argparse.Namespace, paths: StudioPaths) -> int:
     if args.resolve_command == "doctor":
         result = resolve_doctor(paths.root)
@@ -362,6 +394,28 @@ def build_parser() -> argparse.ArgumentParser:
     master.add_argument("--force", action="store_true")
     master.add_argument("--json", action="store_true")
 
+    h3 = sub.add_parser("h3", help="prepare and operate remote ComfyUI MiniMax H3 jobs")
+    h3_sub = h3.add_subparsers(dest="h3_command", required=True)
+    h3_doctor_parser = h3_sub.add_parser("doctor")
+    h3_doctor_parser.add_argument("--json", action="store_true")
+    for name in ("prepare", "submit", "status", "pull"):
+        command = h3_sub.add_parser(name)
+        command.add_argument("episode_id")
+        command.add_argument("--shot")
+        command.add_argument("--json", action="store_true")
+    h3_select = h3_sub.add_parser("select")
+    h3_select.add_argument("episode_id")
+    h3_select.add_argument("--shot", required=True)
+    h3_select.add_argument("--candidate", type=int, required=True)
+    h3_select.add_argument("--reviewer", required=True)
+    h3_select.add_argument("--json", action="store_true")
+
+    roughcut = sub.add_parser("roughcut", help="build the local FFmpeg rough master")
+    roughcut_sub = roughcut.add_subparsers(dest="roughcut_command", required=True)
+    roughcut_build = roughcut_sub.add_parser("build")
+    roughcut_build.add_argument("episode_id")
+    roughcut_build.add_argument("--json", action="store_true")
+
     resolve = sub.add_parser("resolve")
     resolve_sub = resolve.add_subparsers(dest="resolve_command", required=True)
     resolve_doctor_parser = resolve_sub.add_parser("doctor")
@@ -441,6 +495,10 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_qc(args, paths)
         if args.command == "master":
             return _cmd_master(args, paths)
+        if args.command == "h3":
+            return _cmd_h3(args, paths)
+        if args.command == "roughcut":
+            return _cmd_roughcut(args, paths)
         if args.command == "resolve":
             return _cmd_resolve_sync(args, paths)
         if args.command == "publish":

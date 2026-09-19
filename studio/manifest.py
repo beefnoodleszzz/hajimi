@@ -37,11 +37,9 @@ EPISODE_STATUSES = {
 }
 METHODS = {
     "ai_image",
-    "ai_i2v",
-    "ai_video",
-    "ai_multiframe",
-    "ai_extend",
-    "ai_repair",
+    "h3_i2v",
+    "h3_fl2v",
+    "h3_ref2v",
     "fusion",
     "footage",
     "hybrid_ai",
@@ -50,8 +48,9 @@ METHODS = {
     "animatic_card",
 }
 AI_IMAGE_METHODS = {"ai_image"}
-AI_VIDEO_METHODS = {"ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair"}
+AI_VIDEO_METHODS = {"h3_i2v", "h3_fl2v", "h3_ref2v"}
 AI_METHODS = AI_IMAGE_METHODS | AI_VIDEO_METHODS | {"hybrid_ai"}
+REMOTE_SHOT_STATES = {"NOT_READY", "REMOTE_READY", "SUBMITTED", "COMPLETE", "FAILED", "CANDIDATES_IMPORTED", "SELECTED"}
 SUPPORTED_SHORT_ASPECT_RATIO = "9:16"
 PRODUCTION_PHASES = {"production", "qc_pending", "master_qc", "uploaded_private", "checks_pending", "complete"}
 
@@ -92,6 +91,8 @@ def validate_manifest(manifest: dict[str, Any], path: str | Path | None = None) 
                 errors.append(f"master.{key} must be positive")
         if master.get("path") is not None and not isinstance(master.get("path"), str):
             errors.append("master.path must be a string when provided")
+        if master.get("source") is not None and master.get("source") not in {"ffmpeg", "resolve"}:
+            errors.append("master.source must be ffmpeg or resolve when provided")
     else:
         errors.append("master must be a mapping")
 
@@ -143,6 +144,16 @@ def validate_manifest(manifest: dict[str, Any], path: str | Path | None = None) 
             status = shot.get("status")
             if status not in SHOT_STATUSES:
                 errors.append(f"{prefix}.status must be one of {sorted(SHOT_STATUSES)}")
+            remote_status = shot.get("remote_status")
+            if remote_status is not None and remote_status not in REMOTE_SHOT_STATES:
+                errors.append(f"{prefix}.remote_status must be one of {sorted(REMOTE_SHOT_STATES)}")
+            remote_job = shot.get("remote_job")
+            if remote_job is not None and (
+                not isinstance(remote_job, str)
+                or not remote_job.startswith("remote_jobs/")
+                or ".." in Path(remote_job).parts
+            ):
+                errors.append(f"{prefix}.remote_job must be a safe episode-relative remote_jobs path")
             duration_target = shot.get("duration_target")
             if duration_target is not None and (not isinstance(duration_target, (int, float)) or duration_target <= 0):
                 errors.append(f"{prefix}.duration_target must be positive")
@@ -344,16 +355,18 @@ def validate_shot_manifest(
         motion = shot.get("motion_plan")
         if not isinstance(motion, dict):
             errors.append("motion_plan is required for video-producing shots")
-        elif method == "ai_i2v" and not (motion.get("source_keyframe") or output.get("selected_keyframe")):
-            errors.append("ai_i2v requires a source keyframe")
-        elif method == "ai_multiframe":
+        elif method == "h3_i2v" and not (motion.get("source_keyframe") or output.get("selected_keyframe")):
+            errors.append("h3_i2v requires a source keyframe")
+        elif method == "h3_fl2v":
             keyframes = motion.get("keyframes")
-            segments = motion.get("segments")
             if not isinstance(keyframes, list) or len(keyframes) < 2:
-                errors.append("ai_multiframe requires at least two motion_plan.keyframes")
-            expected_segments = len(keyframes) - 1 if isinstance(keyframes, list) and len(keyframes) >= 2 else None
-            if expected_segments is None or not isinstance(segments, list) or len(segments) != expected_segments:
-                errors.append("ai_multiframe requires one motion_plan segment between adjacent keyframes")
+                errors.append("h3_fl2v requires at least two motion_plan.keyframes")
+            elif any(not isinstance(frame, dict) or not isinstance(frame.get("image"), str) for frame in keyframes):
+                errors.append("h3_fl2v keyframes require local image paths")
+        elif method == "h3_ref2v":
+            references = shot.get("h3_references")
+            if not isinstance(references, list) or not references:
+                errors.append("h3_ref2v requires h3_references")
         for key in ("video_dir", "download_target"):
             if not isinstance(output.get(key), str) or not output[key].strip():
                 errors.append(f"output.{key} is required for video-producing shots")

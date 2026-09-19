@@ -31,4 +31,6 @@ def test_all_project_skill_frontmatter_is_valid_and_unique() -> None:
 
 def test_ai_generation_roles_are_present() -> None:
     assert (SKILLS / "ai-visual-producer" / "SKILL.md").exists()
-    assert (SKILLS / "ai-video-director" / "SKILL.md").exists()
+    assert (SKILLS / "h3-video-director" / "SKILL.md").exists()
+    assert not (SKILLS / "ffmpeg-rough-editor" / "SKILL.md").exists()
+    assert "installed `video-editing` skill" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")

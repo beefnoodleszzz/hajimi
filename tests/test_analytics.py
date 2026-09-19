@@ -22,7 +22,7 @@ class AnalyticsTests(unittest.TestCase):
             "audio": {"events": [{"time": 0.4}, {"time": 8.0}]},
             "shots": [
                 {"id": "S001", "role": "hook_ground_locks", "method": "fusion", "duration_target": 1.0},
-                {"id": "S002", "role": "hero_restart_mismatch", "method": "ai_i2v", "duration_target": 2.0},
+                {"id": "S002", "role": "hero_restart_mismatch", "method": "h3_i2v", "duration_target": 2.0},
             ],
         }
 
@@ -32,3 +32,5 @@ class AnalyticsTests(unittest.TestCase):
         self.assertEqual(record["creative"]["hero_shot_type"], "hero_restart_mismatch")
         self.assertEqual(record["timeline_metrics"]["visual_peak_count"], 2)
         self.assertEqual(record["timeline_metrics"]["audio_peak_count"], 2)
+        self.assertEqual(record["production_metrics"]["h3_i2v_seconds"], 2.0)
+        self.assertNotIn("ai_i2v_seconds", record["production_metrics"])

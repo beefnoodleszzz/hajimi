@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import load_yaml
-from .manifest import load_shot_manifest, validate_shot_manifest
+from .manifest import AI_METHODS, load_shot_manifest, validate_shot_manifest
 from .media.hashing import sha256_file
 
 
@@ -83,7 +83,7 @@ def validate_shot_provenance(
         elif value.get("source_sha256") and sha256_file(source_path) != value.get("source_sha256"):
             errors.append("source_sha256")
 
-    if shot.get("method") in {"ai_image", "ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair", "hybrid_ai"}:
+    if shot.get("method") in AI_METHODS:
         generation_record = value
         continuity_source = value.get("continuity_source")
         if isinstance(continuity_source, str):
@@ -101,8 +101,8 @@ def validate_shot_provenance(
             if not generation_record.get("model_family"):
                 errors.append("model_family")
         else:
-            if backend != "google_flow_browser":
-                errors.append("backend must be google_flow_browser")
+            if backend != "comfyui_minimax_h3":
+                errors.append("backend must be comfyui_minimax_h3")
             if not generation_record.get("generation_mode"):
                 errors.append("generation_mode")
             downloaded_file = generation_record.get("downloaded_file")

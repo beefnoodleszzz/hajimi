@@ -30,7 +30,7 @@ reference_pack: {style_ref: creative/visual_concept.yaml, composition_ref: story
 image_candidate_plan: {backend: codex_image_gen, model_family: gpt-image, candidates: 1, artifact_dir: shots/S001/images, rounds: single_then_targeted_variation_if_needed}
 motion_plan:
   source_keyframe: shots/S001/images/selected_keyframe.png
-  generation_mode: image_to_video
+  generation_mode: i2va
   duration_target: 1.4
   subject_motion: cloud settles onto pan by a few centimeters
   environmental_motion: scale pan flexes subtly, haze drifts
@@ -41,5 +41,5 @@ motion_plan:
   end_state: cloud settled, no morphing
   preserve: cloud silhouette, scale geometry, lighting direction, empty text-safe space
   avoid: new objects, readable generated labels, cloud deformation, camera wobble
-video_candidate_plan: {backend: google_flow_browser, browser_tool: ego-browser, candidates: 2, selection: settling readability and continuity}
+video_candidate_plan: {backend: comfyui_minimax_h3, candidates: 2, selection: settling readability and continuity}
 output: {provenance: provenance.json, image_dir: shots/S001/images, selected_keyframe: shots/S001/images/selected_keyframe.png, video_dir: shots/S001/video, download_target: shots/S001/video, active_media: shots/S001/video/selected.mp4}

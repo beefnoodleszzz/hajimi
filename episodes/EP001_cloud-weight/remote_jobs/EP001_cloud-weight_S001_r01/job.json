@@ -1,0 +1,47 @@
+{
+  "schema_version": "hajimi-h3-remote-v1",
+  "job_id": "EP001_cloud-weight_S001_r01",
+  "episode_id": "EP001_cloud-weight",
+  "shot_id": "S001",
+  "mode": "i2va",
+  "candidate_count": 2,
+  "duration_sec": 1.4,
+  "aspect_ratio": "9:16",
+  "prompt": "Visual goal: A cloud visibly settles onto a giant industrial scale.\nSubject and environment: soft-edged cumulus cloud with stable screen-right identity and a heavy lower shadow; dark navy industrial measurement stage with open sky above\nComposition: cloud centered over a wide scale pan, empty negative space for Fusion readout\nSubject motion: cloud settles onto pan by a few centimeters\nEnvironmental motion: scale pan flexes subtly, haze drifts\nCamera motion: tiny push-in\nStart state: hovering cloud, scale unloaded\nMiddle state: cloud contacts pan, pan begins to dip\nEnd state: cloud settled, no morphing\nLighting and palette: cool rim light with warm amber measurement bounce; deep navy, cloud white, wet cyan, warm amber",
+  "inputs": {
+    "first_frame": "assets/first_frame.png",
+    "last_frame": null,
+    "reference_images": [],
+    "reference_videos": [],
+    "reference_audio": []
+  },
+  "audio": {
+    "generate_native_audio": true,
+    "intent": "Natural ambience for dark navy industrial measurement stage with open sky above; Physical environmental sound: scale pan flexes subtly, haze drifts; No dialogue and no music"
+  },
+  "preserve": [
+    "cloud silhouette",
+    "scale geometry",
+    "lighting direction",
+    "empty text-safe space",
+    "same soft-edged cumulus",
+    "screen-right"
+  ],
+  "avoid": [
+    "new objects",
+    "readable generated labels",
+    "cloud deformation",
+    "camera wobble",
+    "generated text",
+    "generic stock cloud",
+    "exaggerated impact",
+    "fake universal precision"
+  ],
+  "output": {
+    "video": true,
+    "native_audio": true
+  },
+  "input_sha256": {
+    "assets/first_frame.png": "1c2134f6cfc153ab6e7889f2edfedb0048d24033ce38ab6bfc10e467e4ffc5f3"
+  }
+}

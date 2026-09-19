@@ -37,17 +37,15 @@ AGENT_STAGES = (
 SHOT_TIERS = {"HERO", "STORY", "CONNECTOR"}
 GENERATION_METHODS = {
     "ai_image",
-    "ai_i2v",
-    "ai_video",
-    "ai_multiframe",
-    "ai_extend",
-    "ai_repair",
+    "h3_i2v",
+    "h3_fl2v",
+    "h3_ref2v",
     "fusion",
     "footage",
     "hybrid_ai",
 }
-IMAGE_REQUIRED_METHODS = {"ai_image", "ai_i2v", "ai_multiframe", "hybrid_ai"}
-VIDEO_REQUIRED_METHODS = {"ai_i2v", "ai_video", "ai_multiframe", "ai_extend", "ai_repair", "hybrid_ai"}
+IMAGE_REQUIRED_METHODS = {"ai_image", "h3_i2v", "h3_fl2v", "h3_ref2v", "hybrid_ai"}
+VIDEO_REQUIRED_METHODS = {"h3_i2v", "h3_fl2v", "h3_ref2v", "hybrid_ai"}
 
 
 class CreativeAgentInputRequired(RuntimeError):
@@ -138,8 +136,8 @@ def load_creative_context(root: str | Path, episode_id: str) -> dict[str, Any]:
         },
         "available_tools": [
             "codex_image_gen",
-            "google_flow_browser",
-            "ego-browser",
+            "remote_comfyui_minimax_h3",
+            "ssh_transport",
             "fusion",
             "resolve",
             "voxcpm2_local",
@@ -354,7 +352,7 @@ def validate_generation_plan(value: Mapping[str, Any]) -> list[str]:
         video_candidates = shot.get("video_candidates", 0)
         if type(image_candidates) is not int or image_candidates < 0:
             errors.append(f"generation_plan.shots[{index}].image_candidates must be a non-negative integer")
-        elif (method in IMAGE_REQUIRED_METHODS or (method == "ai_video" and shot.get("keyframe_first") is True)) and image_candidates < 1:
+        elif method in IMAGE_REQUIRED_METHODS and image_candidates < 1:
             errors.append(f"generation_plan.shots[{index}].image_candidates must be positive for this image-first route")
         if type(video_candidates) is not int or video_candidates < 0:
             errors.append(f"generation_plan.shots[{index}].video_candidates must be a non-negative integer")

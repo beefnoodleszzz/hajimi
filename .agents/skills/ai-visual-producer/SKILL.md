@@ -7,8 +7,9 @@ triggers: AI image, AI video, prompt, visual candidate, generation
 # Objective
 
 Produce traceable AI candidates after the animatic gate. The current image
-backend is Codex `image_gen` using GPT-Image 2 / 2.5. The current video backend
-is Google Flow operated through `ego-browser`.
+backend is local Codex `image_gen`. The video backend is remote ComfyUI
+MiniMax H3 through Hajimi's SSH contract. VoxCPM2 remains the only production
+narration provider.
 
 # Required workflow
 
@@ -21,14 +22,18 @@ is Google Flow operated through `ego-browser`.
 4. Register every local Codex result under `shots/Sxxx/images/` with JSON
    provenance. Never invent a seed when the runtime does not expose one.
 5. Let the director select `selected_keyframe.png`; selection is not QC approval.
-6. Send the selected keyframe and motion plan to `ai-video-director` for Flow.
+6. Send the selected keyframe and motion plan to `generation-director` and
+   `h3-video-director` for a shot-specific H3 route. Keep publishing browser
+   work separate from video generation.
 
 # Quality gate
 
-Candidate metadata is complete, direction/identity are stable, and Fast QC is
-PASS or explicitly REVIEW with a director decision. Exact numbers, labels,
-arrows, vectors, and scientific annotations belong in Fusion.
+Candidate provenance is complete and identity/direction are stable. Selecting
+an H3 candidate does not approve it: run shot Fast QC and record a director
+review when the QC result requires one. Exact numbers, labels, arrows, vectors,
+and scientific annotations belong in Fusion.
 
 # Handoff
 
-Pass approved candidate and provenance JSON to `resolve-editor`.
+Pass the locally selected candidate and provenance to shot QC; send approved
+shots to the `video-editing` workflow or optional `resolve-editor` finish.

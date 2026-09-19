@@ -1,33 +1,31 @@
 ---
 name: shot-designer
-description: Choose an AI-first production method and write Shot Contracts.
+description: Write shot contracts and choose local image plus H3 production methods.
 triggers: shot design, production method, shot brief, negative constraints
 ---
 
 # Objective
 
-Design the cinematic AI visual first, then preserve factual clarity through
-composition, continuity, and Fusion overlays. Scientific accuracy is not a
-requirement to run an engineering simulation.
+Design the visual and motion contract before any generation. Local Hajimi owns
+the story, image assets, prompts, continuity, and candidate selection.
 
 # Required workflow
 
-1. Translate the approved board into one Shot Contract: intent, subject,
-   environment, composition, camera, first/end frame, motion, lighting,
-   continuity, and forbidden constraints.
-2. Default to Codex image_gen keyframe first, then Google Flow I2V.
-3. Use multi-keyframe generation for distinct states; split complex changes.
-4. Defer exact text, numbers, arrows, vectors, and labels to Fusion.
-5. Record backend/model/reference fields; never invent an unavailable seed.
-6. Bind outputs to the active shot ID, version, input hashes, and local artifact paths.
+1. Translate the approved board into a Shot Contract covering narrative
+   purpose, subject, environment, composition, camera, first/end states,
+   lighting, continuity, and forbidden elements.
+2. Use Codex image_gen locally for selected keyframes and references.
+3. Choose among `ai_image`, `h3_i2v`, `h3_fl2v`, `h3_ref2v`, `hybrid_ai`,
+   `fusion`, `footage`, and `animatic_card`.
+4. Keep exact text, numbers, arrows, vectors, and tracked labels in Fusion or
+   deterministic local graphics.
+5. Bind the shot to its stable ID, active version, local inputs, hashes, H3
+   duration/mode, ambience intent, and candidate count.
+6. Review imported H3 candidates locally; remote workers never approve or
+   select them.
 
 # Failure conditions
 
-AI is used for exact vectors/text; a negative constraint or local artifact path
-is missing; or candidate counts, acceptance criteria, or retry boundaries are
-undefined.
-
-# Handoff
-
-Pass the Shot Contract to `ai-visual-producer`, `ai-video-director`, or
-`resolve-editor`.
+A negative constraint, required keyframe, prompt, native-audio intent, or local
+artifact path is missing; H3 is assigned narration or editing; or the route
+cannot satisfy the story beat without a specified input.

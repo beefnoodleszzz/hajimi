@@ -218,6 +218,7 @@ def register_resolve_master(episode_root: str | Path, manifest: dict[str, Any], 
         build["resolve_readback"] = _portable_path(episode_root.parent.parent, resolve_readback)
     build["publish_block_reason"] = None if build["publishable"] else "RESOLVE_READBACK_REQUIRED"
     manifest["master"]["path"] = str(output.relative_to(episode_root))
+    manifest["master"]["source"] = "resolve"
     write_manifest(manifest, episode_root / "episode.yaml")
     write_json(build, episode_root / "master" / "build.json")
     return build

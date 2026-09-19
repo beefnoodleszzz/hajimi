@@ -20,12 +20,15 @@ episodes/*/qc/suspicious/
 episodes/*/master/render_work/
 episodes/*/qc/
 episodes/*/master/*.mp4
+episodes/*/master/*_rough_v*.mp4
 episodes/*/audio/*.wav
 episodes/*/audio/*.aiff
 episodes/*/audio/final/*.wav
 episodes/*/audio/production/*.wav
 episodes/*/shots/*/production/
 episodes/*/shots/*/candidates/
+episodes/*/shots/*/video/*.mp4
+episodes/*/remote_results/
 episodes/*/shots/*/preview/
 episodes/*/shots/*/input/*.png
 episodes/*/animatic/*.mp4
@@ -44,6 +47,7 @@ studio/studio.sqlite3
 
 # Secrets
 .env
+.env.*
 !.env.example
 .beads-credential-key
 .beads/proxieddb/
