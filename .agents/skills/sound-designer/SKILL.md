@@ -1,48 +1,65 @@
 ---
 name: sound-designer
-description: Design layered VO, music, ambience, movement, impact, and silence for narrative clarity.
-triggers: sound design, Fairlight, mix, music, SFX, ambience
+description: Turn Hajimi beats and approved picture into sound intent and executable episode cue artifacts.
 ---
 
-# Objective
+# Role
 
-Make sound carry structure and physical direction instead of merely amplifying
-a narration WAV.
+Design sound to clarify physical action, emotion, and information changes.
+Own sound intent and cue artifacts; execution may use Hajimi's FFmpeg roughcut
+or optional Resolve/Fairlight finishing. Fairlight is not required for the
+ordinary FFmpeg path. Production narration remains local VoxCPM2.
+
+Consult `config/skill-routing.yaml` for the final sound-stage route and artifact
+locations.
 
 # Inputs
 
-Beat script, approved picture, narrator take, music/SFX/ambience library, and
-manifest loudness targets.
+- Validated beat script and storyboard timing/sound events.
+- Approved picture and its H3 native environmental audio.
+- Selected VoxCPM2 narration and voice direction from `voice-director`.
+- Episode music/SFX assets and manifest loudness targets.
 
 # Outputs
 
-Fairlight timeline/mix, stem manifest, ASR transcript, and loudness report.
+- Episode sound-intent and cue plan at the audio artifact path configured in
+  `config/skill-routing.yaml`.
+- Supported local execution settings in `episodes/<episode>/edit/roughcut.yaml`:
+  music path/gain, SFX paths/times/gain, subtitles, and text overlays.
+- A handoff note for cues that need an optional Resolve/Fairlight pass or
+  cannot be represented by Hajimi's current roughcut contract.
 
-# Required Workflow
+Preserve H3 native ambience unless the Shot Contract says it should be muted.
+Do not imply that a plan produced a separate stem or Fairlight timeline unless
+that artifact was actually rendered and recorded.
 
-1. Place VO and normalize intelligibility with EQ/compression/de-ess.
-2. Add music curve, ambience bed, and 3–8 narrative SFX.
-3. Use silence at information pivots when useful.
-4. Check key numbers and duration against ASR.
-5. Deliver `-14 LUFS` target and `-1 dBTP` ceiling.
+# Workflow
 
-# Quality Gate
-
-VO, music, ambience, and SFX are independently identifiable and the mix does
-not mask critical words.
+1. Derive sound events from the locked beats, picture, and shot audio intent.
+   Keep VoxCPM2 narration as the production voice source.
+2. Place music, ambience, silence, and SFX cues against the episode timeline.
+   Use upstream editing guidance only for capabilities relevant to this
+   Hajimi artifact contract.
+3. Map cues expressible by the current FFmpeg roughcut into
+   `edit/roughcut.yaml`. The roughcut preserves H3 ambience, mixes narration,
+   music, and optional SFX, applies sidechain music ducking, subtitles/text
+   overlays, and manifest loudness targets.
+4. Record unsupported timing/mix intent for optional premium finishing instead
+   of claiming the FFmpeg adapter executed it.
+5. Pass the roughcut to Fast QC and then final-master QC for measured audio and
+   output checks.
 
 # Failure Conditions
 
-Bare VO, arbitrary loudness boost, clipping, or missing key number.
-
-# Tools
-
-Resolve Fairlight, FFmpeg ebur128/astats, faster-whisper when installed.
-
-# Forbidden Patterns
-
-Do not use audio to disguise a failed animatic or publish an un-QC'd master.
+Fail handoff if a cue conflicts with the beat/shot contract, narration is not
+the selected local VoxCPM2 production audio, required asset paths are missing,
+or the mix plan cannot fit the episode timeline. Do not use music/SFX to hide
+a failed animatic or unreadable picture.
 
 # Handoff
 
-Pass mixed master and audio report to `final-master-qc`.
+Pass the sound plan and supported `roughcut.yaml` settings to
+`ffmpeg-rough-editor` for automatic assembly. Pass any requested premium
+Fairlight work to `resolve-editor`. Send the rendered master and audio evidence
+to `final-master-qc`. The final stage and artifact paths are in
+`config/skill-routing.yaml`.

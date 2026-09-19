@@ -1,7 +1,6 @@
 ---
 name: fast-media-qc
 description: Run the cached five-tier media QC funnel without flooding agent context.
-triggers: Fast QC, media QC, proxy, contact sheet, shot check
 ---
 
 # Objective

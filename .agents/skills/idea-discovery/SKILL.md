@@ -1,7 +1,6 @@
 ---
 name: idea-discovery
 description: Find high-visual, high-retention knowledge story candidates instead of random topic lists.
-triggers: idea discovery, topic discovery, content ideas, story candidates
 ---
 
 # Objective

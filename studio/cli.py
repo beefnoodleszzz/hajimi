@@ -9,8 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from .analytics.schema import initialize_record
-from .config import write_json
+from .config import load_yaml, write_json
 from .creative import generate_creative_package, load_creative_context, save_creative_artifact, validate_creative_package
+from .generation.image import load_image_prompt_artifact, prepare_image_job, register_image_candidate, write_image_prompt_artifact
 from .db import StateStore
 from .manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, new_manifest, write_manifest
 from .master import register_resolve_master
@@ -24,7 +25,10 @@ from .publish.youtube import record_checks, record_upload_readback
 from .qc.engine import record_human_playback, record_shot_review, run_episode_qc, run_master_qc, run_shot_qc
 from .resolve.sync import record_resolve_readback, resolve_doctor, sync_episode
 from .remote.h3 import h3_doctor, prepare_episode as prepare_h3_episode, pull_episode_result, remote_status as h3_remote_status, select_candidate as select_h3_candidate, submit_episode as submit_h3_episode
+from .remote.contract import _asset_spec, _select_mode, h3_generation_duration
+from .remote.prompt import write_h3_prompt_artifact
 from .roughcut import build_roughcut
+from .skills import check_skill_updates, skills_doctor, skills_list, sync_skills
 from .voice.director import build_voice_plan
 from .voice.voxcpm2 import doctor as voice_doctor
 from .voice.voxcpm2 import assemble_voice, list_available_voices, render_voice, review_voice, voice_status
@@ -154,6 +158,61 @@ def _cmd_creative(args: argparse.Namespace, paths: StudioPaths) -> int:
     return 0 if result.get("status") in {"PASS"} else 1
 
 
+def _cmd_image(args: argparse.Namespace, paths: StudioPaths) -> int:
+    episode_root = paths.episode(args.episode_id)
+    shot_dir = episode_root / "shots" / args.shot_id
+    if args.image_command == "prompt-record":
+        prompt = Path(args.prompt_file).expanduser().read_text(encoding="utf-8")
+        style_decision = load_yaml(Path(args.style_decision).expanduser())
+        result = write_image_prompt_artifact(
+            episode_root,
+            args.shot_id,
+            prompt,
+            style_decision,
+            args.reference,
+        )
+    elif args.image_command == "prepare":
+        shot = load_yaml(shot_dir / "shot.yaml")
+        prompt_artifact = load_image_prompt_artifact(episode_root, args.shot_id)
+        job = prepare_image_job(shot, prompt_artifact=prompt_artifact)
+        destination = shot_dir / "images" / "job.json"
+        if destination.exists() and not args.force:
+            raise FileExistsError(f"Image job already exists: {destination}; use --force after a new prompt decision")
+        write_json(job, destination)
+        result = {"status": "READY", "shot_id": args.shot_id, "job": str(destination.relative_to(episode_root))}
+    else:
+        job_path = shot_dir / "images" / "job.json"
+        job = json.loads(job_path.read_text(encoding="utf-8"))
+        source = Path(args.source).expanduser()
+        if not source.is_absolute():
+            source = paths.root / source
+        destination = register_image_candidate(
+            episode_root,
+            args.shot_id,
+            source,
+            job,
+            candidate_number=args.candidate,
+        )
+        result = {"status": "REGISTERED", "candidate": str(destination.relative_to(episode_root))}
+    _print(result, args.json)
+    return 0
+
+
+def _cmd_skills(args: argparse.Namespace) -> int:
+    if args.skills_command == "doctor":
+        result = skills_doctor()
+    elif args.skills_command == "list":
+        result = skills_list()
+    elif args.skills_command == "updates":
+        result = check_skill_updates()
+    elif args.skills_command == "sync":
+        result = sync_skills(args.skill or None)
+    else:
+        result = skills_doctor()
+    _print(result, args.json)
+    return 0 if result.get("status") == "PASS" else 1
+
+
 def _cmd_voice(args: argparse.Namespace, paths: StudioPaths) -> int:
     if args.voice_command == "voices":
         result = {"status": "READY", "provider": "voxcpm2_local", "voices": list_available_voices()}
@@ -212,8 +271,8 @@ def _cmd_master(args: argparse.Namespace, paths: StudioPaths) -> int:
     manifest, _ = _load_episode(paths, args.episode_id)
     if not args.input:
         raise RuntimeError(
-            "a Resolve-exported master is required; pass --input <Resolve export> "
-            "(the animatic release candidate is not a publishable master)"
+            "this command registers an optional Resolve export; pass --input <Resolve export>. "
+            "The normal FFmpeg master is built with `hajimi roughcut build <episode_id>`."
         )
     source = Path(args.input)
     if not source.is_absolute():
@@ -228,7 +287,43 @@ def _cmd_h3(args: argparse.Namespace, paths: StudioPaths) -> int:
         result = h3_doctor(paths.root)
         _print(result, args.json)
         return 0 if result.get("status") == "PASS" else 1
-    if args.h3_command == "prepare":
+    if args.h3_command == "prompt-record":
+        if not args.shot:
+            raise ValueError("h3 prompt-record requires --shot S001")
+        manifest, _ = _load_episode(paths, args.episode_id)
+        manifest_shot = next((item for item in manifest.get("shots", []) if item.get("id") == args.shot), None)
+        if manifest_shot is None:
+            raise ValueError(f"unknown shot: {args.shot}")
+        shot_path = paths.episode(args.episode_id) / "shots" / args.shot / "shot.yaml"
+        shot = load_yaml(shot_path)
+        mode = _select_mode(str(manifest_shot.get("method", shot.get("method", ""))), shot)
+        assets, _ = _asset_spec(paths.episode(args.episode_id), shot, mode)
+        motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), dict) else {}
+        start, end = manifest_shot.get("time_start"), manifest_shot.get("time_end")
+        edit_duration = float(end) - float(start) if isinstance(start, (int, float)) and isinstance(end, (int, float)) else manifest_shot.get("duration_target")
+        if not isinstance(edit_duration, (int, float)) or isinstance(edit_duration, bool) or edit_duration <= 0:
+            raise ValueError(f"{args.shot} timeline edit duration is required")
+        generation_duration = h3_generation_duration(float(edit_duration), motion.get("generation_duration_sec"))
+        contract = shot.get("shot_contract") if isinstance(shot.get("shot_contract"), dict) else {}
+        audio_intent = contract.get("audio_intent")
+        if not isinstance(audio_intent, str) or not audio_intent.strip():
+            raise ValueError(f"{args.shot} Shot Contract must author audio_intent before H3 prompt writing")
+        music_value = contract.get("non_diegetic_music", shot.get("non_diegetic_music"))
+        allow_music = isinstance(music_value, str) and bool(music_value.strip()) and music_value.strip() != "N/A"
+        prompt = Path(args.prompt_file).expanduser().read_text(encoding="utf-8")
+        artifact = write_h3_prompt_artifact(
+            paths.episode(args.episode_id),
+            args.shot,
+            mode,
+            prompt,
+            audio_intent.strip(),
+            [path for _, path in assets],
+            generation_duration,
+            job_revision=args.revision,
+            allow_non_diegetic_music=allow_music,
+        )
+        result = {"status": "READY", "shot_id": args.shot, "mode": mode, "prompt": f"shots/{args.shot}/h3/prompt.txt", "prompt_source_contract_sha256": artifact["source_shot_contract_sha256"], "generation_duration_sec": generation_duration}
+    elif args.h3_command == "prepare":
         result = {"jobs": [str(path.relative_to(paths.episode(args.episode_id))) for path in prepare_h3_episode(paths.root, args.episode_id, args.shot)]}
     elif args.h3_command == "submit":
         result = {"submitted": submit_h3_episode(paths.root, args.episode_id, args.shot)}
@@ -340,6 +435,36 @@ def build_parser() -> argparse.ArgumentParser:
     creative_validate.add_argument("episode_id")
     creative_validate.add_argument("--json", action="store_true")
 
+    image = sub.add_parser("image", help="record agent-authored GPT Image prompts and candidate provenance")
+    image_sub = image.add_subparsers(dest="image_command", required=True)
+    image_prompt = image_sub.add_parser("prompt-record")
+    image_prompt.add_argument("episode_id")
+    image_prompt.add_argument("shot_id")
+    image_prompt.add_argument("--prompt-file", required=True)
+    image_prompt.add_argument("--style-decision", required=True)
+    image_prompt.add_argument("--reference", action="append", default=[])
+    image_prompt.add_argument("--json", action="store_true")
+    image_prepare = image_sub.add_parser("prepare")
+    image_prepare.add_argument("episode_id")
+    image_prepare.add_argument("--shot", dest="shot_id", required=True)
+    image_prepare.add_argument("--force", action="store_true")
+    image_prepare.add_argument("--json", action="store_true")
+    image_register = image_sub.add_parser("register")
+    image_register.add_argument("episode_id")
+    image_register.add_argument("--shot", dest="shot_id", required=True)
+    image_register.add_argument("--source", required=True)
+    image_register.add_argument("--candidate", type=int, default=1)
+    image_register.add_argument("--json", action="store_true")
+
+    skills = sub.add_parser("skills", help="inspect and maintain the pinned shared Hajimi skill stack")
+    skills_sub = skills.add_subparsers(dest="skills_command", required=True)
+    for command_name in ("doctor", "list", "updates", "verify"):
+        command = skills_sub.add_parser(command_name)
+        command.add_argument("--json", action="store_true")
+    skills_sync_parser = skills_sub.add_parser("sync")
+    skills_sync_parser.add_argument("--skill", action="append")
+    skills_sync_parser.add_argument("--json", action="store_true")
+
     voice = sub.add_parser("voice", help="plan and render production voice")
     voice_sub = voice.add_subparsers(dest="voice_command", required=True)
     voice_voices = voice_sub.add_parser("voices")
@@ -388,7 +513,7 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument("--json", action="store_true")
     review.add_argument("--json", action="store_true")
 
-    master = sub.add_parser("master")
+    master = sub.add_parser("master", help="register an optional Resolve premium-finish export as the active master")
     master.add_argument("episode_id")
     master.add_argument("--input")
     master.add_argument("--force", action="store_true")
@@ -398,6 +523,12 @@ def build_parser() -> argparse.ArgumentParser:
     h3_sub = h3.add_subparsers(dest="h3_command", required=True)
     h3_doctor_parser = h3_sub.add_parser("doctor")
     h3_doctor_parser.add_argument("--json", action="store_true")
+    h3_prompt_record = h3_sub.add_parser("prompt-record", help="validate and persist a locally agent-authored official H3 prompt")
+    h3_prompt_record.add_argument("episode_id")
+    h3_prompt_record.add_argument("--shot", required=True)
+    h3_prompt_record.add_argument("--prompt-file", required=True)
+    h3_prompt_record.add_argument("--revision", type=int, default=1)
+    h3_prompt_record.add_argument("--json", action="store_true")
     for name in ("prepare", "submit", "status", "pull"):
         command = h3_sub.add_parser(name)
         command.add_argument("episode_id")
@@ -489,6 +620,10 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_animatic_review(args, paths)
         if args.command == "creative":
             return _cmd_creative(args, paths)
+        if args.command == "image":
+            return _cmd_image(args, paths)
+        if args.command == "skills":
+            return _cmd_skills(args)
         if args.command == "voice":
             return _cmd_voice(args, paths)
         if args.command == "qc":

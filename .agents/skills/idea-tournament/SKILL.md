@@ -1,7 +1,6 @@
 ---
 name: idea-tournament
 description: Compare story candidates through pairwise reasoning and compose stronger hybrid angles.
-triggers: idea tournament, angle competition, pairwise creative comparison
 ---
 
 # Objective

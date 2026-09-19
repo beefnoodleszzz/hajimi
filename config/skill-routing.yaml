@@ -1,0 +1,105 @@
+schema_version: hajimi-skill-routing-v1
+orchestrator:
+  skill: creative-video-orchestrator
+  policy: route stages and validate handoffs; do not replace specialist creative work
+  entry_files:
+    - AGENTS.md
+    - CLAUDE.md
+    - GEMINI.md
+
+execution_protocol:
+  steps:
+    - identify_current_stage
+    - load_project_adapter
+    - load_canonical_specialist_skill
+    - read_required_inputs
+    - execute_specialist_or_tool
+    - write_hajimi_artifact
+    - validate_artifact_and_provenance
+    - advance_only_when_gate_passes
+  failure: retain current stage, record the missing or invalid artifact, and do not fabricate it
+
+stages:
+  idea:
+    specialists: [idea-discovery, idea-tournament, research-editor, reference-deconstructor]
+    director: creative-director
+    inputs: [episodes/<episode_id>/research/topic_brief.md, episodes/<episode_id>/research/fact_pack.md]
+    outputs: [episodes/<episode_id>/creative/idea_analysis.yaml, episodes/<episode_id>/creative/angle_tournament.yaml, episodes/<episode_id>/creative/creative_direction.yaml]
+    gate: factual claims have source evidence and a selected creative direction has a clear viewer promise
+  script:
+    specialist: short-form-video-script
+    director: creative-director
+    adapter: short-script-editor
+    inputs: [research/fact_pack.md, creative/creative_direction.yaml, creative/angle_tournament.yaml]
+    outputs: [creative/hook_competition.yaml, creative/mute_read.yaml, creative/beat_script.yaml]
+    gate: at least 3 materially different hook concepts; MUTE READ is PASS before script lock; beat script matches beat-script-v2
+    failure: return to script/visual design when mute-first read fails; Python validates and packages only
+  visual_concept:
+    specialist: visual-concept-director
+    inputs: [creative/beat_script.yaml, creative/creative_direction.yaml]
+    outputs: [creative/visual_concept.yaml]
+    gate: each beat has visible information and a meaningful visual action
+  storyboard:
+    director: storyboard-director
+    methods: [short-drama-agent]
+    contract: shot-designer
+    inputs: [creative/beat_script.yaml, creative/visual_concept.yaml]
+    outputs: [storyboard/storyboard_v01.yaml, shots/Sxxx/shot.yaml, storyboard/continuity_review.yaml]
+    gate: shot order/composition, continuity receive/handoff, prior/next shot, state locks, and one visible action are reviewed
+  animatic:
+    director: animatic-director
+    inputs: [storyboard/storyboard_v01.yaml, shots/Sxxx/shot.yaml]
+    outputs: [animatic/animatic.mp4, animatic/gate.json]
+    gate: production_gate is PASS before production image/video work
+  image:
+    specialist: gpt-image-2-style-library
+    adapter: ai-visual-producer
+    executor: codex_image_gen
+    inputs: [shots/Sxxx/shot.yaml, storyboard/continuity_review.yaml, selected references]
+    outputs: [shots/Sxxx/images/prompt.md, shots/Sxxx/images/prompt.json, shots/Sxxx/images/candidate_NN.*, shots/Sxxx/images/selected_keyframe.png]
+    gate: style decision and final prompt are agent-authored; artifact contract/hash validates before image_gen; director selects keyframe
+  video_prompt:
+    specialist: h3-prompt-writing
+    adapter: h3-video-director
+    inputs: [shots/Sxxx/shot.yaml, motion plan, selected first/last/reference images, audio intent, edit and generation duration]
+    outputs: [shots/Sxxx/h3/prompt.txt, shots/Sxxx/h3/prompt.json]
+    gate: official mode structure validates; environment audio intent is embedded; prompt artifact hashes still match
+    failure: Python rejects and packages the final prompt without creative rewriting; remote worker receives prompt unchanged
+  video_generation:
+    adapter: h3-video-director
+    backend: AutoDL_ComfyUI_MiniMax_H3
+    transport: SSH_only
+    inputs: [episodes/<episode_id>/shots/Sxxx/h3/prompt.txt, episodes/<episode_id>/shots/Sxxx/h3/prompt.json, selected keyframe assets]
+    outputs: [remote_jobs/<job_id>/job.json, remote result candidates, local candidate sidecars]
+    gate: local doctor, hashes, required native audio, local candidate review and shot QC
+  voice:
+    adapter: voice-director
+    executor: VoxCPM2_local
+    inputs: [creative/beat_script.yaml, audio/voice_plan.yaml]
+    outputs: [audio/production/narration.wav, audio/voice_manifest.yaml]
+    gate: production voice provenance matches locked script
+  sound:
+    director: sound-designer
+    executor: FFmpeg_roughcut_default
+    optional_executor: Resolve_Fairlight
+    inputs: [sound intent, approved H3 native ambience, VoxCPM2 narration, optional music/SFX/subtitles]
+    outputs: [edit/roughcut.yaml, edit/roughcut_manifest.json]
+    gate: configured optional music/subtitle paths exist; absent values are null
+  editing:
+    specialist: video-editing
+    adapter: ffmpeg-rough-editor
+    executor: studio.roughcut.build_roughcut
+    inputs: [episode.yaml timeline, selected approved H3 clips, VoxCPM2 narration, native ambience, optional music/SFX/subtitles]
+    outputs: [master/<episode_id>_rough_vNNN.mp4, edit/roughcut_manifest.json]
+    gate: probe output and verify manifest hashes; run final-master-qc
+  master:
+    qc: final-master-qc
+    optional_finish: resolve-editor
+    inputs: [FFmpeg rough master or Resolve export]
+    outputs: [qc/master_report.json, master approval bound to active hash]
+    gate: technical QC PASS and recorded human playback/review
+  publish:
+    adapter: youtube-publisher
+    inputs: [active master, final QC, bound human review, valid title/description/audience/disclosure]
+    outputs: [publish/youtube.json, publish/preflight.json]
+    gate: FFmpeg source does not require Resolve readback; Resolve source does

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import shutil
 import subprocess
 from pathlib import Path
@@ -10,12 +11,23 @@ import pytest
 from studio.config import dump_yaml, load_yaml, write_json
 from studio.manifest import load_manifest
 from studio.remote.contract import H3_BACKEND, prepare_h3_jobs, sha256_file, validate_h3_job
+from studio.remote.contract import h3_frame_count, h3_generation_duration
+from studio.remote.prompt import write_h3_prompt_artifact
 from studio.remote.result import import_h3_result, select_h3_candidate, validate_h3_result
 from studio.remote import ssh_transport
 from studio.provenance import validate_shot_provenance
 
 
 EPISODE_ID = "EP099_remote-contract"
+AUDIO_INTENT = "soft wind around the platform with one quiet mechanical scale click as the cloud settles"
+H3_PROMPT = """For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] Live-action, grounded miniature macro realism; preserve the compact cloud and centered portrait composition from <Picture 1>. The cloud settles onto the scale during the first 1.2 seconds, completing its central action within the 1.4-second edit slot; from there to 5.17 seconds it holds a natural, stable after-motion with only a subtle fabric-like edge response. No narration and no dialogue.
+
+overall_soundscape: soft wind around the platform with one quiet mechanical scale click as the cloud settles
+
+non_diegetic_music: N/A
+"""
 
 
 @pytest.mark.parametrize("transfer_tool", ["rsync", "scp"])
@@ -80,10 +92,11 @@ def _project(root: Path, *, include_keyframe: bool = True) -> Path:
             "palette": "navy and white",
             "continuity": {"identity": "same cloud"},
             "forbidden": ["generated text"],
+            "audio_intent": AUDIO_INTENT,
         },
         "motion_plan": {
             "source_keyframe": "shots/S001/images/selected_keyframe.png",
-            "duration_target": 1.0,
+            "duration_target": 1.4,
             "subject_motion": "settles by a few centimeters",
             "environmental_motion": "subtle scale vibration",
             "camera_motion": "small push",
@@ -111,7 +124,7 @@ def _project(root: Path, *, include_keyframe: bool = True) -> Path:
         "language": "en-US",
         "aspect_ratio": "9:16",
         "master": {"width": 1080, "height": 1920, "fps": 24, "sample_rate": 48000},
-        "creative": {"promise": "Test promise", "hero_shot": "S001", "target_duration_sec": 1.0},
+        "creative": {"promise": "Test promise", "hero_shot": "S001", "target_duration_sec": 1.4},
         "script": {"path": "script.md"},
         "audio": {"narrator": "science_female_main", "target_lufs": -14, "true_peak_max_db": -1},
         "shots": [{
@@ -120,13 +133,23 @@ def _project(root: Path, *, include_keyframe: bool = True) -> Path:
             "method": "h3_i2v",
             "status": "storyboard",
             "active_media": None,
-            "duration_target": 1.0,
+            "duration_target": 1.4,
             "remote_status": "NOT_READY",
         }],
         "publish": {"visibility": "private"},
     }
     dump_yaml(manifest, episode / "episode.yaml")
     write_json({"production_gate": "PASS"}, episode / "animatic" / "gate.json")
+    if include_keyframe:
+        write_h3_prompt_artifact(
+            episode,
+            "S001",
+            "i2va",
+            H3_PROMPT,
+            AUDIO_INTENT,
+            ["shots/S001/images/selected_keyframe.png"],
+            h3_generation_duration(1.4),
+        )
     return episode
 
 
@@ -138,12 +161,19 @@ def _job() -> dict:
         "shot_id": "S001",
         "mode": "i2va",
         "candidate_count": 1,
-        "duration_sec": 1.0,
+        "duration_sec": 124 / 24,
+        "edit_duration_sec": 1.4,
+        "generation_duration_sec": 124 / 24,
         "aspect_ratio": "9:16",
-        "prompt": "A cloud settles gently.",
+        "prompt": H3_PROMPT,
+        "prompt_artifact": {
+            "path": "shots/S001/h3/prompt.txt",
+            "sha256": hashlib.sha256(H3_PROMPT.encode()).hexdigest(),
+            "official_skill": {"skill_path": "skills/h3-prompt-writing"},
+        },
         "inputs": {"first_frame": "assets/first.png", "last_frame": None, "reference_images": [], "reference_videos": [], "reference_audio": []},
         "input_sha256": {"assets/first.png": "a" * 64},
-        "audio": {"generate_native_audio": True, "intent": "soft wind, no voice, no music"},
+        "audio": {"generate_native_audio": True, "intent": AUDIO_INTENT},
         "preserve": [],
         "avoid": [],
         "output": {"video": True, "native_audio": True},
@@ -156,7 +186,7 @@ def _sample_mp4(path: Path) -> dict:
     if not ffmpeg or not ffprobe:
         pytest.skip("ffmpeg and ffprobe are required for the H3 result import contract")
     completed = subprocess.run(
-        [ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "color=c=navy:s=288x512:r=24:d=1", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000:duration=1", "-shortest", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-t", "1", str(path)],
+        [ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "color=c=navy:s=288x512:r=24:d=6", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000:duration=6", "-shortest", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-t", "6", str(path)],
         capture_output=True,
         text=True,
         check=False,
@@ -176,12 +206,25 @@ def test_job_contract_rejects_unsafe_assets_and_hash_mismatches() -> None:
     assert any("exactly match" in error for error in validate_h3_job(missing_hash))
 
 
+def test_h3_generation_floor_and_worker_alignment() -> None:
+    assert h3_generation_duration(1.4) == pytest.approx(124 / 24)
+    assert h3_frame_count(h3_generation_duration(1.4)) == 124
+    assert h3_frame_count(362 / 24) == 362
+    with pytest.raises(ValueError, match="split the shot"):
+        h3_generation_duration(362 / 24 + 0.01)
+
+
 def test_prepare_packages_only_selected_keyframe_and_records_hash(tmp_path: Path) -> None:
     episode = _project(tmp_path)
     packages = prepare_h3_jobs(tmp_path, EPISODE_ID, ["S001"])
     assert len(packages) == 1
     job = json.loads((packages[0] / "job.json").read_text(encoding="utf-8"))
     assert validate_h3_job(job) == []
+    assert job["edit_duration_sec"] == 1.4
+    assert job["generation_duration_sec"] == pytest.approx(124 / 24)
+    assert job["duration_sec"] != job["edit_duration_sec"]
+    assert job["prompt"] == H3_PROMPT
+    assert job["audio"]["intent"] in job["prompt"]
     assert job["input_sha256"]["assets/first_frame.png"] == sha256_file(packages[0] / "assets" / "first_frame.png")
     assert sorted(path.name for path in (packages[0] / "assets").iterdir()) == ["first_frame.png"]
     manifest = load_manifest(episode / "episode.yaml")

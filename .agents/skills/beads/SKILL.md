@@ -1,7 +1,6 @@
 ---
 name: beads
 description: Track durable Hajimi work, blockers, dependencies, and handoffs with bd.
-triggers: issue, task, blocker, claim, close, handoff
 ---
 
 # Objective

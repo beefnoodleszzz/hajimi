@@ -1,16 +1,17 @@
 ---
 name: final-master-qc
 description: Perform deterministic, visual-sample, subtitle, ASR, audio, and integrity checks on a master.
-triggers: master QC, final QC, release candidate, delivery check
 ---
 
 # Objective
 
-Decide whether a master is technically and editorially safe for private upload.
+Decide whether an FFmpeg roughcut or optional Resolve premium-finish master is
+technically and editorially safe for private upload.
 
 # Inputs
 
-Master file, manifest, subtitle/story typography spec, audio report, and shot QC.
+Active master file and source/hash record, manifest, roughcut manifest when the
+source is FFmpeg, subtitle/story typography spec, audio report, and shot QC.
 
 # Outputs
 
@@ -18,7 +19,8 @@ Master file, manifest, subtitle/story typography spec, audio report, and shot QC
 
 # Required Workflow
 
-1. Run deterministic metadata/decode and loudness checks.
+1. Identify `master.source`; run deterministic metadata/decode and loudness
+   checks on the exact active master hash.
 2. Build proxy, scene/contact samples, and key-time screenshots.
 3. Compare ASR with the locked script when ASR is available.
 4. Verify geometry, safe-zone declaration, and media integrity.
@@ -26,8 +28,10 @@ Master file, manifest, subtitle/story typography spec, audio report, and shot QC
 
 # Quality Gate
 
-No critical technical finding, dimensions/FPS/audio match manifest, and all
-required checks are recorded.
+No critical technical finding, dimensions/FPS/audio match manifest, FFmpeg
+roughcut provenance passes when applicable, Resolve readback passes when the
+source is Resolve, and all required checks are recorded. Human playback must be
+bound to the active master hash.
 
 # Failure Conditions
 

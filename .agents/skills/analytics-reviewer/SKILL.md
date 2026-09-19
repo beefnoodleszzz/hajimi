@@ -1,7 +1,6 @@
 ---
 name: analytics-reviewer
 description: Turn retention and production metrics into reusable learning records.
-triggers: analytics, retention, AVD, APV, learning loop
 ---
 
 # Objective

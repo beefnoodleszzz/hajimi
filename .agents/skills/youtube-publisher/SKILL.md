@@ -1,7 +1,6 @@
 ---
 name: youtube-publisher
 description: Safely prepare and execute YouTube Studio uploads through ego-browser with readback.
-triggers: YouTube, publish, upload, Studio, visibility, AI disclosure
 ---
 
 # Objective
@@ -11,8 +10,9 @@ all Studio state needed for later checks.
 
 # Inputs
 
-Private publish manifest, master QC PASS, master file, title/description,
-audience choice, and AI disclosure decision.
+Private publish manifest, source-specific master provenance, master QC PASS,
+hash-bound human playback, master file, title/description, audience choice,
+and AI disclosure decision.
 
 # Outputs
 
@@ -21,7 +21,11 @@ and schedule state.
 
 # Required Workflow
 
-1. Preflight all required fields and QC evidence.
+1. Preflight metadata, shot approval/QC/provenance, production VoxCPM2,
+   hash-bound master QC and human review. For an FFmpeg master, require the
+   roughcut manifest, current hashed inputs, and an output hash matching the
+   active master; Resolve readback is `NOT_APPLICABLE`. For a Resolve master,
+   require a passing Resolve readback as well.
 2. Create an independent ego-browser task space.
 3. Use `snapshotText()` to discover current controls; use `uploadFile()`.
 4. Fill metadata, read it back, disclose altered/synthetic content truthfully.

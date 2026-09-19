@@ -277,8 +277,8 @@ def build_roughcut(episode_root: str | Path) -> Path:
     config = load_yaml(roughcut_config_path)
     if config.get("schema_version") != "hajimi-roughcut-v1":
         raise ValueError("edit/roughcut.yaml has an unsupported schema_version")
-    music = _inside_episode(episode_root, config.get("music"), "roughcut music")
-    subtitles = _inside_episode(episode_root, config.get("subtitles"), "roughcut subtitles")
+    music = _inside_episode(episode_root, config.get("music"), "roughcut music", required=False)
+    subtitles = _inside_episode(episode_root, config.get("subtitles"), "roughcut subtitles", required=False)
     sfx = config.get("sfx", [])
     overlays = config.get("overlays", [])
     if not isinstance(sfx, list) or not isinstance(overlays, list):
@@ -300,8 +300,8 @@ def build_roughcut(episode_root: str | Path) -> Path:
     fps = _fps(manifest["master"]["fps"])
     sample_rate = int(manifest["master"]["sample_rate"])
     total_duration = float(shots[-1]["time_end"])
-    subtitle_cues = _subtitle_cues(subtitles, total_duration)
-    if not subtitle_cues:
+    subtitle_cues = _subtitle_cues(subtitles, total_duration) if subtitles else []
+    if subtitles and not subtitle_cues:
         raise ValueError("Roughcut subtitle file contains no cues inside the timeline")
     subtitle_font_size = config.get("subtitle_font_size", max(22, round(height * 0.032)))
     if not isinstance(subtitle_font_size, int) or not 16 <= subtitle_font_size <= 180:
@@ -345,8 +345,12 @@ def build_roughcut(episode_root: str | Path) -> Path:
         command += ["-i", str(media)]
     voice_index = len(clip_data)
     command += ["-i", str(voice)]
-    music_index = len(clip_data) + 1
-    command += ["-stream_loop", "-1", "-i", str(music)]
+    next_audio_input = len(clip_data) + 1
+    music_index: int | None = None
+    if music:
+        music_index = next_audio_input
+        command += ["-stream_loop", "-1", "-i", str(music)]
+        next_audio_input += 1
     sfx_paths: list[tuple[Path, float, float]] = []
     for index, cue in enumerate(sfx):
         if not isinstance(cue, dict):
@@ -362,10 +366,10 @@ def build_roughcut(episode_root: str | Path) -> Path:
         sfx_paths.append((path, float(start), float(gain_db)))
     sfx_indices: list[int] = []
     for path, _, _ in sfx_paths:
-        sfx_indices.append(len(clip_data) + 2 + len(sfx_indices))
+        sfx_indices.append(next_audio_input + len(sfx_indices))
         command += ["-i", str(path)]
 
-    overlay_input_start = len(clip_data) + 2 + len(sfx_paths)
+    overlay_input_start = next_audio_input + len(sfx_paths)
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="hajimi-roughcut-overlay-") as temporary:
         for index, item in enumerate(text_items):
@@ -414,13 +418,20 @@ def build_roughcut(episode_root: str | Path) -> Path:
             )
             video_label = output_label
         filters.append(f"{video_label}null[videoout]")
-        filters.append(
-            f"[{voice_index}:a:0]aresample={sample_rate},aformat=sample_fmts=fltp:channel_layouts=stereo,"
-            f"apad=whole_dur={total_duration:.6f},atrim=duration={total_duration:.6f},asplit=2[voice_mix][voice_sc]"
-        )
-        filters.append(f"[{music_index}:a:0]atrim=duration={total_duration:.6f},asetpts=PTS-STARTPTS,volume={music_gain_db:.2f}dB[music]")
-        filters.append("[music][voice_sc]sidechaincompress=threshold=0.025:ratio=7:attack=20:release=400[ducked]")
-        mix_inputs = ["[ambience]", "[voice_mix]", "[ducked]"]
+        if music is not None and music_index is not None:
+            filters.append(
+                f"[{voice_index}:a:0]aresample={sample_rate},aformat=sample_fmts=fltp:channel_layouts=stereo,"
+                f"apad=whole_dur={total_duration:.6f},atrim=duration={total_duration:.6f},asplit=2[voice_mix][voice_sc]"
+            )
+            filters.append(f"[{music_index}:a:0]atrim=duration={total_duration:.6f},asetpts=PTS-STARTPTS,volume={music_gain_db:.2f}dB[music]")
+            filters.append("[music][voice_sc]sidechaincompress=threshold=0.025:ratio=7:attack=20:release=400[ducked]")
+            mix_inputs = ["[ambience]", "[voice_mix]", "[ducked]"]
+        else:
+            filters.append(
+                f"[{voice_index}:a:0]aresample={sample_rate},aformat=sample_fmts=fltp:channel_layouts=stereo,"
+                f"apad=whole_dur={total_duration:.6f},atrim=duration={total_duration:.6f}[voice_mix]"
+            )
+            mix_inputs = ["[ambience]", "[voice_mix]"]
         for cue_index, (input_index, (_, start, gain_db)) in enumerate(zip(sfx_indices, sfx_paths)):
             delay_ms = round(start * 1000)
             filters.append(f"[{input_index}:a:0]aresample={sample_rate},volume={gain_db:.2f}dB,adelay={delay_ms}|{delay_ms}[sfx{cue_index}]")
@@ -463,12 +474,12 @@ def build_roughcut(episode_root: str | Path) -> Path:
         "inputs": {
             **{shot["id"]: {"path": item[0].relative_to(episode_root).as_posix(), "sha256": sha256_file(item[0])} for shot, item in zip(shots, clip_data)},
             "narration": {"path": voice.relative_to(episode_root).as_posix(), "sha256": sha256_file(voice)},
-            "music": {"path": music.relative_to(episode_root).as_posix(), "sha256": sha256_file(music)},
-            "subtitles": {"path": subtitles.relative_to(episode_root).as_posix(), "sha256": sha256_file(subtitles)},
+            "music": {"path": music.relative_to(episode_root).as_posix(), "sha256": sha256_file(music)} if music else None,
+            "subtitles": {"path": subtitles.relative_to(episode_root).as_posix(), "sha256": sha256_file(subtitles)} if subtitles else None,
             "roughcut_plan": {"path": roughcut_config_path.relative_to(episode_root).as_posix(), "sha256": sha256_file(roughcut_config_path)},
             "sfx": [{"path": path.relative_to(episode_root).as_posix(), "sha256": sha256_file(path), "start_sec": start, "gain_db": gain} for path, start, gain in sfx_paths],
         },
-        "mix": {"native_ambience": "H3 candidate audio", "music_ducking": "sidechaincompress", "music_gain_db": music_gain_db, "target_lufs": target_lufs, "true_peak_db": true_peak_max},
+        "mix": {"native_ambience": "H3 candidate audio", "music_ducking": "sidechaincompress" if music else None, "music_gain_db": music_gain_db if music else None, "target_lufs": target_lufs, "true_peak_db": true_peak_max},
         "probe": probe,
     }
     write_json(report, episode_root / "edit" / "roughcut_manifest.json")

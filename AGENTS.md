@@ -105,7 +105,47 @@ results in SQLite.
 
 ## Agent Skill Routing
 
-Use project skills under `.agents/skills/`:
+Before production work, read `config/skill-routing.yaml` and load only the
+skills for the active stage. Shared upstream skills are available through the
+canonical user skill store; Hajimi adapters and directors live under
+`.agents/skills/`.
+
+For every stage: identify the current gate; load its adapter and required
+specialist; read required episode artifacts; write the Hajimi-native output;
+validate its contract and provenance; advance only when the gate passes. If an
+input, skill, or output is unavailable, record the missing artifact and keep
+the episode at the current stage. Never fabricate a handoff.
+
+### Production stages
+
+- Idea and research → `idea-discovery`, `idea-tournament`, `research-editor`,
+  `reference-deconstructor`, directed by `creative-director`.
+- Script → canonical `short-form-video-script` for retention craft, then
+  `short-script-editor` for Hajimi beat schema, hook competition, and MUTE READ.
+- Visual concept → `visual-concept-director`.
+- Storyboard and continuity → `storyboard-director`, using
+  `short-drama-agent` methods, then `shot-designer` for Shot Contracts.
+- Animatic → `animatic-director`; production image/video work requires the
+  passed manifest production gate.
+- Image → canonical `gpt-image-2-style-library`, then `ai-visual-producer`,
+  then Codex `image_gen`; Python records exact prompt and provenance.
+- H3 → `generation-director` chooses the supported route; official
+  `h3-prompt-writing` authors the prompt; `h3-video-director` validates,
+  packages, submits, pulls, and hands off local candidates. AutoDL/ComfyUI/
+  MiniMax H3 is the remote executor.
+- Voice and sound → `voice-director` with local VoxCPM2 for production
+  narration; `sound-designer` authors cues for the FFmpeg roughcut path.
+- Edit → canonical `video-editing` supplies relevant craft;
+  `ffmpeg-rough-editor` adapts the Hajimi timeline to `studio.roughcut`.
+  FFmpeg is the complete automatic editor; Resolve is optional premium finishing.
+- QC and delivery → `fast-media-qc`, then `final-master-qc`, then
+  `youtube-publisher`; `analytics-reviewer` owns post-publication analysis.
+
+The top-level `creative-video-orchestrator` selects the next specialist,
+checks artifacts and gates, and routes recovery. It does not replace the
+creative director or write specialist prompts, continuity, or edit commands.
+
+Use project skills under `.agents/skills/` for the following Hajimi roles:
 
 - creative direction → `creative-director`
 - end-to-end video orchestration → installed `creative-video-orchestrator`
@@ -117,7 +157,7 @@ Use project skills under `.agents/skills/`:
 - shot method → `shot-designer`
 - AI image generation → `ai-visual-producer`
 - H3 video generation → `h3-video-director` through local SSH transport
-- automatic local edit → installed `video-editing` skill, applied to Hajimi's `roughcut` workflow
+- automatic local edit → `ffmpeg-rough-editor` adapter with canonical `video-editing`
 - optional premium edit → `resolve-editor`
 - sound → `sound-designer`
 - shot QC → `fast-media-qc`

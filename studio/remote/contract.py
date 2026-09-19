@@ -12,6 +12,7 @@ from typing import Any, Mapping
 
 from ..config import dump_yaml, load_yaml, write_json
 from ..manifest import EPISODE_RE, assert_valid_manifest, load_manifest
+from .prompt import load_h3_prompt_artifact, validate_h3_prompt
 
 H3_JOB_SCHEMA_VERSION = "hajimi-h3-remote-v1"
 H3_RESULT_SCHEMA_VERSION = H3_JOB_SCHEMA_VERSION
@@ -22,6 +23,40 @@ JOB_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{2,119}$")
 SHOT_ID_RE = re.compile(r"^S\d{3}$")
 SHA256_RE = re.compile(r"^[a-f0-9]{64}$")
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp"}
+H3_FPS = 24
+H3_MIN_FRAMES = 124
+H3_MAX_FRAMES = 362
+
+
+def h3_frame_count(duration_sec: float) -> int:
+    """Mirror the worker's 17k+5 length alignment for local contract checks."""
+
+    value = max(5, round(duration_sec * H3_FPS))
+    return value + (5 - value % 17) % 17
+
+
+def h3_generation_duration(edit_duration_sec: float, requested_duration_sec: Any = None) -> float:
+    if not isinstance(edit_duration_sec, (int, float)) or isinstance(edit_duration_sec, bool) or edit_duration_sec <= 0:
+        raise ValueError("edit_duration_sec must be positive")
+    if requested_duration_sec is not None and (
+        not isinstance(requested_duration_sec, (int, float))
+        or isinstance(requested_duration_sec, bool)
+        or requested_duration_sec <= 0
+    ):
+        raise ValueError("generation_duration_sec must be positive when provided")
+    target = max(
+        float(edit_duration_sec),
+        H3_MIN_FRAMES / H3_FPS,
+        float(requested_duration_sec) if requested_duration_sec is not None else 0.0,
+    )
+    aligned_frames = h3_frame_count(target)
+    while aligned_frames / H3_FPS + 1e-9 < target:
+        aligned_frames += 17
+    if aligned_frames > H3_MAX_FRAMES:
+        raise ValueError(
+            f"H3 generation requires {aligned_frames} frames, above the {H3_MAX_FRAMES}-frame limit; split the shot"
+        )
+    return aligned_frames / H3_FPS
 
 
 def sha256_file(path: str | Path) -> str:
@@ -58,8 +93,24 @@ def validate_h3_job(job: Mapping[str, Any]) -> list[str]:
     if not isinstance(count, int) or isinstance(count, bool) or count < 1 or count > 8:
         errors.append("candidate_count must be an integer from 1 to 8")
     duration = job.get("duration_sec")
-    if not isinstance(duration, (int, float)) or isinstance(duration, bool) or duration <= 0 or duration > 30:
-        errors.append("duration_sec must be greater than 0 and at most 30")
+    if not isinstance(duration, (int, float)) or isinstance(duration, bool) or duration <= 0:
+        errors.append("duration_sec must be positive")
+    else:
+        frame_count = h3_frame_count(float(duration))
+        if not H3_MIN_FRAMES <= frame_count <= H3_MAX_FRAMES:
+            errors.append(f"generation duration must align to {H3_MIN_FRAMES}-{H3_MAX_FRAMES} H3 frames")
+        if abs(frame_count / H3_FPS - float(duration)) > 1e-6:
+            errors.append("duration_sec must equal an aligned H3 frame count at 24 fps")
+    edit_duration = job.get("edit_duration_sec")
+    generation_duration = job.get("generation_duration_sec")
+    if not isinstance(edit_duration, (int, float)) or isinstance(edit_duration, bool) or edit_duration <= 0:
+        errors.append("edit_duration_sec must be positive")
+    elif isinstance(generation_duration, (int, float)) and generation_duration + 1e-6 < edit_duration:
+        errors.append("generation_duration_sec must cover edit_duration_sec")
+    if not isinstance(generation_duration, (int, float)) or isinstance(generation_duration, bool) or generation_duration <= 0:
+        errors.append("generation_duration_sec must be positive")
+    elif isinstance(duration, (int, float)) and abs(float(duration) - float(generation_duration)) > 1e-6:
+        errors.append("duration_sec must equal generation_duration_sec")
     if job.get("aspect_ratio") not in {"9:16", "16:9", "1:1"}:
         errors.append("aspect_ratio must be 9:16, 16:9, or 1:1")
     if not isinstance(job.get("prompt"), str) or not job["prompt"].strip():
@@ -114,6 +165,30 @@ def validate_h3_job(job: Mapping[str, Any]) -> list[str]:
         errors.append("audio.generate_native_audio must be true")
     elif not isinstance(audio.get("intent"), str) or not audio["intent"].strip():
         errors.append("audio.intent is required")
+    else:
+        image_count = sum(bool(inputs.get(field)) for field in ("first_frame", "last_frame")) + len(inputs.get("reference_images", []))
+        prompt_errors = validate_h3_prompt(
+            str(job.get("mode")),
+            str(job.get("prompt", "")),
+            audio["intent"],
+            float(generation_duration) if isinstance(generation_duration, (int, float)) else 0.0,
+            allow_non_diegetic_music=job.get("non_diegetic_music_allowed") is True,
+            reference_image_count=image_count,
+        )
+        errors.extend(prompt_errors)
+    prompt_artifact = job.get("prompt_artifact")
+    if not isinstance(prompt_artifact, Mapping) or not isinstance(prompt_artifact.get("path"), str) or not isinstance(prompt_artifact.get("sha256"), str):
+        errors.append("prompt_artifact path and sha256 are required")
+    else:
+        artifact_path = PurePosixPath(prompt_artifact["path"])
+        if artifact_path.is_absolute() or ".." in artifact_path.parts:
+            errors.append("prompt_artifact path must be a safe episode-relative path")
+        prompt_text = job.get("prompt")
+        if isinstance(prompt_text, str) and hashlib.sha256(prompt_text.encode("utf-8")).hexdigest() != prompt_artifact["sha256"]:
+            errors.append("prompt_artifact sha256 must match the exact job prompt bytes")
+        official_skill = prompt_artifact.get("official_skill")
+        if not isinstance(official_skill, Mapping) or official_skill.get("skill_path") != "skills/h3-prompt-writing":
+            errors.append("prompt_artifact must identify the official h3-prompt-writing source")
     output = job.get("output")
     if not isinstance(output, Mapping) or output.get("video") is not True or output.get("native_audio") is not True:
         errors.append("output must request video and native_audio")
@@ -148,29 +223,6 @@ def _as_text_list(value: Any) -> list[str]:
     if isinstance(value, list):
         return [str(part).strip() for part in value if isinstance(part, (str, int, float)) and str(part).strip()]
     return []
-
-
-def _shot_prompt(shot: Mapping[str, Any]) -> str:
-    contract = shot.get("shot_contract") if isinstance(shot.get("shot_contract"), Mapping) else {}
-    motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), Mapping) else {}
-    sections: list[str] = []
-    for label, value in (
-        ("Visual goal", contract.get("visual_goal")),
-        ("Subject and environment", "; ".join(str(contract.get(key)) for key in ("subject", "environment") if contract.get(key))),
-        ("Composition", contract.get("composition")),
-        ("Subject motion", motion.get("subject_motion") or contract.get("subject_motion")),
-        ("Environmental motion", motion.get("environmental_motion") or contract.get("environmental_motion")),
-        ("Camera motion", motion.get("camera_motion") or contract.get("camera_motion")),
-        ("Start state", motion.get("start_state")),
-        ("Middle state", motion.get("middle_state")),
-        ("End state", motion.get("end_state")),
-        ("Lighting and palette", "; ".join(str(contract.get(key)) for key in ("lighting", "palette") if contract.get(key))),
-    ):
-        if isinstance(value, str) and value.strip():
-            sections.append(f"{label}: {value.strip()}")
-    if not sections:
-        raise ValueError(f"{shot.get('id', 'shot')} has no visual or motion prompt content")
-    return "\n".join(sections)
 
 
 def _asset_spec(episode_root: Path, shot: Mapping[str, Any], mode: str) -> tuple[list[tuple[str, Path]], dict[str, Any]]:
@@ -244,12 +296,10 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
     candidate_count = plan.get("candidates", 1)
     if not isinstance(candidate_count, int) or isinstance(candidate_count, bool):
         raise ValueError(f"{shot_id} video_candidate_plan.candidates must be an integer")
-    duration = manifest_shot.get("duration_target")
-    if not isinstance(duration, (int, float)):
-        motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), Mapping) else {}
-        duration = motion.get("duration_target")
-    if not isinstance(duration, (int, float)) or duration <= 0:
-        raise ValueError(f"{shot_id} duration_target is required for H3")
+    start, end = manifest_shot.get("time_start"), manifest_shot.get("time_end")
+    duration = (float(end) - float(start)) if isinstance(start, (int, float)) and isinstance(end, (int, float)) else manifest_shot.get("duration_target")
+    if not isinstance(duration, (int, float)) or isinstance(duration, bool) or duration <= 0:
+        raise ValueError(f"{shot_id} timeline edit duration is required for H3")
     contract = shot.get("shot_contract") if isinstance(shot.get("shot_contract"), Mapping) else {}
     motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), Mapping) else {}
     continuity = contract.get("continuity") if isinstance(contract.get("continuity"), Mapping) else {}
@@ -259,12 +309,27 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
     avoid = _as_text_list(motion.get("avoid")) + _as_text_list(contract.get("forbidden"))
     environment = contract.get("environment")
     environment_motion = motion.get("environmental_motion") or contract.get("environmental_motion")
-    audio_intent = "; ".join(value for value in (
-        f"Natural ambience for {environment}" if isinstance(environment, str) and environment else None,
-        f"Physical environmental sound: {environment_motion}" if isinstance(environment_motion, str) and environment_motion else None,
-        "No dialogue and no music",
-    ) if value)
-    job_id = f"{episode_id}_{shot_id}_r{revision:02d}"
+    allow_music_value = contract.get("non_diegetic_music")
+    if allow_music_value is None:
+        allow_music_value = shot.get("non_diegetic_music")
+    allow_music = isinstance(allow_music_value, str) and bool(allow_music_value.strip()) and allow_music_value.strip() != "N/A"
+    audio_intent = contract.get("audio_intent")
+    if not isinstance(audio_intent, str) or not audio_intent.strip():
+        raise ValueError(f"{shot_id} Shot Contract must author audio_intent before H3 prompt writing")
+    requested_generation = motion.get("generation_duration_sec")
+    generation_duration = h3_generation_duration(float(duration), requested_generation)
+    prompt_artifact = load_h3_prompt_artifact(
+        episode_root,
+        shot_id,
+        mode,
+        [source for _, source in files],
+        generation_duration,
+        allow_non_diegetic_music=allow_music,
+    )
+    if prompt_artifact.get("audio_intent") != audio_intent.strip():
+        raise ValueError(f"{shot_id} H3 prompt overall_soundscape must match the Shot Contract audio_intent")
+    job_id = f"{episode_id}_{shot_id}_r{prompt_artifact['job_revision']:02d}"
+    prompt_path = episode_root / "shots" / shot_id / "h3" / "prompt.txt"
     job: dict[str, Any] = {
         "schema_version": H3_JOB_SCHEMA_VERSION,
         "job_id": job_id,
@@ -272,11 +337,22 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
         "shot_id": shot_id,
         "mode": mode,
         "candidate_count": candidate_count,
-        "duration_sec": float(duration),
+        "edit_duration_sec": float(duration),
+        "generation_duration_sec": generation_duration,
+        "duration_sec": generation_duration,
         "aspect_ratio": "9:16",
-        "prompt": _shot_prompt(shot),
+        "prompt": prompt_artifact["prompt"],
+        "prompt_artifact": {
+            "path": prompt_path.relative_to(episode_root).as_posix(),
+            "sha256": sha256_file(prompt_path),
+            "metadata_path": (prompt_path.parent / "prompt.json").relative_to(episode_root).as_posix(),
+            "metadata_sha256": sha256_file(prompt_path.parent / "prompt.json"),
+            "source_shot_contract_sha256": prompt_artifact["source_shot_contract_sha256"],
+            "official_skill": prompt_artifact["official_skill"],
+        },
         "inputs": inputs,
-        "audio": {"generate_native_audio": True, "intent": audio_intent},
+        "audio": {"generate_native_audio": True, "intent": prompt_artifact["audio_intent"]},
+        "non_diegetic_music_allowed": allow_music,
         "preserve": preserve,
         "avoid": avoid,
         "output": {"video": True, "native_audio": True},

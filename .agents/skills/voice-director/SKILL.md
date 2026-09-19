@@ -1,7 +1,6 @@
 ---
 name: voice-director
 description: Direct narrator performance and candidate selection for local VoxCPM2 production voice.
-triggers: voice direction, narrator direction, voice plan, narration takes
 ---
 
 # Objective

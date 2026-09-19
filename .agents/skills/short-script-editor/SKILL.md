@@ -1,56 +1,70 @@
 ---
 name: short-script-editor
-description: Convert research into a timed beat script with hook, escalation, payoff, and loop.
-triggers: script, beat sheet, voiceover, shorts rewrite
+description: Convert upstream short-form script craft and Hajimi direction into a validated beat-script-v2 artifact with hook and mute-read decisions.
 ---
 
-# Objective
+# Role
 
-Write a filmable beat sequence where each sentence has one punch and each
-visual changes the audience's mental model.
+Be Hajimi's beat-script schema and gate adapter. `short-form-video-script`
+owns general retention craft; `creative-director` owns the final creative
+direction and hook choice. Capture their work in Hajimi's contract instead of
+repeating their general methods.
 
-Write visual-first: every beat needs a concrete visual action, the information
-that action reveals, and a reason the audience must keep watching. Voiceover
-supports the image; it must not be used to excuse a static plate.
+Consult `config/skill-routing.yaml` for the final script-stage route, required
+inputs, and artifact location.
 
 # Inputs
 
-Fact pack, creative brief, duration, and channel typography rules.
+- Research fact pack and claim references from `research-editor`.
+- Creative brief and tournament direction from `creative-director` and
+  `idea-tournament`.
+- Script-craft result from `short-form-video-script`, including distinct hook
+  options and a proposed beat sequence.
+- Episode duration, language, and manifest constraints.
 
 # Outputs
 
-Versioned beat script under `episodes/<episode>/script/` with time, voice,
-visual, sound, and purpose per beat.
+Write `episodes/<episode>/creative/beat_script.yaml` with
+`schema_version: beat-script-v2`, the selected hook, hook competition, mute
+read result, and timed beats. Each beat carries `id`, `purpose`, `narration`,
+`visual_action`, `visual_information`, `camera_event`, `sound_event`,
+`emotional_change`, `duration_target`, `visual_role`, and `fact_refs`.
 
-# Required Workflow
+`hook_competition` records 3–5 materially different alternatives. Each
+alternative states its visual event, verbal hook, and screen-information hook;
+the set must differ in the audience-facing idea or event, not just wording.
+Record the selected alternative and the creative director's rationale.
 
-1. Put anomaly/result in the first 1.5 seconds.
-2. Keep one sentence to one punch; say numbers once.
-3. Escalate from personal to system scale.
-4. Correct the most likely misconception.
-5. Earn a loop or comment question.
-6. Label each beat's visual role and tie it to the storyboard's HERO, STORY, or
-   CONNECTOR hierarchy.
+`mute_read` records PASS/FAIL, what the viewer understands without audio, the
+first visible event, whether cognition changes within three seconds, and any
+revision needed. This decision is required before script lock.
 
-# Quality Gate
+# Workflow
 
-Mute-readable beats, 1–3 second visual change plan, 34–38 second target for
-EP001, and every claim links back to research. Each beat exposes a
-`visual_action` and an `information_change` that can be checked without audio.
+1. Consume upstream craft output and the approved direction. Do not recreate
+   generic hook, loop, or retention theory.
+2. Preserve factual claims and attach `fact_refs` to the beats that use them.
+   Convert the script into the beat schema without changing the intended
+   direction silently.
+3. Capture the 3–5 distinct hook options and selected combination. If the
+   upstream result or creative direction does not provide real alternatives,
+   return for hook development instead of manufacturing near-duplicate lines.
+4. Run the MUTE READ before lock: check that the first image contains an event,
+   core change is understandable with sound off, and visuals advance the idea
+   without narration. A failure returns to script or visual design.
+5. Validate all beat fields and duration targets against the current episode
+   contract, then hand off the artifact.
 
 # Failure Conditions
 
-Intro before event, paragraph narration, redundant conversions, or a false
-question with no real options.
-
-# Tools
-
-Manifest, fact pack, ASR diff after audio exists.
-
-# Forbidden Patterns
-
-Do not reuse legacy wording or write visuals that can only be a static plate.
+Fail handoff for missing or unsupported `fact_refs`, a missing beat field,
+fewer than three or more than five distinct hook options, an unresolved mute
+read, narration with no visual action/information, or a script that exceeds
+the episode's approved duration. Do not lock a failed artifact.
 
 # Handoff
 
-Hand the locked beat script to `storyboard-director` and `sound-designer`.
+Pass the validated `beat_script-v2` and hook/mute-read records to
+`storyboard-director`. Pass the locked narration and beat purposes to
+`voice-director` and sound intent to `sound-designer`. The final project route
+and consumer paths are recorded in `config/skill-routing.yaml`.

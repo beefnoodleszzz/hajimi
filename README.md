@@ -18,17 +18,18 @@ EPISODE_ID=EP099_your-episode
 uv run hajimi status "$EPISODE_ID"
 uv run hajimi animatic "$EPISODE_ID"
 uv run hajimi qc episode "$EPISODE_ID"
-uv run hajimi master "$EPISODE_ID" --input "episodes/$EPISODE_ID/master/final.mp4"
 uv run hajimi qc master "$EPISODE_ID"
 uv run hajimi h3 doctor
 uv run hajimi h3 prepare "$EPISODE_ID"
 uv run hajimi roughcut build "$EPISODE_ID"
+uv run hajimi publish doctor "$EPISODE_ID"
+uv run hajimi skills doctor
 ```
 
 Create an episode manifest, storyboard, and shot contracts before running this
 workflow. The animatic is a deliberate pre-production gate: deterministic cards
 and temporary sound stems prove the story rhythm before costly AI shot
-generation or Resolve finishing.
+generation.
 
 Animatic approval is split into three machine-readable states:
 `automation_gate`, `director_review`, and `production_gate`. Run the automation
@@ -46,10 +47,17 @@ the candidate enters the roughcut. Generated assets and provenance under each
 episode's `shots/` directory are the artifact source of truth; paths are
 episode-relative.
 
-Resolve and YouTube checks are capability/readiness contracts, not hidden
-automation. Use `uv run hajimi resolve doctor` and
-`uv run hajimi publish doctor "$EPISODE_ID"`; an external visible runtime is
-required before any mutation or upload. YouTube defaults to a private upload.
+FFmpeg builds a complete rough master from approved shots and local audio.
+Resolve is optional premium finishing; `hajimi master "$EPISODE_ID" --input
+<resolve-export>` registers an export only when that path is chosen. YouTube
+preflight branches on `master.source`: an FFmpeg master is gated by its roughcut
+manifest and hashes, while a Resolve master also requires passing Resolve
+readback. YouTube defaults to a private upload.
+
+Stage routing and artifact gates are defined in `AGENTS.md` and
+`config/skill-routing.yaml`. Run `uv run hajimi skills doctor`, `list`, and
+`updates` to check the canonical shared skills, project adapters, and pinned
+upstream sources.
 
 Ordinary GitHub Core CI runs the Python contracts and compile checks only. Real
 H3 rendering requires the configured AutoDL worker and is not required for
@@ -89,6 +97,7 @@ selects versioned H3 jobs/results without exposing ComfyUI publicly. The remote
 worker renders and probes candidates; local Hajimi remains responsible for
 review and selection.
 
-The shared `video-editing` skill guides automatic roughcut and delivery work;
-the local H3 worker/client payload is specified in
+The canonical shared `video-editing` skill supplies relevant editing craft;
+the thin project `ffmpeg-rough-editor` adapter routes episode artifacts through
+`studio.roughcut`. The local H3 worker/client payload is specified in
 [`docs/remote-h3-protocol.md`](docs/remote-h3-protocol.md).

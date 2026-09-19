@@ -1,8 +1,8 @@
-"""Mechanical release-candidate transcode from an accepted animatic.
+"""Mechanical preview transcode from an accepted animatic.
 
-This command is a delivery fallback for local verification. Resolve remains
-the creative editor of record; the output is labelled `animatic_release_candidate`
-until the Resolve/Fusion/Fairlight handoff is completed.
+This is not the full FFmpeg roughcut path and does not create a publishable
+master. The normal local master is built from approved shots with
+``studio.roughcut``; optional Resolve exports are registered separately.
 """
 
 from __future__ import annotations
@@ -106,8 +106,8 @@ def build_release_candidate(episode_root: str | Path, manifest: dict[str, Any], 
             "output": _portable_path(episode_root.parent.parent, output),
             "created_at": datetime.now(timezone.utc).isoformat(),
             "master_type": "animatic_release_candidate",
-            "editor_of_record": "DaVinci Resolve 21.1",
-            "note": "Mechanical local verification output; replace with Resolve/Fusion/Fairlight master before publish.",
+            "editor_of_record": "FFmpeg animatic preview",
+            "note": "Mechanical animatic preview only; build the approved-shot FFmpeg roughcut before master QC.",
         },
         episode_root / "master" / "build.json",
     )
@@ -130,11 +130,10 @@ def _fps_value(value: Any) -> float | None:
 
 
 def register_resolve_master(episode_root: str | Path, manifest: dict[str, Any], source: str | Path, force: bool = False) -> dict[str, Any]:
-    """Register a real Resolve export as the active publishable master.
+    """Register a Resolve premium-finish export as the active master.
 
-    Resolve remains responsible for the creative edit and export. This function
-    only validates the exported file, copies it into the immutable episode
-    delivery location, and records its hash/probe evidence.
+    When the optional Resolve path is used, validate the export, copy it into
+    the immutable episode delivery location, and record its hash/probe evidence.
     """
 
     episode_root = Path(episode_root)

@@ -1,7 +1,6 @@
 ---
 name: reference-deconstructor
 description: Deconstruct high-performing references into reusable shot and sound grammar.
-triggers: reference analysis, competitor analysis, shot grammar, pattern library
 ---
 
 # Objective

@@ -1,7 +1,6 @@
 ---
 name: animatic-director
 description: Build and judge the low-cost storyboard animatic before production spend.
-triggers: animatic, animatic gate, temp VO, temp SFX, pacing gate
 ---
 
 # Objective

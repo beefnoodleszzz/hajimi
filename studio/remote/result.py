@@ -305,6 +305,9 @@ def select_h3_candidate(
     actual_duration = float(probe.get("format", {}).get("duration", 0.0) or 0.0)
     if isinstance(requested_duration, (int, float)) and actual_duration + 0.05 < float(requested_duration):
         raise ValueError(f"Candidate duration is shorter than the {shot_id} timeline target")
+    requested_generation = job.get("generation_duration_sec")
+    if isinstance(requested_generation, (int, float)) and actual_duration + 0.05 < float(requested_generation):
+        raise ValueError(f"Candidate duration is shorter than the {shot_id} H3 generation duration")
     decode = decode_check(source, probe)
     if not decode.get("ok"):
         raise RuntimeError("H3 candidate failed deterministic decode validation")

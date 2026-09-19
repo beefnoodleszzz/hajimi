@@ -349,7 +349,7 @@ def sync_episode(root: str | Path, episode_id: str) -> Path:
         "readback_contract": {"path": "edit/resolve_production_readback.json", "validator": "studio.resolve.sync.validate_resolve_readback"},
         "mode": "handoff_plan",
         "mutation": False,
-        "note": "Plan only. Resolve remains the editor of record; import active video/image-sequence media in manifest order and record its export readback.",
+        "note": "Optional premium-finish plan. Import active video/image-sequence media in manifest order and record export readback if Resolve is used.",
     }
     destination = episode_root / "edit" / "resolve_sync_manifest.json"
     write_json(payload, destination)

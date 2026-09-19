@@ -1,7 +1,6 @@
 ---
 name: creative-director
 description: Define the emotional curve, stop-scroll hook, hero shot, and cost-worthy visual thesis.
-triggers: creative brief, direction, hook, hero shot, emotional curve
 ---
 
 # Objective

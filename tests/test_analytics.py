@@ -9,9 +9,9 @@ from studio.analytics.schema import _record_from_manifest
 class AnalyticsTests(unittest.TestCase):
     def test_schema_initializes_episode_record(self):
         with tempfile.TemporaryDirectory() as directory:
-            destination = initialize_record(directory, "EP001_earth-stop")
+            destination = initialize_record(directory, "EP099_analytics-test")
             self.assertTrue(Path(destination).exists())
-            self.assertIn('"episode_id": "EP001_earth-stop"', Path(destination).read_text(encoding="utf-8"))
+            self.assertIn('"episode_id": "EP099_analytics-test"', Path(destination).read_text(encoding="utf-8"))
 
     def test_record_derives_creative_and_audio_peak_metrics(self):
         manifest = {

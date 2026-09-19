@@ -1,7 +1,6 @@
 ---
 name: visual-concept-director
 description: Decide what the audience should see before prompts or media generation.
-triggers: visual concept, hero frame, visual language, visual motif
 ---
 
 # Objective

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from studio.config import dump_yaml, write_json
+from studio.config import dump_yaml, load_yaml, write_json
 from studio.media.hashing import sha256_file
 from studio.manifest import manifest_input_hash
 from studio.publish.youtube import build_publish_plan, publish_doctor, record_upload_readback
@@ -22,7 +22,14 @@ def _manifest() -> dict:
         "format": "youtube_short",
         "language": "en-US",
         "aspect_ratio": "9:16",
-        "master": {"width": 1080, "height": 1920, "fps": 30, "sample_rate": 48000},
+        "master": {
+            "width": 1080,
+            "height": 1920,
+            "fps": 30,
+            "sample_rate": 48000,
+            "source": "resolve",
+            "path": "master/EP999_contract_master_final.mp4",
+        },
         "creative": {"promise": "Contract test", "hero_shot": "S001", "target_duration_sec": 2},
         "script": {"version": 1, "path": "script/script.md", "locked": False},
         "audio": {"narrator": "science_female_main", "voice_policy": "production_voxcpm2_local", "production_voice_provider": VOICE_PROVIDER, "target_lufs": -14, "true_peak_max_db": -1},
@@ -42,6 +49,7 @@ def _manifest() -> dict:
                 "time_end": 2,
                 "method": "fusion",
                 "status": "approved",
+                "active_media": "shots/S001/production/shot.mp4",
             }
         ],
     }
@@ -54,6 +62,7 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     (episode_root / "master").mkdir()
     (episode_root / "animatic").mkdir()
     (episode_root / "script").mkdir()
+    (episode_root / "edit").mkdir(parents=True)
     (episode_root / "audio" / "voxcpm2" / "run_0001").mkdir(parents=True)
     (episode_root / "creative").mkdir()
     shot_media = episode_root / "shots" / "S001" / "production" / "shot.mp4"
@@ -103,6 +112,15 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     joined = episode_root / "audio" / "production" / "narration.wav"
     joined.parent.mkdir(parents=True)
     joined.write_bytes(b"joined-contract-narration")
+    music = episode_root / "audio" / "music.wav"
+    music.write_bytes(b"contract-music")
+    subtitles = episode_root / "edit" / "captions.srt"
+    subtitles.write_text("1\n00:00:00,000 --> 00:00:02,000\nContract caption\n", encoding="utf-8")
+    roughcut_plan = episode_root / "edit" / "roughcut.yaml"
+    dump_yaml(
+        {"schema_version": "hajimi-roughcut-v1", "music": "audio/music.wav", "subtitles": "edit/captions.srt", "sfx": []},
+        roughcut_plan,
+    )
     voice = inspect_voice("science_female_main")
     current_script_hash = script_hash(episode_root)
     write_voice_manifest(
@@ -128,6 +146,35 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     )
     master = episode_root / "master" / "EP999_contract_master_final.mp4"
     master.write_bytes(b"master-contract-media")
+    roughcut_output = episode_root / "master" / "EP999_contract_rough_v001.mp4"
+    roughcut_output.write_bytes(b"ffmpeg-roughcut-media")
+    write_json(
+        {
+            "schema_version": "hajimi-roughcut-manifest-v1",
+            "episode_id": "EP999_contract",
+            "source": "ffmpeg",
+            "output": "master/EP999_contract_rough_v001.mp4",
+            "output_sha256": sha256_file(roughcut_output),
+            "timeline": [
+                {
+                    "shot_id": "S001",
+                    "start_sec": 0,
+                    "end_sec": 2,
+                    "duration_sec": 2,
+                    "source": "shots/S001/production/shot.mp4",
+                }
+            ],
+            "inputs": {
+                "S001": {"path": "shots/S001/production/shot.mp4", "sha256": sha256_file(shot_media)},
+                "narration": {"path": "audio/production/narration.wav", "sha256": sha256_file(joined)},
+                "music": {"path": "audio/music.wav", "sha256": sha256_file(music)},
+                "subtitles": {"path": "edit/captions.srt", "sha256": sha256_file(subtitles)},
+                "roughcut_plan": {"path": "edit/roughcut.yaml", "sha256": sha256_file(roughcut_plan)},
+                "sfx": [],
+            },
+        },
+        episode_root / "edit" / "roughcut_manifest.json",
+    )
     write_json(
         {
             "decision": "PASS",
@@ -199,16 +246,137 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
     return tmp_path, episode_root, master
 
 
+def _bind_master_approval(episode_root: Path, master: Path) -> None:
+    manifest = load_yaml(episode_root / "episode.yaml")
+    current_manifest_hash = manifest_input_hash(manifest)
+    current_master_hash = sha256_file(master)
+    report_path = episode_root / "qc" / "master_report.json"
+    report = json.loads(report_path.read_text())
+    report["master_sha256"] = current_master_hash
+    report["manifest_sha256"] = current_manifest_hash
+    report["approval_target"]["asset_sha256"] = current_master_hash
+    report["approval_target"]["manifest_sha256"] = current_manifest_hash
+    report["human_review"]["approval_target"]["asset_sha256"] = current_master_hash
+    report["human_review"]["approval_target"]["manifest_sha256"] = current_manifest_hash
+    write_json(report, report_path)
+
+    shot_report_path = episode_root / "qc" / "report.json"
+    shot_report = json.loads(shot_report_path.read_text())
+    for evidence in shot_report.get("shots", []):
+        target = evidence.get("approval_target")
+        if isinstance(target, dict):
+            target["manifest_sha256"] = current_manifest_hash
+    write_json(shot_report, shot_report_path)
+
+
+def _set_ffmpeg_master(episode_root: Path) -> Path:
+    manifest_path = episode_root / "episode.yaml"
+    manifest = load_yaml(manifest_path)
+    roughcut = json.loads((episode_root / "edit" / "roughcut_manifest.json").read_text())
+    manifest["master"]["source"] = "ffmpeg"
+    manifest["master"]["path"] = roughcut["output"]
+    dump_yaml(manifest, manifest_path)
+    master = episode_root / roughcut["output"]
+    _bind_master_approval(episode_root, master)
+    return master
+
+
 def test_publish_plan_has_ego_upload_contract_and_human_gate(tmp_path: Path) -> None:
     root, _, master = _ready_root(tmp_path)
 
     plan = build_publish_plan(root, "EP999_contract")
 
     assert plan["status"] == "READY"
+    assert plan["gate_details"]["resolve_readback"]["status"] == "PASS"
+    assert plan["checks"]["roughcut_manifest"] is True
+    assert plan["checks"]["roughcut_inputs_current"] is True
     assert plan["upload"]["method"] == "ego-browser"
     assert plan["upload"]["operation"] == "uploadFile"
     assert plan["master"]["sha256"] == sha256_file(master)
     assert plan["readback_contract"]["required"] == ["video_url", "visibility", "metadata", "checks", "processing", "schedule"]
+
+
+def test_ffmpeg_master_treats_resolve_readback_as_not_applicable(tmp_path: Path) -> None:
+    root, episode_root, _ = _ready_root(tmp_path)
+    _set_ffmpeg_master(episode_root)
+    (episode_root / "edit" / "resolve_production_readback.json").unlink()
+
+    plan = build_publish_plan(root, "EP999_contract")
+
+    assert plan["status"] == "READY"
+    assert plan["checks"]["resolve_readback"] is True
+    assert plan["gate_details"]["resolve_readback"] == {
+        "required": False,
+        "status": "NOT_APPLICABLE",
+        "passed": True,
+        "policy": "FFmpeg is the automatic editor; Resolve readback is required only for Resolve-sourced masters.",
+    }
+    assert plan["checks"]["roughcut_active_master_matches"] is True
+    for check in (
+        "shot_qc_evidence",
+        "shot_provenance",
+        "production_voice_voxcpm2",
+        "master_qc",
+        "human_playback_recorded",
+        "master_approval_hash_bound",
+        "title_exists",
+        "description_exists",
+        "ai_disclosure_resolved",
+        "audience_resolved",
+    ):
+        assert plan["checks"][check] is True
+
+
+def test_publish_plan_blocks_missing_roughcut_manifest(tmp_path: Path) -> None:
+    root, episode_root, _ = _ready_root(tmp_path)
+    _set_ffmpeg_master(episode_root)
+    (episode_root / "edit" / "roughcut_manifest.json").unlink()
+
+    plan = build_publish_plan(root, "EP999_contract")
+
+    assert plan["checks"]["roughcut_manifest"] is False
+    assert plan["status"] == "BLOCKED"
+
+
+def test_publish_plan_blocks_stale_roughcut_input_hash(tmp_path: Path) -> None:
+    root, episode_root, _ = _ready_root(tmp_path)
+    _set_ffmpeg_master(episode_root)
+    with (episode_root / "audio" / "music.wav").open("ab") as handle:
+        handle.write(b"changed")
+
+    plan = build_publish_plan(root, "EP999_contract")
+
+    assert plan["checks"]["roughcut_inputs_current"] is False
+    assert plan["status"] == "BLOCKED"
+
+
+def test_publish_plan_blocks_roughcut_output_hash_mismatch(tmp_path: Path) -> None:
+    root, episode_root, _ = _ready_root(tmp_path)
+    _set_ffmpeg_master(episode_root)
+    roughcut_path = episode_root / "edit" / "roughcut_manifest.json"
+    roughcut = json.loads(roughcut_path.read_text())
+    roughcut["output_sha256"] = "stale-output-hash"
+    write_json(roughcut, roughcut_path)
+
+    plan = build_publish_plan(root, "EP999_contract")
+
+    assert plan["checks"]["roughcut_manifest"] is False
+    assert plan["checks"]["roughcut_active_master_matches"] is False
+    assert plan["status"] == "BLOCKED"
+
+
+def test_resolve_master_still_requires_passing_readback(tmp_path: Path) -> None:
+    root, episode_root, _ = _ready_root(tmp_path)
+    readback_path = episode_root / "edit" / "resolve_production_readback.json"
+    readback = json.loads(readback_path.read_text())
+    readback["width"] = 720
+    write_json(readback, readback_path)
+
+    plan = build_publish_plan(root, "EP999_contract")
+
+    assert plan["checks"]["resolve_readback"] is False
+    assert plan["gate_details"]["resolve_readback"]["status"] == "FAIL"
+    assert plan["status"] == "BLOCKED"
 
 
 def test_publish_plan_does_not_call_stale_master_qc_fresh(tmp_path: Path) -> None:

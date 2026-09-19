@@ -1,7 +1,6 @@
 ---
 name: research-editor
 description: Verify facts, separate fact from inference, and maintain source-backed claim maps.
-triggers: research, fact check, source review, scientific accuracy
 ---
 
 # Objective

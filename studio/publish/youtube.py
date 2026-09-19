@@ -165,6 +165,211 @@ def _master_approval_passes(report: dict[str, Any] | None, manifest: dict[str, A
     )
 
 
+def _verified_episode_file(
+    episode_root: Path,
+    record: Any,
+    label: str,
+    errors: list[str],
+) -> Path | None:
+    if not isinstance(record, dict):
+        errors.append(f"{label}: missing path/hash record")
+        return None
+    value, digest = record.get("path"), record.get("sha256")
+    if not isinstance(value, str) or not value.strip() or Path(value).is_absolute():
+        errors.append(f"{label}: path must be episode-relative")
+        return None
+    path = (episode_root / value).resolve()
+    if not path.is_relative_to(episode_root.resolve()):
+        errors.append(f"{label}: path escapes episode directory")
+        return None
+    if not path.is_file():
+        errors.append(f"{label}: file is missing")
+        return None
+    if not isinstance(digest, str) or sha256_file(path) != digest:
+        errors.append(f"{label}: hash is stale")
+        return None
+    return path
+
+
+def _roughcut_preflight(
+    episode_root: Path,
+    manifest: dict[str, Any],
+    master_path: Path | None,
+    master_sha256: str | None,
+) -> dict[str, Any]:
+    """Verify the recorded FFmpeg roughcut and all hashed source inputs."""
+
+    errors: list[str] = []
+    input_errors: list[str] = []
+    master_source = str(manifest.get("master", {}).get("source", "")).lower()
+    ffmpeg_is_active_source = master_source == "ffmpeg"
+    manifest_path = episode_root / "edit" / "roughcut_manifest.json"
+    if not manifest_path.is_file():
+        return {
+            "manifest_passes": False,
+            "inputs_current": False,
+            "active_master_matches": not ffmpeg_is_active_source,
+            "active_master_match_status": "FAIL" if ffmpeg_is_active_source else "NOT_APPLICABLE",
+            "status": "FAIL",
+            "errors": ["roughcut_manifest_missing"],
+        }
+    try:
+        roughcut = _load_json(manifest_path)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return {
+            "manifest_passes": False,
+            "inputs_current": False,
+            "active_master_matches": not ffmpeg_is_active_source,
+            "active_master_match_status": "FAIL" if ffmpeg_is_active_source else "NOT_APPLICABLE",
+            "status": "FAIL",
+            "errors": ["roughcut_manifest_invalid"],
+        }
+
+    if roughcut.get("schema_version") != "hajimi-roughcut-manifest-v1":
+        errors.append("roughcut_manifest_schema")
+    if roughcut.get("episode_id") != manifest.get("episode_id"):
+        errors.append("roughcut_manifest_episode_id")
+    if roughcut.get("source") != "ffmpeg":
+        errors.append("roughcut_source")
+    output = _verified_episode_file(
+        episode_root,
+        {"path": roughcut.get("output"), "sha256": roughcut.get("output_sha256")},
+        "roughcut_output",
+        errors,
+    )
+
+    plan_path = episode_root / "edit" / "roughcut.yaml"
+    try:
+        roughcut_plan = load_yaml(plan_path) if plan_path.is_file() else {}
+    except (OSError, ValueError):
+        roughcut_plan = {}
+    if roughcut_plan.get("schema_version") != "hajimi-roughcut-v1":
+        errors.append("roughcut_plan_missing_or_invalid")
+
+    inputs = roughcut.get("inputs")
+    if not isinstance(inputs, dict):
+        inputs = {}
+        errors.append("roughcut_inputs_missing")
+    shots = manifest.get("shots", [])
+    verified: dict[str, Path] = {}
+
+    def verify_input(key: str) -> Path | None:
+        record = inputs.get(key)
+        path = _verified_episode_file(episode_root, record, f"roughcut_input:{key}", input_errors)
+        if path is not None:
+            verified[key] = path
+        return path
+
+    verify_input("narration")
+    verify_input("roughcut_plan")
+    for shot in shots:
+        if isinstance(shot, dict):
+            verify_input(str(shot.get("id")))
+        else:
+            errors.append("roughcut_shot_manifest_invalid")
+
+    if verified.get("narration") != (episode_root / "audio" / "production" / "narration.wav").resolve():
+        errors.append("roughcut_narration_path")
+    if verified.get("roughcut_plan") != plan_path.resolve():
+        errors.append("roughcut_plan_path")
+    for key, plan_field in (("music", "music"), ("subtitles", "subtitles")):
+        plan_value = roughcut_plan.get(plan_field)
+        if plan_value is None:
+            if inputs.get(key) is not None:
+                errors.append(f"roughcut_{key}_path")
+            continue
+        expected = (episode_root / plan_value).resolve() if isinstance(plan_value, str) else None
+        if expected is None or not expected.is_relative_to(episode_root.resolve()):
+            errors.append(f"roughcut_{key}_path")
+            continue
+        path = verify_input(key)
+        if path != expected:
+            errors.append(f"roughcut_{key}_path")
+
+    for shot in shots:
+        if not isinstance(shot, dict):
+            continue
+        shot_id = str(shot.get("id"))
+        active_media = shot.get("active_media")
+        expected = (episode_root / active_media).resolve() if isinstance(active_media, str) else None
+        if expected is None or not expected.is_relative_to(episode_root.resolve()) or verified.get(shot_id) != expected:
+            errors.append(f"roughcut_shot_input_path:{shot_id}")
+
+    timeline = roughcut.get("timeline")
+    ordered_shots = sorted(
+        (shot for shot in shots if isinstance(shot, dict)),
+        key=lambda shot: float(shot.get("time_start", 0)),
+    )
+    if not isinstance(timeline, list) or len(timeline) != len(ordered_shots):
+        errors.append("roughcut_timeline")
+    else:
+        for item, shot in zip(timeline, ordered_shots):
+            if not isinstance(item, dict):
+                errors.append("roughcut_timeline")
+                break
+            expected_timeline = (
+                item.get("shot_id") == shot.get("id")
+                and item.get("start_sec") == shot.get("time_start")
+                and item.get("end_sec") == shot.get("time_end")
+                and item.get("duration_sec") == shot.get("time_end", 0) - shot.get("time_start", 0)
+                and item.get("source") == shot.get("active_media")
+            )
+            if not expected_timeline:
+                errors.append("roughcut_timeline")
+                break
+
+    sfx_records = inputs.get("sfx", [])
+    sfx_plan = roughcut_plan.get("sfx", [])
+    if not isinstance(sfx_records, list) or not isinstance(sfx_plan, list) or len(sfx_records) != len(sfx_plan):
+        errors.append("roughcut_sfx")
+    else:
+        for index, (record, cue) in enumerate(zip(sfx_records, sfx_plan)):
+            path = _verified_episode_file(episode_root, record, f"roughcut_input:sfx:{index}", input_errors)
+            value = cue.get("path") if isinstance(cue, dict) else None
+            expected = (episode_root / value).resolve() if isinstance(value, str) else None
+            if expected is None or not expected.is_relative_to(episode_root.resolve()) or path != expected:
+                errors.append(f"roughcut_sfx_path:{index}")
+            if isinstance(record, dict) and isinstance(cue, dict) and (
+                record.get("start_sec") != cue.get("start_sec")
+                or record.get("gain_db") != cue.get("gain_db", 0)
+            ):
+                errors.append(f"roughcut_sfx_mix:{index}")
+
+    if ffmpeg_is_active_source:
+        active_master_matches = bool(
+            output
+            and master_path
+            and output == master_path.resolve()
+            and master_sha256
+            and roughcut.get("output_sha256") == master_sha256
+        )
+        if not active_master_matches:
+            errors.append("roughcut_output_not_active_master")
+    else:
+        # A Resolve premium render intentionally differs from its FFmpeg base.
+        # Its own readback and hash-bound master QC validate the active export.
+        active_master_matches = True
+
+    inputs_current = not input_errors
+    manifest_passes = (
+        output is not None
+        and roughcut.get("schema_version") == "hajimi-roughcut-manifest-v1"
+        and roughcut.get("episode_id") == manifest.get("episode_id")
+        and roughcut.get("source") == "ffmpeg"
+        and not errors
+    )
+    errors.extend(input_errors)
+    status = "PASS" if manifest_passes and inputs_current and active_master_matches else "FAIL"
+    return {
+        "manifest_passes": manifest_passes,
+        "inputs_current": inputs_current,
+        "active_master_matches": active_master_matches,
+        "active_master_match_status": "PASS" if ffmpeg_is_active_source and active_master_matches else "NOT_APPLICABLE" if not ffmpeg_is_active_source else "FAIL",
+        "status": status,
+        "errors": errors,
+    }
+
+
 def _shot_qc_evidence_passes(episode_root: Path, manifest: dict[str, Any]) -> bool:
     """Require PASS evidence for every approved shot, not only editable flags."""
 
@@ -242,8 +447,15 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
     master_report = _master_report(episode_root)
     animatic_gate = _animatic_gate(episode_root)
     production_voice = production_voice_check(episode_root)
-    resolve_readback_pass = _resolve_readback_passes(root, episode_root, manifest, master_path)
     master_sha256 = sha256_file(master_path) if master_path else None
+    master_source = str(manifest.get("master", {}).get("source", "")).lower()
+    resolve_readback_required = master_source != "ffmpeg"
+    resolve_readback_pass = (
+        _resolve_readback_passes(root, episode_root, manifest, master_path)
+        if resolve_readback_required
+        else True
+    )
+    roughcut = _roughcut_preflight(episode_root, manifest, master_path, master_sha256)
     title = youtube.get("title") or manifest_publish.get("title")
     description = youtube.get("description") or manifest_publish.get("description")
     audience = youtube.get("audience") or manifest_publish.get("audience")
@@ -261,6 +473,9 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
         "all_shots_approved": bool(shots) and all(shot.get("status") == "approved" for shot in shots),
         "shot_qc_evidence": _shot_qc_evidence_passes(episode_root, manifest),
         "shot_provenance": _shot_provenance_passes(root, episode_id, manifest),
+        "roughcut_manifest": roughcut["manifest_passes"],
+        "roughcut_inputs_current": roughcut["inputs_current"],
+        "roughcut_active_master_matches": roughcut["active_master_matches"],
         "resolve_readback": resolve_readback_pass,
         "master_qc": _master_qc_passes(master_report, manifest, master_sha256),
         "human_playback_recorded": _human_review_passed(master_report),
@@ -282,6 +497,15 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
         "status": "READY" if all(checks.values()) else "BLOCKED",
         "lifecycle_status": "PREFLIGHT_READY" if all(checks.values()) else "BLOCKED",
         "checks": checks,
+        "gate_details": {
+            "resolve_readback": {
+                "required": resolve_readback_required,
+                "status": "PASS" if resolve_readback_required and resolve_readback_pass else "FAIL" if resolve_readback_required else "NOT_APPLICABLE",
+                "passed": resolve_readback_pass,
+                "policy": "FFmpeg is the automatic editor; Resolve readback is required only for Resolve-sourced masters.",
+            },
+            "roughcut": roughcut,
+        },
         "stage_policy": {
             "required_sequence": ["animatic_gate", "shot_approval", "master_qc", "human_playback", "private_upload", "checks_readback"],
             "animatic_gate": animatic_gate.get("decision") if animatic_gate else "NOT_RUN",

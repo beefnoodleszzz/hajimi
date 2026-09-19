@@ -153,7 +153,7 @@ def test_voice_selection_rejects_invented_or_non_english_narrators(tmp_path: Pat
 
 
 def test_production_voice_check_rejects_temporary_and_stale_voice(tmp_path: Path) -> None:
-    episode_root = tmp_path / "episodes" / "EP001_earth-stop"
+    episode_root = tmp_path / "episodes" / "EP099_creative-voice-test"
     beat_script = episode_root / "creative" / "beat_script.yaml"
     dump_yaml({"schema_version": "beat-script-v2", "beats": [{"id": "B01", "narration": "Text"}]}, beat_script)
     output = episode_root / "audio" / "production" / "narration.wav"
@@ -175,7 +175,7 @@ def test_voxcpm2_unavailable_is_blocked_without_fallback(tmp_path: Path, monkeyp
     monkeypatch.setenv("VOXCPM_PROJECT", str(tmp_path / "missing-voxcpm2"))
     from studio.voice.voxcpm2 import doctor
 
-    result = doctor(tmp_path, "EP001_earth-stop")
+    result = doctor(tmp_path, "EP099_creative-voice-test")
 
     assert result["status"] == "BLOCKED_ENGLISH_NARRATOR"
     assert result["fallback"] is None

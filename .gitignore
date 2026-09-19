@@ -44,6 +44,7 @@ episodes/*/edit/*.drp
 
 .amv/project-state.json
 studio/studio.sqlite3
+.local/skill-lock.json
 
 # Secrets
 .env
