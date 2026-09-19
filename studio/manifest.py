@@ -330,10 +330,15 @@ def validate_shot_manifest(
             errors.append("shot_contract must be a mapping")
         else:
             required_contract = {
-                "shot_id", "role", "narrative_purpose", "visual_goal", "subject",
-                "environment", "composition", "first_frame", "end_frame",
+                "shot_id", "role", "narrative_purpose", "information_payload",
+                "visual_goal", "subject", "environment", "composition", "camera_height",
+                "lens_feel", "first_frame", "end_frame", "start_state", "end_state",
                 "subject_motion", "environmental_motion", "camera_motion", "lighting",
-                "palette", "continuity", "forbidden",
+                "palette", "previous_shot", "next_shot", "screen_direction",
+                "continuity_receive", "continuity_handoff", "identity_lock",
+                "environment_lock", "prop_state", "first_frame_requirement",
+                "last_frame_requirement", "tail_frame_requirement", "preserve",
+                "forbidden", "audio_intent",
             }
             missing = sorted(required_contract - set(contract))
             if missing:
@@ -342,16 +347,33 @@ def validate_shot_manifest(
                 errors.append("shot_contract.shot_id must match id")
             if contract.get("role") != shot.get("role"):
                 errors.append("shot_contract.role must match role")
+            for key in ("preserve", "forbidden"):
+                if key in contract and not isinstance(contract.get(key), list):
+                    errors.append(f"shot_contract.{key} must be a list")
+            for key in ("previous_shot", "next_shot", "continuity_receive", "continuity_handoff"):
+                if key in contract and contract.get(key) is not None and not isinstance(contract.get(key), str):
+                    errors.append(f"shot_contract.{key} must be a string or null")
         reference_pack = shot.get("reference_pack")
         if not isinstance(reference_pack, (dict, list)):
             errors.append("reference_pack must be a mapping or list")
-    if method in AI_IMAGE_METHODS or method == "hybrid_ai":
-        plan = shot.get("image_candidate_plan")
-        if not isinstance(plan, dict):
-            errors.append("image_candidate_plan is required for image-producing shots")
-        elif not isinstance(plan.get("candidates"), int) or plan["candidates"] < 1:
-            errors.append("image_candidate_plan.candidates must be positive")
     if method in AI_VIDEO_METHODS or method == "hybrid_ai":
+        contract = shot.get("shot_contract") if isinstance(shot.get("shot_contract"), dict) else {}
+        required_h3 = {
+            "start_state", "end_state", "audio_intent", "continuity_receive",
+            "continuity_handoff", "screen_direction", "preserve", "forbidden",
+        }
+        missing_h3 = sorted(required_h3 - set(contract))
+        if missing_h3:
+            errors.append(f"H3 shot_contract missing {missing_h3}")
+        for key in ("start_state", "end_state", "audio_intent", "screen_direction"):
+            if key in contract and (not isinstance(contract.get(key), str) or not contract[key].strip()):
+                errors.append(f"shot_contract.{key} must be a non-empty string for H3")
+        if not (
+            isinstance(contract.get("primary_visible_action"), str) and contract["primary_visible_action"].strip()
+        ) and not (
+            isinstance(contract.get("subject_motion"), str) and contract["subject_motion"].strip()
+        ):
+            errors.append("H3 shot_contract requires one primary_visible_action or subject_motion")
         motion = shot.get("motion_plan")
         if not isinstance(motion, dict):
             errors.append("motion_plan is required for video-producing shots")
@@ -370,8 +392,6 @@ def validate_shot_manifest(
         for key in ("video_dir", "download_target"):
             if not isinstance(output.get(key), str) or not output[key].strip():
                 errors.append(f"output.{key} is required for video-producing shots")
-        if not isinstance(shot.get("video_candidate_plan"), dict):
-            errors.append("video_candidate_plan is required for video-producing shots")
     return errors
 
 

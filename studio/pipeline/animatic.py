@@ -561,7 +561,7 @@ def record_animatic_review(
     """Record a human review bound to the exact current animatic inputs."""
 
     if not isinstance(reviewer, str) or not reviewer.strip():
-        raise ValueError("animatic review requires a reviewer")
+        raise ValueError("animatic-review requires a reviewer")
     paths = StudioPaths(Path(root).resolve() if root else project_root())
     episode_root = paths.episode(episode_id)
     manifest_path = paths.manifest(episode_id)

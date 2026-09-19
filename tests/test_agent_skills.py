@@ -117,11 +117,14 @@ def test_production_routes_connect_upstream_knowledge_to_hajimi_adapters() -> No
     ]
     assert stages["storyboard"]["methods"] == ["short-drama-agent"]
     assert stages["storyboard"]["contract"] == "shot-designer"
+    assert stages["generation_plan"]["director"] == "generation-director"
+    assert stages["generation_plan"]["outputs"] == ["production/generation_plan.yaml"]
     assert stages["image"]["specialist"] == "gpt-image-2-style-library"
     assert stages["image"]["adapter"] == "ai-visual-producer"
     assert stages["image"]["executor"] == "codex_image_gen"
     assert stages["video_prompt"]["specialist"] == "h3-prompt-writing"
     assert stages["video_prompt"]["adapter"] == "h3-video-director"
+    assert stages["shot_qc"]["qc"] == "fast-media-qc"
     assert stages["editing"]["specialist"] == "video-editing"
     assert stages["editing"]["adapter"] == "ffmpeg-rough-editor"
     assert stages["editing"]["executor"] == "studio.roughcut.build_roughcut"
@@ -134,5 +137,5 @@ def test_agent_entry_files_point_to_one_router_and_resolve_is_optional() -> None
     assert "config/skill-routing.yaml" in agents
     assert "AGENTS.md" in claude and "config/skill-routing.yaml" in claude
     assert "AGENTS.md" in gemini and "config/skill-routing.yaml" in gemini
-    assert "EP001_earth-stop" not in claude + gemini
-    assert "Resolve-exported master is required" not in (ROOT / "studio" / "cli.py").read_text(encoding="utf-8")
+    assert "config/skill-routing.yaml" in claude + gemini
+    assert "register an optional Resolve premium-finish export" in (ROOT / "studio" / "cli.py").read_text(encoding="utf-8")

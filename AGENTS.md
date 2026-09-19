@@ -207,5 +207,12 @@ Before closing an episode, confirm:
 - upload result and YouTube checks are recorded;
 - analytics record is initialized.
 
+## Stop Engineering Rule
+
+After the Final Production Lock passes, route new providers, abstractions,
+queues, databases, service splits, skills, cleanup, and future expansion to the
+backlog. Only a demonstrated blocker in content production, image generation,
+H3, sound, editing, QC, or publishing may interrupt first-episode production.
+
 At session close, run quality gates, update the relevant Beads issue, and
 report changed files, validation, and any external step that was not executed.

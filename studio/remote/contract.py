@@ -12,6 +12,8 @@ from typing import Any, Mapping
 
 from ..config import dump_yaml, load_yaml, write_json
 from ..manifest import EPISODE_RE, assert_valid_manifest, load_manifest
+from ..production import load_generation_plan_shot
+from ..h3_constants import H3_FPS, H3_MAX_FRAMES, H3_MIN_FRAMES
 from .prompt import load_h3_prompt_artifact, validate_h3_prompt
 
 H3_JOB_SCHEMA_VERSION = "hajimi-h3-remote-v1"
@@ -23,11 +25,6 @@ JOB_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{2,119}$")
 SHOT_ID_RE = re.compile(r"^S\d{3}$")
 SHA256_RE = re.compile(r"^[a-f0-9]{64}$")
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp"}
-H3_FPS = 24
-H3_MIN_FRAMES = 124
-H3_MAX_FRAMES = 362
-
-
 def h3_frame_count(duration_sec: float) -> int:
     """Mirror the worker's 17k+5 length alignment for local contract checks."""
 
@@ -173,6 +170,8 @@ def validate_h3_job(job: Mapping[str, Any]) -> list[str]:
             audio["intent"],
             float(generation_duration) if isinstance(generation_duration, (int, float)) else 0.0,
             allow_non_diegetic_music=job.get("non_diegetic_music_allowed") is True,
+            allow_narration=audio.get("narration_requested") is True,
+            allow_dialogue=audio.get("dialogue_requested") is True,
             reference_image_count=image_count,
         )
         errors.extend(prompt_errors)
@@ -225,43 +224,41 @@ def _as_text_list(value: Any) -> list[str]:
     return []
 
 
-def _asset_spec(episode_root: Path, shot: Mapping[str, Any], mode: str) -> tuple[list[tuple[str, Path]], dict[str, Any]]:
-    motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), Mapping) else {}
-    output = shot.get("output") if isinstance(shot.get("output"), Mapping) else {}
+def _asset_spec(
+    episode_root: Path,
+    shot: Mapping[str, Any],
+    mode: str,
+    input_strategy: Mapping[str, Any],
+) -> tuple[list[tuple[str, Path]], dict[str, Any]]:
     files: list[tuple[str, Path]] = []
     inputs: dict[str, Any] = {"first_frame": None, "last_frame": None, "reference_images": [], "reference_videos": [], "reference_audio": []}
-    keyframes = motion.get("keyframes") if isinstance(motion.get("keyframes"), list) else []
     if mode == "fl2va":
-        frame_values: list[tuple[str, Any]] = []
-        if len(keyframes) >= 2:
-            frame_values = [("first_frame", keyframes[0].get("image")), ("last_frame", keyframes[-1].get("image"))]
-            for index, frame in enumerate(keyframes[1:-1], start=1):
-                source = _episode_relative_file(episode_root, frame.get("image"), f"keyframes[{index}].image")
-                destination = f"assets/reference_{index:02d}{source.suffix.lower()}"
-                files.append((destination, source))
-                inputs["reference_images"].append(destination)
-        else:
-            frame_values = [
-                ("first_frame", motion.get("first_frame") or output.get("selected_keyframe")),
-                ("last_frame", motion.get("last_frame") or shot.get("shot_contract", {}).get("end_keyframe")),
-            ]
+        frame_values = [
+            ("first_frame", input_strategy.get("first_frame")),
+            ("last_frame", input_strategy.get("last_frame")),
+        ]
         for field, value in frame_values:
             source = _episode_relative_file(episode_root, value, f"inputs.{field}")
             destination = f"assets/{field}{source.suffix.lower()}"
             files.append((destination, source))
             inputs[field] = destination
+        for index, value in enumerate(input_strategy.get("references", []), start=1):
+            source = _episode_relative_file(episode_root, value, f"input_strategy.references[{index - 1}]")
+            destination = f"assets/reference_{index:02d}{source.suffix.lower()}"
+            files.append((destination, source))
+            inputs["reference_images"].append(destination)
     elif mode == "i2va":
-        value = motion.get("source_keyframe") or output.get("selected_keyframe")
+        value = input_strategy.get("first_frame")
         source = _episode_relative_file(episode_root, value, "inputs.first_frame")
         destination = f"assets/first_frame{source.suffix.lower()}"
         files.append((destination, source))
         inputs["first_frame"] = destination
     else:
-        references = shot.get("h3_references", [])
+        references = input_strategy.get("references", [])
         if not isinstance(references, list) or not references:
-            raise ValueError(f"{shot.get('id')} ref2va requires shot.h3_references")
+            raise ValueError(f"{shot.get('id')} ref2va requires production input_strategy.references")
         for index, value in enumerate(references, start=1):
-            source = _episode_relative_file(episode_root, value, f"h3_references[{index - 1}]")
+            source = _episode_relative_file(episode_root, value, f"input_strategy.references[{index - 1}]")
             destination = f"assets/reference_{index:02d}{source.suffix.lower()}"
             files.append((destination, source))
             inputs["reference_images"].append(destination)
@@ -290,22 +287,23 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
     method = str(manifest_shot.get("method", shot.get("method", "")))
     if method not in H3_METHODS:
         raise ValueError(f"{shot_id} method {method!r} does not route to H3")
+    generation_plan = load_generation_plan_shot(episode_root, shot_id)
     mode = _select_mode(method, shot)
-    files, inputs = _asset_spec(episode_root, shot, mode)
-    plan = shot.get("video_candidate_plan") if isinstance(shot.get("video_candidate_plan"), Mapping) else {}
-    candidate_count = plan.get("candidates", 1)
+    input_strategy = generation_plan.get("input_strategy") if isinstance(generation_plan.get("input_strategy"), Mapping) else {}
+    files, inputs = _asset_spec(episode_root, shot, mode, input_strategy)
+    candidate_count = generation_plan.get("video_candidates", 0)
     if not isinstance(candidate_count, int) or isinstance(candidate_count, bool):
-        raise ValueError(f"{shot_id} video_candidate_plan.candidates must be an integer")
+        raise ValueError(f"{shot_id} production video_candidates must be an integer")
     start, end = manifest_shot.get("time_start"), manifest_shot.get("time_end")
     duration = (float(end) - float(start)) if isinstance(start, (int, float)) and isinstance(end, (int, float)) else manifest_shot.get("duration_target")
     if not isinstance(duration, (int, float)) or isinstance(duration, bool) or duration <= 0:
         raise ValueError(f"{shot_id} timeline edit duration is required for H3")
     contract = shot.get("shot_contract") if isinstance(shot.get("shot_contract"), Mapping) else {}
     motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), Mapping) else {}
-    continuity = contract.get("continuity") if isinstance(contract.get("continuity"), Mapping) else {}
     preserve = _as_text_list(motion.get("preserve"))
-    preserve.extend(_as_text_list(continuity.get("identity")))
-    preserve.extend(_as_text_list(continuity.get("screen_direction")))
+    preserve.extend(_as_text_list(contract.get("preserve")))
+    preserve.extend(_as_text_list(contract.get("identity_lock")))
+    preserve.extend(_as_text_list(contract.get("screen_direction")))
     avoid = _as_text_list(motion.get("avoid")) + _as_text_list(contract.get("forbidden"))
     environment = contract.get("environment")
     environment_motion = motion.get("environmental_motion") or contract.get("environmental_motion")
@@ -313,10 +311,12 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
     if allow_music_value is None:
         allow_music_value = shot.get("non_diegetic_music")
     allow_music = isinstance(allow_music_value, str) and bool(allow_music_value.strip()) and allow_music_value.strip() != "N/A"
+    allow_narration = bool(contract.get("narration_requested"))
+    allow_dialogue = bool(contract.get("dialogue_requested"))
     audio_intent = contract.get("audio_intent")
     if not isinstance(audio_intent, str) or not audio_intent.strip():
         raise ValueError(f"{shot_id} Shot Contract must author audio_intent before H3 prompt writing")
-    requested_generation = motion.get("generation_duration_sec")
+    requested_generation = generation_plan.get("generation_duration_sec")
     generation_duration = h3_generation_duration(float(duration), requested_generation)
     prompt_artifact = load_h3_prompt_artifact(
         episode_root,
@@ -325,9 +325,11 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
         [source for _, source in files],
         generation_duration,
         allow_non_diegetic_music=allow_music,
+        allow_narration=allow_narration,
+        allow_dialogue=allow_dialogue,
     )
     if prompt_artifact.get("audio_intent") != audio_intent.strip():
-        raise ValueError(f"{shot_id} H3 prompt overall_soundscape must match the Shot Contract audio_intent")
+        raise ValueError(f"{shot_id} H3 prompt artifact must preserve the Shot Contract audio_intent")
     job_id = f"{episode_id}_{shot_id}_r{prompt_artifact['job_revision']:02d}"
     prompt_path = episode_root / "shots" / shot_id / "h3" / "prompt.txt"
     job: dict[str, Any] = {
@@ -351,7 +353,13 @@ def _job_spec(episode_root: Path, episode_id: str, manifest_shot: Mapping[str, A
             "official_skill": prompt_artifact["official_skill"],
         },
         "inputs": inputs,
-        "audio": {"generate_native_audio": True, "intent": prompt_artifact["audio_intent"]},
+        "audio": {
+            "generate_native_audio": True,
+            "intent": prompt_artifact["audio_intent"],
+            "overall_soundscape": prompt_artifact["overall_soundscape"],
+            "narration_requested": allow_narration,
+            "dialogue_requested": allow_dialogue,
+        },
         "non_diegetic_music_allowed": allow_music,
         "preserve": preserve,
         "avoid": avoid,

@@ -6,10 +6,17 @@ from pathlib import Path
 import pytest
 
 from studio.config import dump_yaml, load_yaml, write_json
+from studio.creative import validate_creative_package
+from studio.generation.image import write_image_prompt_artifact
 from studio.media.hashing import sha256_file
 from studio.manifest import manifest_input_hash
-from studio.publish.youtube import build_publish_plan, publish_doctor, record_upload_readback
+from studio.production import validate_production_generation_plan
+from studio.publish.youtube import build_publish_plan, preflight, publish_doctor, record_checks, record_upload_readback
+from studio.readiness import episode_readiness
+from studio.remote.contract import prepare_h3_jobs
+from studio.remote.prompt import write_h3_prompt_artifact
 from studio.resolve.sync import record_resolve_readback, resolve_doctor, validate_resolve_readback
+from studio.storyboard import validate_storyboard_gate
 from studio.voice.manifest import VOICE_PROVIDER, script_hash, write_voice_manifest
 from studio.voice.voxcpm2 import inspect_voice
 
@@ -79,10 +86,19 @@ def _ready_root(tmp_path: Path) -> tuple[Path, Path, Path]:
             "camera": {"lens_mm": 24},
             "shot_contract": {
                 "shot_id": "S001", "role": "hook", "narrative_purpose": "contract",
+                "information_payload": "contract state change",
                 "visual_goal": "contract", "subject": "subject", "environment": "environment",
                 "composition": "composition", "first_frame": "first", "end_frame": "end",
+                "start_state": "stable", "end_state": "stable", "camera_height": "eye",
+                "lens_feel": "normal",
                 "subject_motion": "none", "environmental_motion": "none", "camera_motion": "none",
-                "lighting": "neutral", "palette": "neutral", "continuity": {}, "forbidden": ["text"],
+                "lighting": "neutral", "palette": "neutral", "preserve": ["subject"], "forbidden": ["text"],
+                "previous_shot": None, "next_shot": None, "screen_direction": "center",
+                "continuity_receive": None, "continuity_handoff": None,
+                "identity_lock": "same subject", "environment_lock": "same environment",
+                "prop_state": "unchanged", "first_frame_requirement": "stable",
+                "last_frame_requirement": None, "tail_frame_requirement": "stable",
+                "audio_intent": "room tone",
             },
             "reference_pack": {},
             "output": {"production": "production/shot.mp4", "provenance": "provenance.json"},
@@ -286,7 +302,7 @@ def test_publish_plan_has_ego_upload_contract_and_human_gate(tmp_path: Path) -> 
 
     plan = build_publish_plan(root, "EP999_contract")
 
-    assert plan["status"] == "READY"
+    assert plan["status"] == "READY", plan
     assert plan["gate_details"]["resolve_readback"]["status"] == "PASS"
     assert plan["checks"]["roughcut_manifest"] is True
     assert plan["checks"]["roughcut_inputs_current"] is True
@@ -325,6 +341,110 @@ def test_ffmpeg_master_treats_resolve_readback_as_not_applicable(tmp_path: Path)
         "audience_resolved",
     ):
         assert plan["checks"][check] is True
+
+
+def test_deterministic_no_gpu_fixture_reaches_ffmpeg_publish_preflight(tmp_path: Path) -> None:
+    """Exercise the complete artifact chain without paid image or video generation."""
+
+    from tests.test_creative_voice import _agent_outputs
+
+    root, episode_root, _ = _ready_root(tmp_path)
+    _set_ffmpeg_master(episode_root)
+    research = episode_root / "research"
+    research.mkdir()
+    (research / "topic_brief.md").write_text("A sourced contract topic.", encoding="utf-8")
+    (research / "fact_pack.md").write_text("fact-delay: verified fixture fact.", encoding="utf-8")
+    write_json({"patterns": ["visible causal reveal"]}, research / "reference_deconstruction.json")
+    for filename, value in _agent_outputs().items():
+        dump_yaml(value, episode_root / "creative" / filename)
+    assert validate_creative_package(episode_root / "creative") == []
+
+    manifest_path = episode_root / "episode.yaml"
+    manifest = load_yaml(manifest_path)
+    manifest["shots"][0]["role"] = "HERO"
+    manifest["shots"][0]["method"] = "h3_i2v"
+    manifest["shots"][0]["remote_status"] = "NOT_READY"
+    dump_yaml(manifest, manifest_path)
+    shot_path = episode_root / "shots" / "S001" / "shot.yaml"
+    shot = load_yaml(shot_path)
+    shot.update({
+        "role": "HERO", "method": "h3_i2v",
+        "motion_plan": {"source_keyframe": "shots/S001/images/selected_keyframe.png", "preserve": ["subject"]},
+        "video_candidate_plan": {"candidates": 1},
+    })
+    shot["output"].update({"selected_keyframe": "shots/S001/images/selected_keyframe.png", "video_dir": "shots/S001/video", "download_target": "shots/S001/video"})
+    shot["shot_contract"].update({
+        "shot_id": "S001", "role": "HERO", "start_state": "subject still",
+        "end_state": "subject moved once", "audio_intent": "quiet room tone with one soft movement",
+        "continuity_receive": None, "continuity_handoff": None, "screen_direction": "right",
+        "subject_motion": "moves right once", "identity_lock": "same subject",
+    })
+    dump_yaml(shot, shot_path)
+    dump_yaml({"shots": [{"id": "S001"}]}, episode_root / "storyboard" / "storyboard_v01.yaml")
+    dump_yaml({
+        "schema_version": "continuity-review-v1",
+        "shots": {"S001": {"receive": None, "action": "moves right once", "handoff": None, "screen_direction": "right", "identity_state": "same subject", "environment_state": "same environment", "prop_state": "unchanged"}},
+    }, episode_root / "storyboard" / "continuity_review.yaml")
+    assert validate_storyboard_gate(episode_root) == []
+
+    dump_yaml({
+        "schema_version": "generation-plan-v3",
+        "shots": [{"shot_id": "S001", "tier": "HERO", "method": "h3_i2v", "image_candidates": 1, "video_candidates": 1, "edit_duration_sec": 2.0, "generation_duration_sec": 124 / 24, "input_strategy": {"first_frame": "shots/S001/images/selected_keyframe.png"}, "fusion_graphics": []}],
+    }, episode_root / "production" / "generation_plan.yaml")
+    assert validate_production_generation_plan(episode_root) == []
+
+    image_dir = episode_root / "shots" / "S001" / "images"
+    image_dir.mkdir()
+    write_image_prompt_artifact(episode_root, "S001", "Agent-authored fixture keyframe prompt.", {"style": "fixture", "template": "single subject"}, [])
+    keyframe = image_dir / "selected_keyframe.png"
+    keyframe.write_bytes(b"deterministic-image-candidate-fixture")
+    prompt = """For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] The subject moves right once and settles. No narration and no dialogue.
+
+overall_soundscape: Quiet room tone expands into one soft movement and a short settling sound.
+
+non_diegetic_music: N/A
+"""
+    write_h3_prompt_artifact(episode_root, "S001", "i2va", prompt, "quiet room tone with one soft movement", [keyframe], 124 / 24)
+    packages = prepare_h3_jobs(root, "EP999_contract", ["S001"])
+    assert len(packages) == 1
+    assert json.loads((packages[0] / "job.json").read_text())["prompt"] == prompt
+    provenance_path = episode_root / "shots" / "S001" / "provenance.json"
+    provenance = json.loads(provenance_path.read_text())
+    provenance.update({
+        "backend": "comfyui_minimax_h3",
+        "generation_mode": "i2va",
+        "downloaded_file": "production/shot.mp4",
+        "prompt": prompt,
+        "references": ["images/selected_keyframe.png"],
+    })
+    provenance["output_asset"] = "production/shot.mp4"
+    write_json(provenance, provenance_path)
+    config_dir = root / "config"
+    config_dir.mkdir()
+    (config_dir / "skill-routing.yaml").write_text(
+        (Path(__file__).resolve().parents[1] / "config" / "skill-routing.yaml").read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    readiness = episode_readiness(root, "EP999_contract", remote_doctor=lambda _root: {"status": "FAIL", "error": "OFFLINE"})
+    assert readiness["LOCAL_PREPRODUCTION_READY"] is True
+    assert readiness["REMOTE_H3_READY"] is False
+    assert readiness["remote_reason"] == "OFFLINE"
+
+    voice_manifest_path = episode_root / "audio" / "voice_manifest.yaml"
+    voice_manifest = load_yaml(voice_manifest_path)
+    current_script_hash = script_hash(episode_root)
+    voice_manifest["script_hash"] = current_script_hash
+    voice_manifest["production_voice"]["script_hash"] = current_script_hash
+    dump_yaml(voice_manifest, voice_manifest_path)
+    active_master = episode_root / load_yaml(manifest_path)["master"]["path"]
+    _bind_master_approval(episode_root, active_master)
+    plan = build_publish_plan(root, "EP999_contract")
+    failed_checks = {key: value for key, value in plan["checks"].items() if value is not True}
+    assert failed_checks == {}, plan
+    assert plan["status"] == "READY", plan
+    assert plan["gate_details"]["resolve_readback"]["status"] == "NOT_APPLICABLE"
 
 
 def test_publish_plan_blocks_missing_roughcut_manifest(tmp_path: Path) -> None:
@@ -417,6 +537,33 @@ def test_upload_readback_is_validated_and_persisted(tmp_path: Path) -> None:
     saved = json.loads((root / "episodes/EP999_contract/publish/youtube.json").read_text())
     assert saved["metadata_readback"]["title"] == plan["metadata"]["title"]
     assert saved["youtube_checks"]["upload"] == "complete"
+
+
+def test_preflight_writes_readiness_artifact_and_checks_require_complete_readback(tmp_path: Path) -> None:
+    root, episode_root, master = _ready_root(tmp_path)
+    plan = preflight(root, "EP999_contract")
+    assert plan["status"] == "READY"
+    assert json.loads((episode_root / "publish" / "preflight.json").read_text())["status"] == "READY"
+    readback = {
+        "video_url": "https://studio.youtube.com/video/abc123",
+        "visibility": "private",
+        "master_sha256": sha256_file(master),
+        "metadata": {
+            "title": plan["metadata"]["title"], "description": plan["metadata"]["description"],
+            "audience": plan["metadata"]["audience"], "ai_disclosure": plan["metadata"]["ai_use"],
+        },
+        "checks": {"copyright": "running", "likeness": "running", "upload": "complete"},
+        "processing": {"status": "processed"}, "schedule": plan["metadata"]["schedule"],
+    }
+    record_upload_readback(root, "EP999_contract", readback)
+    with pytest.raises(ValueError, match="missing required fields"):
+        record_checks(root, "EP999_contract", readback["checks"])
+    complete = {
+        "copyright": "clear", "likeness": "clear", "upload": "complete",
+        "hd_processing": "PASS", "audio": "PASS", "subtitles": "PASS",
+        "audience": "PASS", "ai_disclosure": "PASS", "visibility": "private",
+    }
+    assert record_checks(root, "EP999_contract", complete)["status"] == "CHECKS_RECORDED"
 
 
 def test_resolve_readback_rejects_legacy_timeline_and_accepts_current_contract() -> None:

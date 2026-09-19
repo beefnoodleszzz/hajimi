@@ -3,7 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 
 from studio.config import dump_yaml, load_yaml
-from studio.creative import discover_ideas, generate_creative_package, run_tournament, validate_creative_package, validate_generation_plan
+from studio.creative import (
+    discover_ideas, generate_creative_package, run_tournament,
+    validate_beat_script, validate_creative_package,
+    validate_hook_competition, validate_mute_read,
+)
+from studio.production import validate_generation_plan
 from studio.voice.manifest import VOICE_PROVIDER, production_voice_check, script_hash, write_voice_manifest
 from studio.voice.voxcpm2 import _source_payload, review_voice, route_emotion, select_voice
 
@@ -50,9 +55,18 @@ def _agent_outputs() -> dict[str, dict]:
             "selected_direction": {"hook_from": "m1", "visual_motif_from": "m1", "escalation_from": "m1", "payoff_from": "dynamic_candidate", "ending_from": "m1", "rationale": "Composite direction keeps the immediate anomaly and clear explanation."},
         },
         "creative_direction.yaml": {"core_question": "Why is the result delayed?", "one_sentence_promise": "You will see the hidden delay before you learn its cause.", "opening": "Show the result arriving first.", "narrative_engine": "anomaly to layered explanation", "visual_peaks": ["layer separation"], "hero_shot": "S001", "ending": "return to the first image with new meaning", "reject": ["generic lecture"]},
+        "hook_competition.yaml": {
+            "schema_version": "hook-competition-v1",
+            "candidates": [
+                {"id": "H1", "visual_hook": "result appears alone", "verbal_hook": "The result came first.", "screen_information": "cause absent", "curiosity_gap": "where is the cause", "payoff_compatibility": "delay reveal", "loop_potential": "return to result"},
+                {"id": "H2", "visual_hook": "layers split in time", "verbal_hook": "These layers disagree.", "screen_information": "three time layers", "curiosity_gap": "which layer is real", "payoff_compatibility": "layer reveal", "loop_potential": "layers reunite"},
+                {"id": "H3", "visual_hook": "clock runs backward", "verbal_hook": "Cause is late.", "screen_information": "reverse clock", "curiosity_gap": "why time reversed", "payoff_compatibility": "causal explanation", "loop_potential": "clock resets"},
+            ],
+            "selected": {"id": "H1", "rationale": "The missing cause reads immediately without sound."},
+        },
+        "mute_read.yaml": {"schema_version": "mute-read-v1", "decision": "PASS", "first_visible_event": "result appears alone", "first_event_sec": 0.2, "three_second_change": "hidden layers separate", "viewer_understanding_without_audio": "effect precedes cause", "narration_only_beats": [], "revision_required": False},
         "visual_concept.yaml": {"visual_language": {"motif": "misaligned time layers"}, "hero_frames": ["S001"], "shots": [{"shot_id": "S001", "tier": "HERO", "visual_goal": "make causal lag visible", "composition": "centered split frame", "focal_subject": "layered object", "camera": "slow push", "action": "layers separate", "transition": "match back to opening", "method_candidates": ["ai_image", "h3_i2v"]}], "rejections": ["talking head"]},
-        "beat_script.yaml": {"schema_version": "beat-script-v2", "duration_sec": 5, "beats": [{"id": "B001", "purpose": "hook", "narration": "The result arrives before the cause.", "visual_action": "result appears", "visual_information": "cause is absent", "camera_event": "snap push", "sound_event": "short impact", "emotional_change": "surprise", "duration_target": 5}]},
-        "generation_plan.yaml": {"schema_version": "generation-plan-v3", "shots": [{"shot_id": "S001", "tier": "HERO", "method": "hybrid_ai", "image_candidates": 1, "video_candidates": 2, "fusion_graphics": [], "forbidden": ["unmotivated text overlay"]}]},
+        "beat_script.yaml": {"schema_version": "beat-script-v2", "selected_hook_id": "H1", "hook_competition_ref": "creative/hook_competition.yaml", "mute_read_ref": "creative/mute_read.yaml", "duration_sec": 5, "beats": [{"id": "B001", "purpose": "hook", "narration": "The result arrives before the cause.", "visual_action": "result appears", "visual_information": "cause is absent", "camera_event": "snap push", "sound_event": "short impact", "emotional_change": "surprise", "duration_target": 5, "visual_role": "HERO", "claim_type": "FACTUAL", "fact_refs": ["fact-delay"]}]},
     }
 
 
@@ -66,6 +80,8 @@ def test_ep002_uses_dynamic_agent_outputs_without_python_seed(tmp_path: Path) ->
     assert result["status"] == "PASS"
     assert not validate_creative_package(episode_root / "creative")
     assert result["hero_shot"] == "S001"
+    assert not (episode_root / "creative" / "generation_plan.yaml").exists()
+    assert not (episode_root / "production" / "generation_plan.yaml").exists()
     source = Path("studio/creative.py").read_text()
     assert "_ep001_ideas" not in source
     assert "rank = {" not in source
@@ -86,11 +102,24 @@ def test_missing_agent_outputs_blocks_instead_of_inventing_answer(tmp_path: Path
 
 
 def test_generation_plan_candidate_requirements_follow_method() -> None:
-    base = {"shot_id": "S001", "tier": "STORY", "fusion_graphics": [], "forbidden": ["fake text"]}
-    fusion = {**base, "method": "fusion"}
-    t2v = {**base, "method": "h3_ref2v", "image_candidates": 1, "video_candidates": 1}
-    i2v = {**base, "method": "h3_i2v", "image_candidates": 1, "video_candidates": 1}
-    assert validate_generation_plan({"shots": [fusion, t2v, i2v]}) == []
+    base = {"tier": "STORY", "fusion_graphics": [], "edit_duration_sec": 1.4, "generation_duration_sec": 124 / 24}
+    fusion = {**base, "shot_id": "S001", "method": "fusion"}
+    ref = {**base, "shot_id": "S002", "method": "h3_ref2v", "image_candidates": 1, "video_candidates": 1, "input_strategy": {"references": ["selected_keyframe.png"]}}
+    i2v = {**base, "shot_id": "S003", "method": "h3_i2v", "image_candidates": 1, "video_candidates": 1, "input_strategy": {"first_frame": "selected_keyframe.png"}}
+    assert validate_generation_plan({"schema_version": "generation-plan-v3", "shots": [fusion, ref, i2v]}) == []
+
+
+def test_script_gates_require_distinct_hooks_passing_mute_read_and_complete_beats() -> None:
+    outputs = _agent_outputs()
+    hooks = outputs["hook_competition.yaml"]
+    assert validate_hook_competition(hooks) == []
+    assert any("3 to 5" in error for error in validate_hook_competition({**hooks, "candidates": hooks["candidates"][:2]}))
+    assert any("must be PASS" in error for error in validate_mute_read({**outputs["mute_read.yaml"], "decision": "FAIL"}))
+    beat = outputs["beat_script.yaml"]
+    invalid_role = {**beat, "beats": [{**beat["beats"][0], "visual_role": None}]}
+    invalid_refs = {**beat, "beats": [{key: value for key, value in beat["beats"][0].items() if key != "fact_refs"}]}
+    assert any("visual_role" in error for error in validate_beat_script(invalid_role))
+    assert any("fact_refs" in error for error in validate_beat_script(invalid_refs))
 
 
 def test_voice_source_carries_per_beat_controls_and_candidates(tmp_path: Path) -> None:

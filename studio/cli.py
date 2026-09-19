@@ -10,14 +10,15 @@ from typing import Any
 
 from .analytics.schema import initialize_record
 from .config import load_yaml, write_json
-from .creative import generate_creative_package, load_creative_context, save_creative_artifact, validate_creative_package
-from .generation.image import load_image_prompt_artifact, prepare_image_job, register_image_candidate, write_image_prompt_artifact
+from .creative import generate_creative_package, load_creative_context, save_creative_artifact, validate_creative_package, validate_script_package
+from .generation.image import load_image_prompt_artifact, prepare_image_job, register_image_candidate, select_image_candidate, write_image_prompt_artifact
 from .db import StateStore
-from .manifest import assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, new_manifest, write_manifest
+from .manifest import EPISODE_RE, assert_valid_manifest, load_manifest, manifest_hash, manifest_input_hash, new_manifest, write_manifest
 from .master import register_resolve_master
 from .media.hashing import sha256_file
 from .paths import StudioPaths, project_root
 from .pipeline.animatic import record_animatic_review, run_animatic_gate
+from .production import load_generation_plan_shot, record_generation_plan, validate_production_generation_plan
 from .publish.youtube import preflight as youtube_preflight
 from .publish.youtube import publish_doctor
 from .publish.youtube import publish_status as youtube_status
@@ -27,6 +28,7 @@ from .resolve.sync import record_resolve_readback, resolve_doctor, sync_episode
 from .remote.h3 import h3_doctor, prepare_episode as prepare_h3_episode, pull_episode_result, remote_status as h3_remote_status, select_candidate as select_h3_candidate, submit_episode as submit_h3_episode
 from .remote.contract import _asset_spec, _select_mode, h3_generation_duration
 from .remote.prompt import write_h3_prompt_artifact
+from .readiness import episode_readiness
 from .roughcut import build_roughcut
 from .skills import check_skill_updates, skills_doctor, skills_list, sync_skills
 from .voice.director import build_voice_plan
@@ -53,6 +55,15 @@ def _load_episode(paths: StudioPaths, episode_id: str) -> tuple[dict[str, Any], 
     manifest = load_manifest(path)
     assert_valid_manifest(manifest, path)
     return manifest, path
+
+
+def _safe_episode_root(paths: StudioPaths, episode_id: str) -> Path:
+    if not isinstance(episode_id, str) or not EPISODE_RE.fullmatch(episode_id):
+        raise ValueError("episode_id is invalid")
+    episode_root = paths.episode(episode_id).resolve()
+    if not episode_root.is_relative_to(paths.root.resolve()):
+        raise ValueError("episode path escapes the project root")
+    return episode_root
 
 
 def _cmd_new(args: argparse.Namespace, paths: StudioPaths) -> int:
@@ -108,9 +119,18 @@ def _cmd_status(args: argparse.Namespace, paths: StudioPaths) -> int:
     return 0
 
 
+def _cmd_readiness(args: argparse.Namespace, paths: StudioPaths) -> int:
+    result = episode_readiness(paths.root, args.episode_id)
+    _print(result, args.json)
+    return 0
+
+
 def _cmd_research(args: argparse.Namespace, paths: StudioPaths) -> int:
-    _, manifest_path = _load_episode(paths, args.episode_id)
-    episode_root = manifest_path.parent
+    episode_root = _safe_episode_root(paths, args.episode_id)
+    manifest_path = episode_root / "episode.yaml"
+    if not manifest_path.is_file():
+        raise FileNotFoundError(f"episode manifest is missing: {manifest_path}")
+    load_manifest(manifest_path)
     required = [episode_root / "research" / "topic_brief.md", episode_root / "research" / "fact_pack.md", episode_root / "research" / "reference_deconstruction.json"]
     missing = [str(path) for path in required if not path.exists()]
     payload = {
@@ -149,6 +169,9 @@ def _cmd_creative(args: argparse.Namespace, paths: StudioPaths) -> int:
         destination = paths.episode(args.episode_id) / "creative" / "context_pack.yaml"
         save_creative_artifact(context, destination)
         result = {"status": "PASS", "episode_id": args.episode_id, "context_pack": str(destination)}
+    elif args.creative_command == "script-validate":
+        errors = validate_script_package(paths.episode(args.episode_id) / "creative")
+        result = {"status": "PASS" if not errors else "FAIL", "episode_id": args.episode_id, "errors": errors}
     elif args.creative_command == "validate":
         errors = validate_creative_package(paths.episode(args.episode_id) / "creative")
         result = {"status": "PASS" if not errors else "FAIL", "episode_id": args.episode_id, "errors": errors}
@@ -156,6 +179,19 @@ def _cmd_creative(args: argparse.Namespace, paths: StudioPaths) -> int:
         result = generate_creative_package(paths.root, args.episode_id, force=args.force, agent_dir=args.agent_dir)
     _print(result, args.json)
     return 0 if result.get("status") in {"PASS"} else 1
+
+
+def _cmd_production(args: argparse.Namespace, paths: StudioPaths) -> int:
+    episode_root = _safe_episode_root(paths, args.episode_id)
+    if args.production_command == "plan-record":
+        value = load_yaml(Path(args.file).expanduser())
+        destination = record_generation_plan(episode_root, value)
+        result = {"status": "PASS", "generation_plan": str(destination.relative_to(episode_root))}
+    else:
+        errors = validate_production_generation_plan(episode_root)
+        result = {"status": "PASS" if not errors else "FAIL", "errors": errors}
+    _print(result, args.json)
+    return 0 if result["status"] == "PASS" else 1
 
 
 def _cmd_image(args: argparse.Namespace, paths: StudioPaths) -> int:
@@ -173,6 +209,8 @@ def _cmd_image(args: argparse.Namespace, paths: StudioPaths) -> int:
         )
     elif args.image_command == "prepare":
         shot = load_yaml(shot_dir / "shot.yaml")
+        generation_plan = load_generation_plan_shot(episode_root, args.shot_id)
+        shot["image_candidate_plan"] = {"candidates": generation_plan.get("image_candidates", 0)}
         prompt_artifact = load_image_prompt_artifact(episode_root, args.shot_id)
         job = prepare_image_job(shot, prompt_artifact=prompt_artifact)
         destination = shot_dir / "images" / "job.json"
@@ -180,7 +218,7 @@ def _cmd_image(args: argparse.Namespace, paths: StudioPaths) -> int:
             raise FileExistsError(f"Image job already exists: {destination}; use --force after a new prompt decision")
         write_json(job, destination)
         result = {"status": "READY", "shot_id": args.shot_id, "job": str(destination.relative_to(episode_root))}
-    else:
+    elif args.image_command == "register":
         job_path = shot_dir / "images" / "job.json"
         job = json.loads(job_path.read_text(encoding="utf-8"))
         source = Path(args.source).expanduser()
@@ -194,6 +232,14 @@ def _cmd_image(args: argparse.Namespace, paths: StudioPaths) -> int:
             candidate_number=args.candidate,
         )
         result = {"status": "REGISTERED", "candidate": str(destination.relative_to(episode_root))}
+    else:
+        destination = select_image_candidate(
+            episode_root,
+            args.shot_id,
+            args.candidate,
+            args.reviewer,
+        )
+        result = {"status": "SELECTED", "selected_keyframe": str(destination.relative_to(episode_root)), "reviewer": args.reviewer}
     _print(result, args.json)
     return 0
 
@@ -296,20 +342,23 @@ def _cmd_h3(args: argparse.Namespace, paths: StudioPaths) -> int:
             raise ValueError(f"unknown shot: {args.shot}")
         shot_path = paths.episode(args.episode_id) / "shots" / args.shot / "shot.yaml"
         shot = load_yaml(shot_path)
+        generation_plan = load_generation_plan_shot(paths.episode(args.episode_id), args.shot)
         mode = _select_mode(str(manifest_shot.get("method", shot.get("method", ""))), shot)
-        assets, _ = _asset_spec(paths.episode(args.episode_id), shot, mode)
-        motion = shot.get("motion_plan") if isinstance(shot.get("motion_plan"), dict) else {}
+        input_strategy = generation_plan.get("input_strategy") if isinstance(generation_plan.get("input_strategy"), dict) else {}
+        assets, _ = _asset_spec(paths.episode(args.episode_id), shot, mode, input_strategy)
         start, end = manifest_shot.get("time_start"), manifest_shot.get("time_end")
         edit_duration = float(end) - float(start) if isinstance(start, (int, float)) and isinstance(end, (int, float)) else manifest_shot.get("duration_target")
         if not isinstance(edit_duration, (int, float)) or isinstance(edit_duration, bool) or edit_duration <= 0:
             raise ValueError(f"{args.shot} timeline edit duration is required")
-        generation_duration = h3_generation_duration(float(edit_duration), motion.get("generation_duration_sec"))
+        generation_duration = h3_generation_duration(float(edit_duration), generation_plan.get("generation_duration_sec"))
         contract = shot.get("shot_contract") if isinstance(shot.get("shot_contract"), dict) else {}
         audio_intent = contract.get("audio_intent")
         if not isinstance(audio_intent, str) or not audio_intent.strip():
             raise ValueError(f"{args.shot} Shot Contract must author audio_intent before H3 prompt writing")
         music_value = contract.get("non_diegetic_music", shot.get("non_diegetic_music"))
         allow_music = isinstance(music_value, str) and bool(music_value.strip()) and music_value.strip() != "N/A"
+        allow_narration = bool(contract.get("narration_requested"))
+        allow_dialogue = bool(contract.get("dialogue_requested"))
         prompt = Path(args.prompt_file).expanduser().read_text(encoding="utf-8")
         artifact = write_h3_prompt_artifact(
             paths.episode(args.episode_id),
@@ -321,6 +370,8 @@ def _cmd_h3(args: argparse.Namespace, paths: StudioPaths) -> int:
             generation_duration,
             job_revision=args.revision,
             allow_non_diegetic_music=allow_music,
+            allow_narration=allow_narration,
+            allow_dialogue=allow_dialogue,
         )
         result = {"status": "READY", "shot_id": args.shot, "mode": mode, "prompt": f"shots/{args.shot}/h3/prompt.txt", "prompt_source_contract_sha256": artifact["source_shot_contract_sha256"], "generation_duration_sec": generation_duration}
     elif args.h3_command == "prepare":
@@ -408,6 +459,9 @@ def build_parser() -> argparse.ArgumentParser:
         command = sub.add_parser(name)
         command.add_argument("episode_id")
         command.add_argument("--json", action="store_true")
+    readiness = sub.add_parser("readiness", help="derive local, remote H3, and postproduction readiness")
+    readiness.add_argument("episode_id")
+    readiness.add_argument("--json", action="store_true")
     animatic = sub.add_parser("animatic")
     animatic.add_argument("episode_id")
     animatic.add_argument("--force", action="store_true")
@@ -434,6 +488,19 @@ def build_parser() -> argparse.ArgumentParser:
     creative_validate = creative_sub.add_parser("validate")
     creative_validate.add_argument("episode_id")
     creative_validate.add_argument("--json", action="store_true")
+    creative_script_validate = creative_sub.add_parser("script-validate")
+    creative_script_validate.add_argument("episode_id")
+    creative_script_validate.add_argument("--json", action="store_true")
+
+    production = sub.add_parser("production", help="record and validate post-animatic production plans")
+    production_sub = production.add_subparsers(dest="production_command", required=True)
+    plan_record = production_sub.add_parser("plan-record")
+    plan_record.add_argument("episode_id")
+    plan_record.add_argument("--file", required=True)
+    plan_record.add_argument("--json", action="store_true")
+    plan_validate = production_sub.add_parser("plan-validate")
+    plan_validate.add_argument("episode_id")
+    plan_validate.add_argument("--json", action="store_true")
 
     image = sub.add_parser("image", help="record agent-authored GPT Image prompts and candidate provenance")
     image_sub = image.add_subparsers(dest="image_command", required=True)
@@ -455,6 +522,12 @@ def build_parser() -> argparse.ArgumentParser:
     image_register.add_argument("--source", required=True)
     image_register.add_argument("--candidate", type=int, default=1)
     image_register.add_argument("--json", action="store_true")
+    image_select = image_sub.add_parser("select")
+    image_select.add_argument("episode_id")
+    image_select.add_argument("--shot", dest="shot_id", required=True)
+    image_select.add_argument("--candidate", type=int, required=True)
+    image_select.add_argument("--reviewer", required=True)
+    image_select.add_argument("--json", action="store_true")
 
     skills = sub.add_parser("skills", help="inspect and maintain the pinned shared Hajimi skill stack")
     skills_sub = skills.add_subparsers(dest="skills_command", required=True)
@@ -591,19 +664,6 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_argv = list(argv) if argv is not None else sys.argv[1:]
-    # Keep the concise documented form ``hajimi animatic review EP099_example``
-    # while retaining the original ``hajimi animatic EP099_example`` invocation.
-    try:
-        animatic_index = raw_argv.index("animatic")
-    except ValueError:
-        animatic_index = -1
-    if animatic_index >= 0 and len(raw_argv) > animatic_index + 2 and raw_argv[animatic_index + 1] == "review":
-        raw_argv = [
-            *raw_argv[:animatic_index],
-            "animatic-review",
-            raw_argv[animatic_index + 2],
-            *raw_argv[animatic_index + 3:],
-        ]
     parser = build_parser()
     args = parser.parse_args(raw_argv)
     paths = _paths(args.root)
@@ -612,6 +672,8 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_new(args, paths)
         if args.command == "status":
             return _cmd_status(args, paths)
+        if args.command == "readiness":
+            return _cmd_readiness(args, paths)
         if args.command == "research":
             return _cmd_research(args, paths)
         if args.command == "animatic":
@@ -620,6 +682,8 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_animatic_review(args, paths)
         if args.command == "creative":
             return _cmd_creative(args, paths)
+        if args.command == "production":
+            return _cmd_production(args, paths)
         if args.command == "image":
             return _cmd_image(args, paths)
         if args.command == "skills":

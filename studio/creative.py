@@ -21,31 +21,23 @@ CREATIVE_FILES = (
     "idea_analysis.yaml",
     "angle_tournament.yaml",
     "creative_direction.yaml",
-    "visual_concept.yaml",
+    "hook_competition.yaml",
+    "mute_read.yaml",
     "beat_script.yaml",
-    "generation_plan.yaml",
+    "visual_concept.yaml",
 )
 AGENT_STAGES = (
     "idea_discovery",
     "angle_mutation",
     "idea_tournament",
     "creative_direction",
-    "visual_concept",
+    "short_form_script",
+    "hook_competition",
+    "mute_read",
     "beat_script",
-    "generation_plan",
+    "visual_concept",
 )
 SHOT_TIERS = {"HERO", "STORY", "CONNECTOR"}
-GENERATION_METHODS = {
-    "ai_image",
-    "h3_i2v",
-    "h3_fl2v",
-    "h3_ref2v",
-    "fusion",
-    "footage",
-    "hybrid_ai",
-}
-IMAGE_REQUIRED_METHODS = {"ai_image", "h3_i2v", "h3_fl2v", "h3_ref2v", "hybrid_ai"}
-VIDEO_REQUIRED_METHODS = {"h3_i2v", "h3_fl2v", "h3_ref2v", "hybrid_ai"}
 
 
 class CreativeAgentInputRequired(RuntimeError):
@@ -177,7 +169,7 @@ def build_creative_brief(context: Mapping[str, Any]) -> dict[str, Any]:
             "tournament": "pairwise reasoning with counterarguments and composite winner support",
             "direction": "challenge the apparent winner and preserve only one primary promise",
             "visual": "design information-bearing visuals before generation prompts",
-            "generation": "route by shot information, continuity, physics, and production fit",
+            "script": "compare distinct hooks, require a passing mute read, and bind factual beats to sources",
         },
         "provenance": {"source": "creative_context", "agent_owned_fields": True},
     }
@@ -316,10 +308,17 @@ def validate_visual_concept(value: Mapping[str, Any]) -> list[str]:
 
 def validate_beat_script(value: Mapping[str, Any]) -> list[str]:
     errors: list[str] = []
+    if value.get("schema_version") != "beat-script-v2":
+        errors.append("beat_script.schema_version must be beat-script-v2")
     beats = value.get("beats")
     if not isinstance(beats, list) or not beats:
-        return ["beat_script.beats must be a non-empty list"]
-    required = ("id", "purpose", "narration", "visual_action", "visual_information", "camera_event", "sound_event", "emotional_change", "duration_target")
+        errors.append("beat_script.beats must be a non-empty list")
+        return errors
+    required = (
+        "id", "purpose", "narration", "visual_action", "visual_information",
+        "camera_event", "sound_event", "emotional_change", "duration_target",
+        "visual_role", "claim_type", "fact_refs",
+    )
     for index, beat in enumerate(beats):
         if not isinstance(beat, dict):
             errors.append(f"beats[{index}] must be a mapping")
@@ -329,39 +328,77 @@ def validate_beat_script(value: Mapping[str, Any]) -> list[str]:
                 errors.append(f"beats[{index}] missing {key}")
         if not isinstance(beat.get("duration_target"), (int, float)) or beat.get("duration_target", 0) <= 0:
             errors.append(f"beats[{index}].duration_target must be positive")
+        if beat.get("visual_role") not in SHOT_TIERS:
+            errors.append(f"beats[{index}].visual_role must be one of {sorted(SHOT_TIERS)}")
+        fact_refs = beat.get("fact_refs")
+        if not isinstance(fact_refs, list):
+            errors.append(f"beats[{index}].fact_refs must be a list")
+        if beat.get("claim_type") not in {"FACTUAL", "NON_FACTUAL"}:
+            errors.append(f"beats[{index}].claim_type must be FACTUAL or NON_FACTUAL")
+        elif beat.get("claim_type") == "FACTUAL" and not fact_refs:
+            errors.append(f"beats[{index}] FACTUAL beat requires fact_refs")
         if beat.get("narration") and not beat.get("visual_action") and not beat.get("visual_information"):
             errors.append(f"beats[{index}] narration has no visual reason")
     return errors
 
 
-def validate_generation_plan(value: Mapping[str, Any]) -> list[str]:
+def validate_hook_competition(value: Mapping[str, Any]) -> list[str]:
     errors: list[str] = []
-    shots = value.get("shots")
-    if not isinstance(shots, list) or not shots:
-        return ["generation_plan.shots must be a non-empty list"]
-    for index, shot in enumerate(shots):
-        if not isinstance(shot, dict):
-            errors.append(f"generation_plan.shots[{index}] must be a mapping")
+    if value.get("schema_version") != "hook-competition-v1":
+        errors.append("hook_competition.schema_version must be hook-competition-v1")
+    candidates = value.get("candidates")
+    if not isinstance(candidates, list) or not 3 <= len(candidates) <= 5:
+        errors.append("hook_competition.candidates must contain 3 to 5 candidates")
+        return errors
+    required = (
+        "id", "visual_hook", "verbal_hook", "screen_information",
+        "curiosity_gap", "payoff_compatibility", "loop_potential",
+    )
+    ids: set[str] = set()
+    concepts: set[tuple[str, str, str]] = set()
+    for index, candidate in enumerate(candidates):
+        if not isinstance(candidate, Mapping):
+            errors.append(f"hook_competition.candidates[{index}] must be a mapping")
             continue
-        if shot.get("tier") not in SHOT_TIERS:
-            errors.append(f"generation_plan.shots[{index}] invalid tier")
-        if shot.get("method") not in GENERATION_METHODS:
-            errors.append(f"generation_plan.shots[{index}] invalid method")
-        method = shot.get("method")
-        image_candidates = shot.get("image_candidates", 0)
-        video_candidates = shot.get("video_candidates", 0)
-        if type(image_candidates) is not int or image_candidates < 0:
-            errors.append(f"generation_plan.shots[{index}].image_candidates must be a non-negative integer")
-        elif method in IMAGE_REQUIRED_METHODS and image_candidates < 1:
-            errors.append(f"generation_plan.shots[{index}].image_candidates must be positive for this image-first route")
-        if type(video_candidates) is not int or video_candidates < 0:
-            errors.append(f"generation_plan.shots[{index}].video_candidates must be a non-negative integer")
-        elif method in VIDEO_REQUIRED_METHODS and video_candidates < 1:
-            errors.append(f"generation_plan.shots[{index}].video_candidates must be positive for {method}")
-        if not isinstance(shot.get("fusion_graphics"), list):
-            errors.append(f"generation_plan.shots[{index}].fusion_graphics must be a list")
-        if not isinstance(shot.get("forbidden"), list) or not shot["forbidden"]:
-            errors.append(f"generation_plan.shots[{index}] missing forbidden constraints")
+        for key in required:
+            if candidate.get(key) in (None, ""):
+                errors.append(f"hook_competition.candidates[{index}] missing {key}")
+        candidate_id = candidate.get("id")
+        if isinstance(candidate_id, str):
+            if candidate_id in ids:
+                errors.append(f"hook_competition candidate id is duplicated: {candidate_id}")
+            ids.add(candidate_id)
+        concept = tuple(str(candidate.get(key, "")).strip().casefold() for key in ("visual_hook", "screen_information", "curiosity_gap"))
+        if concept in concepts:
+            errors.append("hook_competition candidates must use materially distinct audience-facing concepts")
+        concepts.add(concept)
+    selected = value.get("selected")
+    if not isinstance(selected, Mapping):
+        errors.append("hook_competition.selected must be a mapping")
+    else:
+        if selected.get("id") not in ids:
+            errors.append("hook_competition.selected.id must reference a candidate")
+        if not selected.get("rationale"):
+            errors.append("hook_competition.selected.rationale is required")
+    return errors
+
+
+def validate_mute_read(value: Mapping[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if value.get("schema_version") != "mute-read-v1":
+        errors.append("mute_read.schema_version must be mute-read-v1")
+    if value.get("decision") != "PASS":
+        errors.append("mute_read.decision must be PASS before script lock")
+    for key in ("first_visible_event", "three_second_change", "viewer_understanding_without_audio"):
+        if not value.get(key):
+            errors.append(f"mute_read.{key} is required")
+    first_event = value.get("first_event_sec")
+    if not isinstance(first_event, (int, float)) or isinstance(first_event, bool) or first_event < 0:
+        errors.append("mute_read.first_event_sec must be a non-negative number")
+    if not isinstance(value.get("narration_only_beats"), list):
+        errors.append("mute_read.narration_only_beats must be a list")
+    if "revision_required" not in value:
+        errors.append("mute_read.revision_required must be explicit")
     return errors
 
 
@@ -381,12 +418,35 @@ def validate_creative_package(package_dir: str | Path) -> list[str]:
         "idea_analysis.yaml": validate_idea_analysis,
         "angle_tournament.yaml": validate_tournament,
         "creative_direction.yaml": validate_creative_direction,
-        "visual_concept.yaml": validate_visual_concept,
+        "hook_competition.yaml": validate_hook_competition,
+        "mute_read.yaml": validate_mute_read,
         "beat_script.yaml": validate_beat_script,
-        "generation_plan.yaml": validate_generation_plan,
+        "visual_concept.yaml": validate_visual_concept,
     }
     for filename, validator in validators.items():
         errors.extend(f"{filename}: {error}" for error in validator(values[filename]))
+    return errors
+
+
+def validate_script_package(package_dir: str | Path) -> list[str]:
+    """Validate the script gate before the visual concept is authored."""
+
+    package_dir = Path(package_dir)
+    validators = {
+        "hook_competition.yaml": validate_hook_competition,
+        "mute_read.yaml": validate_mute_read,
+        "beat_script.yaml": validate_beat_script,
+    }
+    errors: list[str] = []
+    for filename, validator in validators.items():
+        path = package_dir / filename
+        if not path.is_file():
+            errors.append(f"missing {filename}")
+            continue
+        try:
+            errors.extend(f"{filename}: {error}" for error in validator(load_yaml(path)))
+        except (OSError, ValueError) as exc:
+            errors.append(f"invalid {filename}: {exc}")
     return errors
 
 
@@ -399,21 +459,21 @@ def _load_agent_outputs(agent_dir: Path) -> dict[str, dict[str, Any]]:
     return outputs
 
 
-def _hero_shot_id(direction: Mapping[str, Any], generation: Mapping[str, Any]) -> str | None:
+def _hero_shot_id(direction: Mapping[str, Any], visual: Mapping[str, Any]) -> str | None:
     hero = direction.get("hero_shot")
     if isinstance(hero, str):
         return hero
     if isinstance(hero, dict) and hero.get("shot_id"):
         return str(hero["shot_id"])
-    for shot in generation.get("shots", []):
+    for shot in visual.get("shots", []):
         if isinstance(shot, dict) and shot.get("tier") == "HERO" and shot.get("shot_id"):
             return str(shot["shot_id"])
     return None
 
 
-def _sync_manifest(manifest: dict[str, Any], direction: Mapping[str, Any], visual: Mapping[str, Any], beats: Mapping[str, Any], generation: Mapping[str, Any]) -> None:
+def _sync_manifest(manifest: dict[str, Any], direction: Mapping[str, Any], visual: Mapping[str, Any], beats: Mapping[str, Any]) -> None:
     creative = manifest.setdefault("creative", {})
-    hero_id = _hero_shot_id(direction, generation)
+    hero_id = _hero_shot_id(direction, visual)
     creative.update(
         {
             "promise": direction.get("one_sentence_promise"),
@@ -475,9 +535,10 @@ def generate_creative_package(
         "idea_analysis.yaml": validate_idea_analysis,
         "angle_tournament.yaml": validate_tournament,
         "creative_direction.yaml": validate_creative_direction,
-        "visual_concept.yaml": validate_visual_concept,
+        "hook_competition.yaml": validate_hook_competition,
+        "mute_read.yaml": validate_mute_read,
         "beat_script.yaml": validate_beat_script,
-        "generation_plan.yaml": validate_generation_plan,
+        "visual_concept.yaml": validate_visual_concept,
     }
     for filename, validator in validators.items():
         validation_errors.extend(f"{filename}: {error}" for error in validator(outputs[filename]))
@@ -486,9 +547,7 @@ def generate_creative_package(
 
     for filename in CREATIVE_FILES:
         save_creative_artifact(outputs[filename], creative_dir / filename)
-    generation = outputs["generation_plan.yaml"]
-    dump_yaml(generation, paths.episode(episode_id) / "production" / "generation_plan.yaml")
-    _sync_manifest(manifest, outputs["creative_direction.yaml"], outputs["visual_concept.yaml"], outputs["beat_script.yaml"], generation)
+    _sync_manifest(manifest, outputs["creative_direction.yaml"], outputs["visual_concept.yaml"], outputs["beat_script.yaml"])
     write_manifest(manifest, manifest_path)
     package_errors = validate_creative_package(creative_dir)
     if package_errors:

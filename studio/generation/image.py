@@ -15,6 +15,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
 
+from PIL import Image
+
 from ..skills import shared_skill_identity
 
 IMAGE_BACKEND = "codex_image_gen"
@@ -220,5 +222,56 @@ def register_image_candidate(
         "output_asset": str(destination.relative_to(root)),
         "sha256": _sha256(destination),
     }
+    metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return destination
+
+
+def select_image_candidate(
+    episode_root: str | Path,
+    shot_id: str,
+    candidate_number: int,
+    reviewer: str,
+) -> Path:
+    """Promote one registered candidate to the stable production keyframe."""
+
+    if candidate_number < 1:
+        raise ValueError("candidate_number must be positive")
+    if not isinstance(reviewer, str) or not reviewer.strip():
+        raise ValueError("reviewer is required")
+    root, image_dir = _safe_shot_directory(episode_root, shot_id)
+    candidates = [
+        path for path in image_dir.glob(f"candidate_{candidate_number:02d}.*")
+        if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}
+    ]
+    if len(candidates) != 1:
+        raise FileNotFoundError(f"exactly one registered image candidate is required for {shot_id} candidate {candidate_number}")
+    source = candidates[0]
+    metadata_path = source.with_suffix(".json")
+    if not metadata_path.is_file():
+        raise FileNotFoundError(f"image candidate metadata is missing: {metadata_path}")
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if metadata.get("sha256") != _sha256(source):
+        raise ValueError("image candidate hash does not match its metadata")
+    destination = image_dir / "selected_keyframe.png"
+    if source.suffix.lower() == ".png":
+        shutil.copy2(source, destination)
+    else:
+        with Image.open(source) as image:
+            image.convert("RGB").save(destination, format="PNG")
+    selection = {
+        "schema_version": "hajimi-image-selection-v1",
+        "shot_id": shot_id,
+        "candidate_id": metadata.get("candidate_id"),
+        "source": source.relative_to(root).as_posix(),
+        "source_sha256": _sha256(source),
+        "selected_keyframe": destination.relative_to(root).as_posix(),
+        "selected_keyframe_sha256": _sha256(destination),
+        "prompt_artifact": metadata.get("prompt_artifact"),
+        "reviewer": reviewer.strip(),
+        "selected_at": _utc_now(),
+    }
+    (image_dir / "selected_keyframe.json").write_text(json.dumps(selection, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    metadata["status"] = "selected"
+    metadata["reviewer"] = reviewer.strip()
     metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return destination

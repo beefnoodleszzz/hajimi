@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from studio.generation.image import ROLE_BUDGETS, prepare_image_job, register_image_candidate
+from studio.generation.image import ROLE_BUDGETS, prepare_image_job, register_image_candidate, select_image_candidate
 from studio.generation.image import load_image_prompt_artifact, write_image_prompt_artifact
 from studio.config import dump_yaml
 
@@ -53,6 +53,22 @@ def test_image_registration_identifies_codex_backend(tmp_path: Path) -> None:
     assert metadata["prompt"] == artifact["prompt"]
     assert metadata["prompt_artifact"]["path"] == "shots/S001/images/prompt.md"
     assert destination.exists()
+
+
+def test_registered_image_candidate_can_be_selected_with_bound_review(tmp_path: Path) -> None:
+    from PIL import Image
+
+    source = tmp_path / "source.jpg"
+    Image.new("RGB", (4, 4), "navy").save(source)
+    artifact = _prompt_artifact(tmp_path)
+    job = prepare_image_job(_shot(), prompt_artifact=artifact)
+    register_image_candidate(tmp_path, "S001", source, job, candidate_number=1)
+    selected = select_image_candidate(tmp_path, "S001", 1, "director")
+    assert selected.name == "selected_keyframe.png"
+    assert selected.is_file()
+    selection = json.loads(selected.with_suffix(".json").read_text())
+    assert selection["reviewer"] == "director"
+    assert selection["selected_keyframe_sha256"]
 
 
 def test_image_generation_defaults_to_one_candidate(tmp_path: Path) -> None:

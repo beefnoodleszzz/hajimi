@@ -10,24 +10,29 @@ optional Resolve finishing, and a five-tier Fast QC funnel.
 
 ```bash
 uv sync
-# Optional full ASR + scene-detection QC (enables locked-script diff)
-uv sync --extra media-qc
-# Analytics export (DuckDB + Parquet)
-uv sync --extra analytics
 EPISODE_ID=EP099_your-episode
-uv run hajimi status "$EPISODE_ID"
-uv run hajimi animatic "$EPISODE_ID"
-uv run hajimi qc episode "$EPISODE_ID"
-uv run hajimi qc master "$EPISODE_ID"
-uv run hajimi h3 doctor
-uv run hajimi h3 prepare "$EPISODE_ID"
-uv run hajimi roughcut build "$EPISODE_ID"
-uv run hajimi publish doctor "$EPISODE_ID"
-uv run hajimi skills doctor
+uv run hajimi new "$EPISODE_ID"
+uv run hajimi readiness "$EPISODE_ID"
 ```
 
-Create an episode manifest, storyboard, and shot contracts before running this
-workflow. The animatic is a deliberate pre-production gate: deterministic cards
+Agents then follow [`docs/production-runbook.md`](docs/production-runbook.md) to
+author and validate each gated artifact. The core CLI checkpoints are:
+
+```bash
+uv run hajimi research "$EPISODE_ID"
+uv run hajimi creative context "$EPISODE_ID"
+uv run hajimi creative package "$EPISODE_ID" --agent-dir /path/to/agent-output
+uv run hajimi creative validate "$EPISODE_ID"
+uv run hajimi animatic "$EPISODE_ID"
+uv run hajimi animatic-review "$EPISODE_ID" --approve --reviewer director
+uv run hajimi production plan-record "$EPISODE_ID" --file /path/to/generation_plan.yaml
+uv run hajimi production plan-validate "$EPISODE_ID"
+uv run hajimi status "$EPISODE_ID"
+uv run hajimi readiness "$EPISODE_ID"
+```
+
+After episode creation, author the research, creative, storyboard, and Shot
+Contract artifacts in the runbook order. The animatic is a deliberate pre-production gate: deterministic cards
 and temporary sound stems prove the story rhythm before costly AI shot
 generation.
 
@@ -38,7 +43,7 @@ gate first, then approve the exact unchanged asset with:
 ```bash
 EPISODE_ID=EP099_your-episode
 uv run hajimi animatic "$EPISODE_ID" --force
-uv run hajimi animatic review "$EPISODE_ID" --approve --reviewer director
+uv run hajimi animatic-review "$EPISODE_ID" --approve --reviewer director
 ```
 
 H3 candidates are locally inspected and selected; selection records `qc_pending`

@@ -81,16 +81,39 @@ def _project(root: Path, *, include_keyframe: bool = True) -> Path:
         "method": "h3_i2v",
         "intent": "A measured cloud settles onto a platform.",
         "camera": {"movement": "small push"},
+        "reference_pack": {},
         "shot_contract": {
             "shot_id": "S001",
             "role": "HERO",
+            "narrative_purpose": "show measured contact",
+            "information_payload": "the cloud has measurable weight",
             "visual_goal": "Show contact without deformation.",
             "subject": "a compact cloud",
             "environment": "measurement stage",
             "composition": "centered portrait frame",
+            "camera_height": "platform level",
+            "lens_feel": "macro",
+            "first_frame": "cloud above scale",
+            "end_frame": "cloud settled on scale",
+            "start_state": "cloud suspended above scale",
+            "end_state": "cloud settled without deformation",
+            "subject_motion": "cloud settles once",
+            "environmental_motion": "subtle scale vibration",
+            "camera_motion": "small push",
             "lighting": "cool edge light",
             "palette": "navy and white",
-            "continuity": {"identity": "same cloud"},
+            "previous_shot": None,
+            "next_shot": None,
+            "screen_direction": "center",
+            "continuity_receive": None,
+            "continuity_handoff": None,
+            "identity_lock": "same compact cloud",
+            "environment_lock": "same measurement stage",
+            "prop_state": "scale centered",
+            "first_frame_requirement": "selected keyframe",
+            "last_frame_requirement": None,
+            "tail_frame_requirement": "stable after-motion",
+            "preserve": ["cloud silhouette", "platform geometry"],
             "forbidden": ["generated text"],
             "audio_intent": AUDIO_INTENT,
         },
@@ -134,12 +157,29 @@ def _project(root: Path, *, include_keyframe: bool = True) -> Path:
             "status": "storyboard",
             "active_media": None,
             "duration_target": 1.4,
+            "time_start": 0.0,
+            "time_end": 1.4,
             "remote_status": "NOT_READY",
         }],
         "publish": {"visibility": "private"},
     }
     dump_yaml(manifest, episode / "episode.yaml")
+    dump_yaml({"shots": [{"id": "S001"}]}, episode / "storyboard" / "storyboard_v01.yaml")
+    dump_yaml({"schema_version": "continuity-review-v1", "shots": {"S001": {
+        "receive": None, "action": "settles", "handoff": None, "screen_direction": "center",
+        "identity_state": "same compact cloud", "environment_state": "measurement stage", "prop_state": "scale centered",
+    }}}, episode / "storyboard" / "continuity_review.yaml")
     write_json({"production_gate": "PASS"}, episode / "animatic" / "gate.json")
+    dump_yaml({
+        "schema_version": "generation-plan-v3",
+        "shots": [{
+            "shot_id": "S001", "tier": "HERO", "method": "h3_i2v",
+            "image_candidates": 1, "video_candidates": 1,
+            "edit_duration_sec": 1.4, "generation_duration_sec": 124 / 24,
+            "input_strategy": {"first_frame": "shots/S001/images/selected_keyframe.png"},
+            "fusion_graphics": [],
+        }],
+    }, episode / "production" / "generation_plan.yaml")
     if include_keyframe:
         write_h3_prompt_artifact(
             episode,

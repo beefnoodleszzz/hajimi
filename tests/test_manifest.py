@@ -49,19 +49,36 @@ def _h3_shot(shot_id: str, episode_id: str = EPISODE_ID) -> dict:
             "shot_id": shot_id,
             "role": role,
             "narrative_purpose": "test",
+            "information_payload": "one visible state change",
             "visual_goal": "Show one clear change.",
             "subject": "test subject",
             "environment": "test stage",
             "composition": "centered portrait frame",
+            "camera_height": "eye level",
+            "lens_feel": "normal",
             "first_frame": "test start state",
             "end_frame": "test end state",
+            "start_state": "subject at rest",
+            "end_state": "subject settled",
             "subject_motion": "moves gently",
             "environmental_motion": "subtle background motion",
             "camera_motion": "small push",
             "lighting": "soft key light",
             "palette": "neutral",
-            "continuity": {"identity": "same subject"},
+            "previous_shot": None,
+            "next_shot": None,
+            "screen_direction": "center",
+            "continuity_receive": None,
+            "continuity_handoff": None,
+            "identity_lock": "same subject",
+            "environment_lock": "same stage",
+            "prop_state": "no props",
+            "first_frame_requirement": "selected keyframe",
+            "last_frame_requirement": None,
+            "tail_frame_requirement": "stable tail",
+            "preserve": ["subject identity"],
             "forbidden": ["generated text"],
+            "audio_intent": "quiet room tone with one soft movement",
         },
         "reference_pack": {},
         "motion_plan": {"source_keyframe": f"shots/{shot_id}/images/first.png"},
@@ -98,8 +115,7 @@ def test_example_manifest_is_valid_and_has_stable_shot_ids(tmp_path: Path) -> No
 
 def test_shot_methods_are_explicit() -> None:
     methods = {shot["method"] for shot in _example_manifest()["shots"]}
-    assert {"hybrid_ai", "h3_i2v", "h3_fl2v", "h3_ref2v"}.issubset(methods)
-    assert "blender" not in methods
+    assert methods == {"ai_image", "h3_i2v", "h3_fl2v", "h3_ref2v", "fusion", "footage", "hybrid_ai", "animatic_card"}
 
 
 def test_short_manifest_requires_portrait_aspect_ratio() -> None:

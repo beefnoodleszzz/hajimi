@@ -87,6 +87,8 @@ def validate_h3_prompt(
     generation_duration_sec: float,
     *,
     allow_non_diegetic_music: bool = False,
+    allow_narration: bool = False,
+    allow_dialogue: bool = False,
     reference_image_count: int = 0,
 ) -> list[str]:
     errors: list[str] = []
@@ -129,15 +131,13 @@ def validate_h3_prompt(
 
     integrated = sections.get("integrated_multimodal_description", sections.get("detailed_description", ""))
     integrated_lower = integrated.casefold()
-    if "no narration" not in integrated_lower:
+    if not allow_narration and "no narration" not in integrated_lower:
         errors.append("integrated description must explicitly say no narration")
-    if "no dialogue" not in integrated_lower:
+    if not allow_dialogue and "no dialogue" not in integrated_lower:
         errors.append("integrated description must explicitly say no dialogue")
     soundscape = sections.get("overall_soundscape", "")
     if soundscape.casefold() in {"n/a", "na"}:
         errors.append("overall_soundscape must describe the shot's native environment audio")
-    if soundscape != audio_intent.strip():
-        errors.append("overall_soundscape must exactly match the locally authored audio_intent")
     music = sections.get("non_diegetic_music", "")
     if not allow_non_diegetic_music and music != "N/A":
         errors.append("non_diegetic_music must be N/A unless the Shot Contract explicitly requests music")
@@ -168,6 +168,8 @@ def write_h3_prompt_artifact(
     *,
     job_revision: int = 1,
     allow_non_diegetic_music: bool = False,
+    allow_narration: bool = False,
+    allow_dialogue: bool = False,
 ) -> dict[str, Any]:
     """Persist a finished agent prompt byte-for-byte with its source evidence."""
 
@@ -185,6 +187,8 @@ def write_h3_prompt_artifact(
         audio_intent,
         generation_duration_sec,
         allow_non_diegetic_music=allow_non_diegetic_music,
+        allow_narration=allow_narration,
+        allow_dialogue=allow_dialogue,
         reference_image_count=len(hashes) if mode == "ref2va" else 0,
     )
     if errors:
@@ -194,6 +198,13 @@ def write_h3_prompt_artifact(
         "mode": mode,
         "prompt": prompt,
         "audio_intent": audio_intent,
+        "overall_soundscape": _sections(prompt, REF_FIELDS if mode == "ref2va" else BASE_FIELDS)[1]["overall_soundscape"],
+        "audio_policy": {
+            "native_audio": True,
+            "narration_requested": allow_narration,
+            "dialogue_requested": allow_dialogue,
+            "non_diegetic_music_requested": allow_non_diegetic_music,
+        },
         "generation_duration_sec": float(generation_duration_sec),
         "job_revision": job_revision,
         "source_shot_contract_sha256": sha256_file(contract_path),
@@ -216,6 +227,8 @@ def load_h3_prompt_artifact(
     generation_duration_sec: float,
     *,
     allow_non_diegetic_music: bool = False,
+    allow_narration: bool = False,
+    allow_dialogue: bool = False,
 ) -> dict[str, Any]:
     episode_root = Path(episode_root).resolve()
     artifact_dir = episode_root / "shots" / shot_id / "h3"
@@ -244,6 +257,17 @@ def load_h3_prompt_artifact(
         raise ValueError("H3 prompt artifact official skill version does not match the local synced skill")
     if not isinstance(artifact.get("job_revision"), int) or artifact["job_revision"] < 1:
         raise ValueError("H3 prompt artifact job_revision must be a positive integer")
+    _, sections = _sections(prompt, REF_FIELDS if mode == "ref2va" else BASE_FIELDS)
+    if artifact.get("overall_soundscape") != sections.get("overall_soundscape"):
+        raise ValueError("H3 prompt artifact overall_soundscape does not match prompt.txt")
+    expected_audio_policy = {
+        "native_audio": True,
+        "narration_requested": allow_narration,
+        "dialogue_requested": allow_dialogue,
+        "non_diegetic_music_requested": allow_non_diegetic_music,
+    }
+    if artifact.get("audio_policy") != expected_audio_policy:
+        raise ValueError("H3 prompt artifact audio policy is stale")
     artifact_duration = artifact.get("generation_duration_sec")
     if not isinstance(artifact_duration, (int, float)) or abs(float(artifact_duration) - generation_duration_sec) > 1e-6:
         raise ValueError("H3 prompt artifact generation duration is stale")
@@ -253,6 +277,8 @@ def load_h3_prompt_artifact(
         artifact.get("audio_intent"),
         generation_duration_sec,
         allow_non_diegetic_music=allow_non_diegetic_music,
+        allow_narration=allow_narration,
+        allow_dialogue=allow_dialogue,
         reference_image_count=len(expected_hashes) if mode == "ref2va" else 0,
     )
     if errors:

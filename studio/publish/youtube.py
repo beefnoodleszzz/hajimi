@@ -539,8 +539,9 @@ def build_publish_plan(root: str | Path, episode_id: str, requested_visibility: 
 
 def preflight(root: str | Path, episode_id: str, requested_visibility: str = PRIVATE_VISIBILITY) -> dict[str, Any]:
     plan = build_publish_plan(root, episode_id, requested_visibility=requested_visibility)
-    destination = Path(root) / "episodes" / episode_id / "publish" / "youtube.json"
-    write_json(plan, destination)
+    publish_root = Path(root) / "episodes" / episode_id / "publish"
+    write_json(plan, publish_root / "youtube.json")
+    write_json(plan, publish_root / "preflight.json")
     return plan
 
 
@@ -654,11 +655,20 @@ def record_checks(root: str | Path, episode_id: str, checks: dict[str, Any]) -> 
         raise RuntimeError("An uploaded private video is required before recording YouTube Checks")
     if not isinstance(checks, dict):
         raise ValueError("checks must be a mapping")
-    missing = [field for field in ("copyright", "likeness", "upload") if field not in checks]
+    required = ("copyright", "likeness", "upload", "hd_processing", "audio", "subtitles", "audience", "ai_disclosure", "visibility")
+    missing = [field for field in required if field not in checks]
     if missing:
         raise ValueError("YouTube checks readback missing required fields: " + ", ".join(missing))
     if checks.get("upload") != "complete":
         raise ValueError("YouTube checks readback must preserve checks.upload=complete")
+    for field in ("hd_processing", "audio", "subtitles", "audience", "ai_disclosure"):
+        if checks.get(field) != "PASS":
+            raise ValueError(f"YouTube checks readback requires {field}=PASS")
+    for field in ("copyright", "likeness"):
+        if checks.get(field) not in {"clear", "passed", "not_applicable"}:
+            raise ValueError(f"YouTube checks readback {field} is not clear")
+    if checks.get("visibility") != PRIVATE_VISIBILITY:
+        raise ValueError("YouTube checks readback must preserve private visibility")
     result["youtube_checks"] = checks
     result["status"] = "CHECKS_RECORDED"
     result["checks_recorded_at"] = _utc_now()

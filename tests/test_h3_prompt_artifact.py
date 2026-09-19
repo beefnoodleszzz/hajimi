@@ -21,8 +21,8 @@ non_diegetic_music: N/A
 
 def test_base_h3_prompt_uses_official_sections_audio_and_image_alignment() -> None:
     assert validate_h3_prompt("i2va", I2VA_PROMPT, AUDIO_INTENT, 124 / 24) == []
-    wrong_audio = validate_h3_prompt("i2va", I2VA_PROMPT, "heavy rain", 124 / 24)
-    assert any("exactly match" in error for error in wrong_audio)
+    expanded_audio = validate_h3_prompt("i2va", I2VA_PROMPT, "quiet wind and a scale response", 124 / 24)
+    assert expanded_audio == []
     wrong_music = I2VA_PROMPT.replace("non_diegetic_music: N/A", "non_diegetic_music: strings")
     assert any("must be N/A" in error for error in validate_h3_prompt("i2va", wrong_music, AUDIO_INTENT, 124 / 24))
     wrong_alignment = I2VA_PROMPT.replace("0.00 seconds", "0.10 seconds", 1)
@@ -79,6 +79,9 @@ def test_h3_prompt_artifact_is_required_hash_bound_and_kept_unchanged(tmp_path: 
         job_revision=2,
     )
     assert artifact["job_revision"] == 2
+    assert artifact["audio_intent"] == AUDIO_INTENT
+    assert artifact["overall_soundscape"] == AUDIO_INTENT
+    assert artifact["audio_policy"] == {"native_audio": True, "narration_requested": False, "dialogue_requested": False, "non_diegetic_music_requested": False}
     assert artifact["source_shot_contract_sha256"]
     assert artifact["source_keyframe_hashes"]["shots/S001/images/selected_keyframe.png"]
     assert artifact["official_skill"]["commit"] == "d21241f0a4b3acbb34c97dae47fa417b7065e438"

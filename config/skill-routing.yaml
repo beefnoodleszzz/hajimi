@@ -51,6 +51,11 @@ stages:
     inputs: [storyboard/storyboard_v01.yaml, shots/Sxxx/shot.yaml]
     outputs: [animatic/animatic.mp4, animatic/gate.json]
     gate: production_gate is PASS before production image/video work
+  generation_plan:
+    director: generation-director
+    inputs: [animatic/gate.json, storyboard/storyboard_v01.yaml, storyboard/continuity_review.yaml, shots/Sxxx/shot.yaml, episode.yaml timeline]
+    outputs: [production/generation_plan.yaml]
+    gate: animatic production_gate is PASS; plan shot IDs match current Shot Contracts; edit durations match episode.yaml; generation durations and input strategies validate
   image:
     specialist: gpt-image-2-style-library
     adapter: ai-visual-producer
@@ -72,6 +77,11 @@ stages:
     inputs: [episodes/<episode_id>/shots/Sxxx/h3/prompt.txt, episodes/<episode_id>/shots/Sxxx/h3/prompt.json, selected keyframe assets]
     outputs: [remote_jobs/<job_id>/job.json, remote result candidates, local candidate sidecars]
     gate: local doctor, hashes, required native audio, local candidate review and shot QC
+  shot_qc:
+    qc: fast-media-qc
+    inputs: [selected local candidate, candidate sidecar, shot provenance, shots/Sxxx/shot.yaml]
+    outputs: [qc cached metrics, shot review bound to active hash]
+    gate: deterministic QC and required director review pass before the shot status becomes approved
   voice:
     adapter: voice-director
     executor: VoxCPM2_local
@@ -103,3 +113,8 @@ stages:
     inputs: [active master, final QC, bound human review, valid title/description/audience/disclosure]
     outputs: [publish/youtube.json, publish/preflight.json]
     gate: FFmpeg source does not require Resolve readback; Resolve source does
+  analytics:
+    specialist: analytics-reviewer
+    inputs: [publish/youtube.json, episode.yaml]
+    outputs: [analytics.json]
+    gate: analytics record is initialized for the uploaded episode
